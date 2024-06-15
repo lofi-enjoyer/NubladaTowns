@@ -67,7 +67,7 @@ public class TownManager {
             town.setRgbColor(section.getInt("color"));
             town.setSpawn(section.getLocation("spawn"));
             town.setOpen(section.getBoolean("open", true));
-            town.setPower(section.getInt("power"));
+            town.setPower(section.getInt("power", 0));
             var residentUniqueIds = section.getStringList("residents");
             residentUniqueIds.forEach(resident -> {
                 var residentUuid = UUID.fromString(resident);

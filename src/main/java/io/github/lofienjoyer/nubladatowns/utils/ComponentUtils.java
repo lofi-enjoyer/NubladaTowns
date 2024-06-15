@@ -4,6 +4,8 @@ import io.github.lofienjoyer.nubladatowns.town.Town;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 
+import java.util.Map;
+
 public class ComponentUtils {
 
     public static Component getTownNameComponent(Town town) {
@@ -34,6 +36,14 @@ public class ComponentUtils {
         return component.replaceText(builder -> {
             builder.matchLiteral(literal).replacement(String.valueOf(number));
         });
+    }
+
+    public static Component replaceIntegers(Component component, Map<String, Integer> replace) {
+        for (Map.Entry<String, Integer> entry : replace.entrySet()) {
+            component = replaceInteger(component, entry.getKey(), entry.getValue());
+        }
+
+        return component;
     }
 
 }
