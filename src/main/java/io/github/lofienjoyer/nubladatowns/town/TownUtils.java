@@ -26,6 +26,8 @@ public class TownUtils {
                 Component.empty()
                         .append(ComponentUtils.replaceTownName(lm.getMessage("town-menu-title"), town))
                         .appendNewline()
+                        .append(ComponentUtils.replaceInteger(lm.getMessage("town-menu-power"), "%count%", town.getPower()))
+                        .appendNewline()
                         .append(ComponentUtils.replaceInteger(lm.getMessage("town-menu-population"), "%count%", town.getResidents().size()))
                         .appendNewline()
                         .append(ComponentUtils.replaceInteger(lm.getMessage("town-menu-land"), "%count%", town.getClaimedLand().size()))
