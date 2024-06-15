@@ -1,0 +1,20 @@
+name: NubladaTowns
+version: '${project.version}'
+main: io.github.lofienjoyer.nubladatowns.NubladaTowns
+api-version: '1.20'
+
+commands:
+  town:
+    permission: nubladatowns.user
+    aliases:
+      - t
+  nubladatownsadmin:
+    permission: nubladatowns.admin
+    aliases:
+      - nta
+
+permissions:
+  nubladatowns.user:
+    default: true
+  nubladatowns.admin:
+    default: op
