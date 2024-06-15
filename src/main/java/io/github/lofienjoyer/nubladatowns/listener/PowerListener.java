@@ -27,6 +27,10 @@ public class PowerListener implements Listener {
             Town town = townManager.getPlayerTown(killer);
             if(town == null) return;
 
+            //Todo: check for actual enemies
+            if(event.getEntity() instanceof Player victim && townManager.getPlayerTown(victim).equals(town))
+                return;
+
             var amount = powerManager.getAmount(targetEntity.getType().toString().toLowerCase());
 
             if(amount == null) amount = powerManager.getAmount("fallback-amount");

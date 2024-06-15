@@ -9,7 +9,7 @@ claim-land: 16
 #
 
 fallback-amount: 1
-enemy-player: 8
+player: 8 # This only applies to enemy players
 
 # Passive mobs
 
