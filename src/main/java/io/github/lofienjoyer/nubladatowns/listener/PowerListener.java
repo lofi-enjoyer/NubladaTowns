@@ -28,13 +28,17 @@ public class PowerListener implements Listener {
             if(town == null) return;
 
             //Todo: check for actual enemies
-            if(event.getEntity() instanceof Player victim && townManager.getPlayerTown(victim).equals(town))
+            if(event.getEntity() instanceof Player victim && townManager.getPlayerTown(victim) == town)
                 return;
 
             var amount = powerManager.getAmount(targetEntity.getType().toString().toLowerCase());
+            var max_amount = powerManager.getAmount("max-power-multiplier") * town.getResidents().size();
 
             if(amount == null) amount = powerManager.getAmount("fallback-amount");
-            if(town.getPower() + amount > powerManager.getAmount("max-power-multiplier") * town.getResidents().size()) return;
+            if(town.getPower() + amount > max_amount) {
+                town.setPower(max_amount);
+                return;
+            }
             town.setPower(town.getPower() + amount);
         }
     }
