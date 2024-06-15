@@ -1,11 +1,11 @@
 package io.github.lofienjoyer.nubladatowns.town;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,36 +30,36 @@ public class Town {
         this(UUID.randomUUID(), name);
     }
 
-    public void addLand(LandChunk chunk) {
+    protected void addLand(LandChunk chunk) {
         claimedLand.add(chunk);
     }
 
-    public void addLand(int x, int z, World world) {
+    protected void addLand(int x, int z, World world) {
         var landChunk = new LandChunk(x, z, world);
         claimedLand.add(landChunk);
     }
 
-    public List<LandChunk> getClaimedLand() {
-        return claimedLand;
-    }
-
-    public void addResident(UUID uuid) {
+    protected void addResident(UUID uuid) {
         residents.add(uuid);
     }
 
-    public void addResident(Player player) {
+    protected void addResident(Player player) {
         addResident(player.getUniqueId());
     }
 
     public List<UUID> getResidents() {
-        return residents;
+        return Collections.unmodifiableList(residents);
+    }
+
+    public List<LandChunk> getClaimedLand() {
+        return Collections.unmodifiableList(claimedLand);
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    protected void setName(String name) {
         this.name = name;
     }
 
@@ -67,7 +67,7 @@ public class Town {
         return spawn;
     }
 
-    public void setSpawn(Location spawn) {
+    protected void setSpawn(Location spawn) {
         this.spawn = spawn;
     }
 
@@ -79,7 +79,7 @@ public class Town {
         return rgbColor;
     }
 
-    public void setRgbColor(int rgbColor) {
+    protected void setRgbColor(int rgbColor) {
         this.rgbColor = rgbColor;
     }
 
@@ -87,7 +87,7 @@ public class Town {
         return open;
     }
 
-    public void setOpen(boolean open) {
+    protected void setOpen(boolean open) {
         this.open = open;
     }
 
