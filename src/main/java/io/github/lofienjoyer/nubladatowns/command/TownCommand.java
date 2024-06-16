@@ -1,12 +1,12 @@
 package io.github.lofienjoyer.nubladatowns.command;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
+import io.github.lofienjoyer.nubladatowns.command.town.EditSubcommand;
 import io.github.lofienjoyer.nubladatowns.command.town.JoinTownSubcommand;
 import io.github.lofienjoyer.nubladatowns.command.town.ListResidentsSubcommand;
+import io.github.lofienjoyer.nubladatowns.command.town.RolesSubcommand;
 import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -33,6 +33,8 @@ public class TownCommand implements CommandExecutor, TabCompleter {
         this.subCommands = new HashMap<>();
         subCommands.put("list", new ListResidentsSubcommand(townManager));
         subCommands.put("join", new JoinTownSubcommand(townManager));
+        subCommands.put("roles", new RolesSubcommand(townManager));
+        subCommands.put("edit", new EditSubcommand(townManager));
     }
 
     @Override

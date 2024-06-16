@@ -1,6 +1,8 @@
 package io.github.lofienjoyer.nubladatowns.town;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
+import io.github.lofienjoyer.nubladatowns.roles.Permission;
+import io.github.lofienjoyer.nubladatowns.roles.Role;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -34,6 +36,7 @@ public class TownManager {
         town.setSpawn(location);
         town.setRgbColor(color);
         town.setPower(0);
+        town.setMayor(founder);
 
         townMap.put(town.getUniqueId(), town);
         landMap.put(landChunk, town.getUniqueId());
@@ -68,6 +71,7 @@ public class TownManager {
             town.setSpawn(section.getLocation("spawn"));
             town.setOpen(section.getBoolean("open", true));
             town.setPower(section.getInt("power", 0));
+            town.setMayor(UUID.fromString(section.getString("mayor")));
             var residentUniqueIds = section.getStringList("residents");
             residentUniqueIds.forEach(resident -> {
                 var residentUuid = UUID.fromString(resident);
@@ -81,6 +85,24 @@ public class TownManager {
                 town.addLand(chunk);
                 landMap.put(chunk, townUuid);
             });
+            var roles = section.getConfigurationSection("roles");
+            if (roles != null) {
+                roles.getKeys(false).forEach(roleName -> {
+                    var role = new Role(roleName);
+                    var permissions = section.getStringList("roles." + roleName + ".permissions");
+                    var players = section.getStringList("roles." + roleName + ".players");
+
+                    permissions.forEach(permission -> {
+                        role.addPermission(Permission.valueOf(permission));
+                    });
+
+                    players.forEach(uuid -> {
+                        role.addPlayer(UUID.fromString(uuid));
+                    });
+
+                    town.addRole(role);
+                });
+            }
             townMap.put(townUuid, town);
         });
     }
@@ -93,12 +115,20 @@ public class TownManager {
             section.set("color", town.getRgbColor());
             section.set("spawn", town.getSpawn());
             section.set("power", town.getPower());
+            section.set("mayor", town.getMayor().toString());
             var residentUniqueIds = town.getResidents().stream().map(UUID::toString).toList();
             section.set("residents", residentUniqueIds);
             var landChunks = town.getClaimedLand().stream()
                     .map(chunk -> chunk.x() + ":" + chunk.z() + ":" + chunk.world().getName())
                     .toList();
             section.set("land", landChunks);
+            for (Role role : town.getRoles()) {
+                var permissions = role.getPermissions().stream().map(Enum::name).toList();
+                var players = role.getPlayers().stream().map(UUID::toString).toList();
+
+                section.set("roles." + role.getName() + ".permissions", permissions);
+                section.set("roles." + role.getName() + ".players", players);
+            }
         });
     }
 
