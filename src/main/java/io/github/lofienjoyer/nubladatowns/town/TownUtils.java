@@ -115,15 +115,6 @@ public class TownUtils {
                 townManager.getTownOnChunk(world.getChunkAt(chunk.getX() - 1, chunk.getZ())) == town;
     }
 
-    public boolean hasPermission(UUID uuid, Town town, Permission permission) {
-        for(Role role : town.getRoles()) {
-            if(role.getPlayers().contains(uuid) && role.getPermissions().contains(permission))
-                return true;
-        }
-
-        return false;
-    }
-
     public static void broadcastToTown(Component component, Town town) {
         Bukkit.getOnlinePlayers().stream()
                 .filter(player -> town.getResidents().contains(player.getUniqueId()))

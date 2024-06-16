@@ -1,5 +1,6 @@
 package io.github.lofienjoyer.nubladatowns.town;
 
+import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -115,4 +116,17 @@ public class Town {
     }
 
     protected void setRoles(List<Role> roles) { this.roles = roles; }
+
+    public boolean hasPermission(UUID uuid, Permission permission) {
+        for(Role role : getRoles()) {
+            if(role.getPlayers().contains(uuid) && role.getPermissions().contains(permission))
+                return true;
+        }
+
+        return false;
+    }
+
+    public boolean hasPermission(Player player, Permission permission) {
+        return hasPermission(player.getUniqueId(), permission);
+    }
 }
