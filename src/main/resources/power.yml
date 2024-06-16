@@ -1,0 +1,100 @@
+# Max power per town = amount of residents * this value
+max-power-multiplier: 64
+
+# Amount of power needed per territory
+claim-land: 16
+
+#
+# Power earned from killing mobs
+#
+
+fallback-amount: 1
+player: 8 # This only applies to enemy players
+
+# Passive mobs
+
+allay: 1
+armadillo: 1
+axolotl: 1
+bat: 1
+camel: 1
+cat: 1
+chicken: 1
+cod: 1
+cow: 1
+donkey: 1
+frog: 1
+glow_squid: 1
+horse: 1
+mooshroom: 1
+mule: 1
+ocelot: 1
+parrot: 1
+pig: 1
+pufferfish: 1
+rabbit: 1
+salmon: 1
+sheep: 1
+skeleton_horse: 1
+sniffer: 1
+snow_golem: 1
+squid: 1
+strider: 1
+tadpole: 1
+tropical_fish: 1
+turtle: 1
+villager: 1
+wandering_trader: 1
+
+# Neutral mobs
+
+bee: 2
+cave_spider: 2
+dolphin: 2
+drowned: 2
+enderman: 2
+fox: 2
+goat: 2
+iron_golem: 4
+llama: 2
+panda: 2
+piglin: 2
+polar_bear: 2
+spider: 2
+trader_llama: 2
+wolf: 2
+zombified_piglin: 2
+
+# Hostile mobs
+
+blaze: 4
+bogged: 4
+breeze: 4
+creeper: 4
+elder_guardian: 16
+endermite: 4
+ender_dragon: 64
+evoker: 4
+ghast: 4
+guardian: 4
+hoglin: 4
+husk: 4
+magma_cube: 4
+phantom: 4
+piglin_brute: 4
+pillager: 4
+ravager: 4
+shulker: 4
+silverfish: 4
+skeleton: 4
+slime: 4
+stray: 4
+vex: 4
+vindicator: 4
+warden: 4
+witch: 4
+wither: 64
+wither_skeleton: 4
+zoglin: 4
+zombie: 4
+zombie_villager: 4

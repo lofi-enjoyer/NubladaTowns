@@ -18,6 +18,7 @@ public class Town {
     private final List<LandChunk> claimedLand;
     private Location spawn;
     private boolean open;
+    private int power;
 
     public Town(UUID uniqueId, String name) {
         this.uniqueId = uniqueId;
@@ -91,4 +92,7 @@ public class Town {
         this.open = open;
     }
 
+    public int getPower() { return power; }
+
+    public void setPower(int power) { this.power = power; }
 }
