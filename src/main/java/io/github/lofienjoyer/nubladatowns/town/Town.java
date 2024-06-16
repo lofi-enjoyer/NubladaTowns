@@ -1,5 +1,7 @@
 package io.github.lofienjoyer.nubladatowns.town;
 
+import io.github.lofienjoyer.nubladatowns.roles.Permission;
+import io.github.lofienjoyer.nubladatowns.roles.Role;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -19,6 +21,8 @@ public class Town {
     private Location spawn;
     private boolean open;
     private int power;
+    private UUID mayor;
+    private ArrayList<Role> roles = new ArrayList<>();
 
     public Town(UUID uniqueId, String name) {
         this.uniqueId = uniqueId;
@@ -95,4 +99,44 @@ public class Town {
     public int getPower() { return power; }
 
     public void setPower(int power) { this.power = power; }
+  
+    protected void setMayor(UUID uuid) { this.mayor = uuid; }
+
+    protected void setMayor(Player player) { setMayor(player.getUniqueId()); }
+
+    public UUID getMayor() { return mayor; }
+
+    public void addRole(Role role) { this.roles.add(role); }
+
+    public void removeRole(Role role) {
+        roles.remove(role);
+    }
+
+    public List<Role> getRoles() { return roles; }
+
+    public Role getRole(String name) {
+        for (Role role : roles) {
+            if(role.getName().equals(name)) return role;
+        }
+
+        return null;
+    }
+
+    protected void setRoles(ArrayList<Role> roles) { this.roles = roles; }
+
+    public boolean hasPermission(UUID uuid, Permission permission) {
+        if(getMayor().equals(uuid))
+            return true;
+
+        for(Role role : getRoles()) {
+            if(role.getPlayers().contains(uuid) && role.getPermissions().contains(permission))
+                return true;
+        }
+
+        return false;
+    }
+
+    public boolean hasPermission(Player player, Permission permission) {
+        return hasPermission(player.getUniqueId(), permission);
+    }
 }
