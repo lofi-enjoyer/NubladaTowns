@@ -4,6 +4,7 @@ import io.github.lofienjoyer.nubladatowns.NubladaTowns;
 import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import org.bukkit.GameMode;
+import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.Openable;
 import org.bukkit.event.EventHandler;
@@ -11,7 +12,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import java.util.List;
 
 public class ProtectionListener implements Listener {
 
@@ -57,9 +61,12 @@ public class ProtectionListener implements Listener {
 
     @EventHandler
     public void onBlockExplode(BlockExplodeEvent event) {
-        var currentTown = townManager.getTownOnChunk(event.getBlock().getChunk());
-        if (currentTown != null)
-            event.setCancelled(true);
+        handleExplosion(event.blockList());
+    }
+
+    @EventHandler
+    public void onEntityExplode(EntityExplodeEvent event) {
+        handleExplosion(event.blockList());
     }
 
     @EventHandler
@@ -81,6 +88,16 @@ public class ProtectionListener implements Listener {
                 event.setCancelled(true);
                 player.sendMessage(localizationManager.getMessage("cannot-interact-here"));
             }
+        }
+    }
+
+    private void handleExplosion(List<Block> blocks) {
+        var iterator = blocks.iterator();
+        while (iterator.hasNext()) {
+            var block = iterator.next();
+            var currentTown = townManager.getTownOnChunk(block.getChunk());
+            if (currentTown != null)
+                iterator.remove();
         }
     }
 
