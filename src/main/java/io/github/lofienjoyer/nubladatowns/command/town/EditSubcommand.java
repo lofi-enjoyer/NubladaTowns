@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public class EditSubcommand implements BiConsumer<CommandSender, String[]> {
@@ -62,14 +63,17 @@ public class EditSubcommand implements BiConsumer<CommandSender, String[]> {
 
             if (args.length == 2) {
                 TownUtils.showRoleEditor(player, town, role);
-            } else if (args.length == 3 && args[2].equals("delete")) {
-                if (!town.hasPermission(player, Permission.MANAGE_ROLES)) {
-                    player.sendMessage(localizationManager.getMessage("no-permission"));
+            } else if (args.length == 3) {
+                if (args[2].equals("delete")) {
+                    if (!town.hasPermission(player, Permission.MANAGE_ROLES)) {
+                        player.sendMessage(localizationManager.getMessage("no-permission"));
+                        return;
+                    }
+
+                    player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-deleted", true), "%role%", role.getName()));
+                    town.removeRole(role);
                     return;
                 }
-
-                player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-deleted", true), "%role%", role.getName()));
-                town.removeRole(role);
             } else if (args.length == 4) {
                 switch (args[2]) {
                     case "grant" -> {
@@ -144,6 +148,8 @@ public class EditSubcommand implements BiConsumer<CommandSender, String[]> {
                         role.addPlayer(target.getUniqueId());
                         var replace = Map.of("%player%", player.getName(), "%role%", role.getName());
                         player.sendMessage(ComponentUtils.replaceStrings(localizationManager.getMessage("player-added-to-role", true), replace));
+
+                        TownUtils.showResidentRoleEditor(player, town, target.getPlayer());
                     }
                     case "remove" -> {
                         if (!town.hasPermission(player, Permission.ASSIGN_ROLES)) {
@@ -165,7 +171,83 @@ public class EditSubcommand implements BiConsumer<CommandSender, String[]> {
                         role.removePlayer(target.getUniqueId());
                         var replace = Map.of("%player%", player.getName(), "%role%", role.getName());
                         player.sendMessage(ComponentUtils.replaceStrings(localizationManager.getMessage("player-removed-from-role", true), replace));
+
+                        TownUtils.showResidentRoleEditor(player, town, target);
                     }
+                }
+            } else {
+                player.sendMessage(localizationManager.getMessage("invalid-command"));
+            }
+        }
+
+        if (args[0].equals("mayor")) {
+            if (args.length < 2) {
+                player.sendMessage(localizationManager.getMessage("not-enough-arguments"));
+                return;
+            }
+
+            if (!town.getMayor().equals(player.getUniqueId())) {
+                player.sendMessage(localizationManager.getMessage("no-permission"));
+                return;
+            }
+
+            var target = Bukkit.getOfflinePlayer(args[1]);
+            if (!town.getResidents().contains(target.getUniqueId())) {
+                sender.sendMessage(localizationManager.getMessage("other-not-in-this-town"));
+                return;
+            }
+
+            town.setMayor(target.getUniqueId());
+
+            var replace = Map.of("%player%", player.getName(), "%mayor%", Objects.requireNonNull(target.getName()));
+            TownUtils.broadcastToTown(ComponentUtils.replaceStrings(localizationManager.getMessage("set-mayor", true), replace), town);
+        }
+
+        if (args[0].equals("resident")) {
+            if (args.length < 2) {
+                player.sendMessage(localizationManager.getMessage("not-enough-arguments"));
+                return;
+            }
+
+            var target = Bukkit.getOfflinePlayer(args[1]);
+            if (!town.getResidents().contains(target.getUniqueId())) {
+                sender.sendMessage(localizationManager.getMessage("other-not-in-this-town"));
+                return;
+            }
+
+            if (args.length == 2) {
+                TownUtils.showResidentEditor(player, target.getName());
+            } else if (args.length == 3) {
+                if (args[2].equals("kick")) {
+                    if (!town.hasPermission(player, Permission.KICK)) {
+                        player.sendMessage(localizationManager.getMessage("no-permission"));
+                        return;
+                    }
+
+                    if (town.getMayor().equals(target.getUniqueId())) {
+                        player.sendMessage(localizationManager.getMessage("mayor-cannot-be-kicked"));
+                        return;
+                    }
+
+                    if (player.getUniqueId().equals(target.getUniqueId())) {
+                        player.sendMessage(localizationManager.getMessage("cannot-kick-yourself"));
+                        return;
+                    }
+
+                    townManager.kickResidentFromTown(target.getUniqueId(), town);
+
+                    if (target.isOnline()) {
+                        Objects.requireNonNull(target.getPlayer()).sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("kicked-from-town"), town));
+                    }
+                    TownUtils.broadcastToTown(ComponentUtils.replacePlayerName(localizationManager.getMessage("player-kicked-from-town"), target.getName()), town);
+
+                } else if(args[2].equals("roles")) {
+                    if (!town.hasPermission(player, Permission.ASSIGN_ROLES)) {
+                        player.sendMessage(localizationManager.getMessage("no-permission"));
+                        return;
+                    }
+
+                    TownUtils.showResidentRoleEditor(player, town, target.getPlayer());
                 }
             } else {
                 player.sendMessage(localizationManager.getMessage("invalid-command"));
