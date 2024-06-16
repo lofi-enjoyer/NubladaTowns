@@ -1,5 +1,6 @@
 package io.github.lofienjoyer.nubladatowns.town;
 
+import io.github.lofienjoyer.nubladatowns.roles.Role;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -18,6 +19,8 @@ public class Town {
     private final List<LandChunk> claimedLand;
     private Location spawn;
     private boolean open;
+    private UUID mayor;
+    private List<Role> roles = new ArrayList<>();
 
     public Town(UUID uniqueId, String name) {
         this.uniqueId = uniqueId;
@@ -91,4 +94,25 @@ public class Town {
         this.open = open;
     }
 
+    protected void setMayor(UUID uuid) { this.mayor = uuid; }
+
+    protected void setMayor(Player player) { setMayor(player.getUniqueId()); }
+
+    public UUID getMayor() { return mayor; }
+
+    public void addRole(Role role) { this.roles.add(role); }
+
+    public void removeRole(Role role) { this.roles.remove(role); }
+
+    public List<Role> getRoles() { return roles; }
+
+    public Role getRole(String name) {
+        for (Role role : roles) {
+            if(role.getName().equals(name)) return role;
+        }
+
+        return null;
+    }
+
+    protected void setRoles(List<Role> roles) { this.roles = roles; }
 }

@@ -36,4 +36,9 @@ public class ComponentUtils {
         });
     }
 
+    public static Component replaceString(Component component, String literal, String string) {
+        return component.replaceText(builder -> {
+            builder.matchLiteral(literal).replacement(string);
+        });
+    }
 }

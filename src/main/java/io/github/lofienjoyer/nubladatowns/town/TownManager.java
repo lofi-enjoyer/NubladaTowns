@@ -1,6 +1,8 @@
 package io.github.lofienjoyer.nubladatowns.town;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
+import io.github.lofienjoyer.nubladatowns.roles.Permission;
+import io.github.lofienjoyer.nubladatowns.roles.Role;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -33,6 +35,7 @@ public class TownManager {
         town.addLand(landChunk);
         town.setSpawn(location);
         town.setRgbColor(color);
+        town.setMayor(founder);
 
         townMap.put(town.getUniqueId(), town);
         landMap.put(landChunk, town.getUniqueId());
@@ -66,6 +69,7 @@ public class TownManager {
             town.setRgbColor(section.getInt("color"));
             town.setSpawn(section.getLocation("spawn"));
             town.setOpen(section.getBoolean("open", true));
+            town.setMayor(UUID.fromString(section.getString("mayor")));
             var residentUniqueIds = section.getStringList("residents");
             residentUniqueIds.forEach(resident -> {
                 var residentUuid = UUID.fromString(resident);
@@ -79,6 +83,17 @@ public class TownManager {
                 town.addLand(chunk);
                 landMap.put(chunk, townUuid);
             });
+            var roles = section.getConfigurationSection("roles");
+            Objects.requireNonNull(roles).getKeys(false).forEach(roleName -> {
+                var role = new Role(roleName);
+                var permissions = section.getStringList("roles." + roleName + ".permissions");
+
+                for(String permission : permissions) {
+                    role.addPermission(Permission.valueOf(permission));
+                }
+
+                town.addRole(role);
+            });
             townMap.put(townUuid, town);
         });
     }
@@ -90,12 +105,20 @@ public class TownManager {
             section.set("name", town.getName());
             section.set("color", town.getRgbColor());
             section.set("spawn", town.getSpawn());
+            section.set("mayor", town.getMayor().toString());
             var residentUniqueIds = town.getResidents().stream().map(UUID::toString).toList();
             section.set("residents", residentUniqueIds);
             var landChunks = town.getClaimedLand().stream()
                     .map(chunk -> chunk.x() + ":" + chunk.z() + ":" + chunk.world().getName())
                     .toList();
             section.set("land", landChunks);
+            for (Role role : town.getRoles()) {
+                List permissions = new ArrayList();
+                for (Permission permission : role.getPermissions()) {
+                    permissions.add(permission.name());
+                }
+                section.set("roles." + role.getName() + ".permissions", permissions);
+            }
         });
     }
 

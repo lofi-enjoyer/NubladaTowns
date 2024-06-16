@@ -1,6 +1,7 @@
 package io.github.lofienjoyer.nubladatowns.town;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
+import io.github.lofienjoyer.nubladatowns.roles.Role;
 import io.github.lofienjoyer.nubladatowns.utils.ComponentUtils;
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
@@ -32,6 +33,8 @@ public class TownUtils {
                         .appendNewline()
                         .appendNewline()
                         .append(lm.getMessage("town-menu-resident-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town list " + town.getName())))
+                        .appendNewline()
+                        .append(lm.getMessage("town-menu-roles-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town roles " + town.getName())))
         );
 
         player.openBook(Book.book(title, author, content));
@@ -56,6 +59,47 @@ public class TownUtils {
                     .appendNewline();
         }
 
+        var title = Component.text("Town menu");
+        var author = Component.text("NubladaTowns");
+        player.openBook(Book.book(title, author, componentList.build()));
+    }
+
+    public static void showRolesList(Player player, Town town) {
+        var componentList = Component.text()
+                .append(NubladaTowns.getInstance().getLocalizationManager().getMessage("roles-list"))
+                .appendNewline()
+                .appendNewline();
+
+        for (Role role : town.getRoles()) {
+            componentList = componentList
+                    .append(Component.text("▪ ", NamedTextColor.GRAY))
+                    .append(Component.text(role.getName(), NamedTextColor.DARK_GRAY)
+                            .clickEvent(ClickEvent.runCommand("/nubladatowns:town edit role " + role.getName()))
+                    )
+                    .appendNewline();
+        }
+
+        var title = Component.text("Town menu");
+        var author = Component.text("NubladaTowns");
+        player.openBook(Book.book(title, author, componentList.build()));
+    }
+
+    public static void showRoleEditor(Player player, Town town, Role role) {
+        var lm = NubladaTowns.getInstance().getLocalizationManager();
+
+        var componentList = Component.text()
+                .append(ComponentUtils.replaceString(lm.getMessage("role-editor-title"), "%role%", role.getName()))
+                .appendNewline()
+                .appendNewline()
+                .append(lm.getMessage("role-editor-edit").clickEvent(ClickEvent.runCommand("/nubladatowns:town ")))
+                .appendNewline()
+                .appendNewline()
+                .append(lm.getMessage("role-editor-delete").clickEvent(ClickEvent.runCommand("/nubladatowns:town ")))
+                .appendNewline();
+
+        // grant permissions
+        // revoke permissions
+        // remove role
         var title = Component.text("Town menu");
         var author = Component.text("NubladaTowns");
         player.openBook(Book.book(title, author, componentList.build()));
