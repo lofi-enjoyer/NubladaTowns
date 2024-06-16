@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class TownUtils {
-    private static LocalizationManager lm = NubladaTowns.getInstance().getLocalizationManager();
+    private static final LocalizationManager lm = NubladaTowns.getInstance().getLocalizationManager();
 
     public static void showTownMenu(Player player, Town town) {
         var title = Component.text("Town menu");
@@ -36,6 +36,8 @@ public class TownUtils {
                         .append(ComponentUtils.replaceTownName(lm.getMessage("town-menu-title"), town))
                         .appendNewline()
                         .append(ComponentUtils.replaceInteger(lm.getMessage("town-menu-population"), "%count%", town.getResidents().size()))
+                        .appendNewline()
+                        .append(ComponentUtils.replacePlayerName(lm.getMessage("town-menu-mayor"), Bukkit.getOfflinePlayer(town.getMayor()).getName()))
                         .appendNewline()
                         .append(ComponentUtils.replaceInteger(lm.getMessage("town-menu-land"), "%count%", town.getClaimedLand().size()))
                         .appendNewline()
