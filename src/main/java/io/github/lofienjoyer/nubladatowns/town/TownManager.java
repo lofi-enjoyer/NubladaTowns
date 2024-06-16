@@ -45,7 +45,7 @@ public class TownManager {
     public Town claimChunk(Chunk chunk, Town town) {
         var currentTown = getTownOnChunk(chunk);
         if (currentTown != null) {
-            //TODO
+            instance.getLogger().warning("Tried to claim an already claimed chunk.");
             return currentTown;
         }
 

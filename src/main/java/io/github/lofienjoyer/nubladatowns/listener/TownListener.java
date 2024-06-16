@@ -106,6 +106,12 @@ public class TownListener implements Listener {
     private boolean claimChunk(Player player, Town town, Location location) {
         var chunk = location.getChunk();
 
+        var currentTown = townManager.getTownOnChunk(chunk);
+        if (currentTown != null) {
+            player.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("land-already-of", true), currentTown));
+            return false;
+        }
+
         if (!TownUtils.checkNeighborChunks(chunk, town, townManager)) {
             player.sendMessage(localizationManager.getMessage("land-not-connected", true));
             return false;
@@ -116,11 +122,7 @@ public class TownListener implements Listener {
             return false;
         }
 
-        var currentTown = townManager.claimChunk(chunk, town);
-        if (currentTown != null) {
-            player.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("land-already-of", true), currentTown));
-            return false;
-        }
+        townManager.claimChunk(chunk, town);
 
         player.sendMessage(localizationManager.getMessage("land-claimed-successfully", true));
         Bukkit.getOnlinePlayers().forEach(resident -> {
