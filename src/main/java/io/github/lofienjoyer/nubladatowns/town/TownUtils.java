@@ -1,6 +1,7 @@
 package io.github.lofienjoyer.nubladatowns.town;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
+import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
 import io.github.lofienjoyer.nubladatowns.utils.ComponentUtils;
 import net.kyori.adventure.inventory.Book;
@@ -16,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class TownUtils {
 
@@ -111,6 +113,15 @@ public class TownUtils {
                 townManager.getTownOnChunk(world.getChunkAt(chunk.getX(), chunk.getZ() - 1)) == town ||
                 townManager.getTownOnChunk(world.getChunkAt(chunk.getX() + 1, chunk.getZ())) == town ||
                 townManager.getTownOnChunk(world.getChunkAt(chunk.getX() - 1, chunk.getZ())) == town;
+    }
+
+    public boolean hasPermission(UUID uuid, Town town, Permission permission) {
+        for(Role role : town.getRoles()) {
+            if(role.getPlayers().contains(uuid) && role.getPermissions().contains(permission))
+                return true;
+        }
+
+        return false;
     }
 
     public static void broadcastToTown(Component component, Town town) {

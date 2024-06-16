@@ -6,5 +6,7 @@ public enum Permission {
     INVITE,
     KICK,
     RENAME,
-    CHANGE_SPAWN
+    CHANGE_SPAWN,
+    MANAGE_ROLES,
+    ASSIGN_ROLES
 }

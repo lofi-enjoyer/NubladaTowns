@@ -84,12 +84,18 @@ public class TownManager {
                 landMap.put(chunk, townUuid);
             });
             var roles = section.getConfigurationSection("roles");
+            // Todo: optimize
             Objects.requireNonNull(roles).getKeys(false).forEach(roleName -> {
                 var role = new Role(roleName);
                 var permissions = section.getStringList("roles." + roleName + ".permissions");
+                var players = section.getStringList("roles." + roleName + ".players");
 
                 for(String permission : permissions) {
                     role.addPermission(Permission.valueOf(permission));
+                }
+
+                for(String player : players) {
+                    role.addPlayer(UUID.fromString(player));
                 }
 
                 town.addRole(role);
@@ -112,12 +118,19 @@ public class TownManager {
                     .map(chunk -> chunk.x() + ":" + chunk.z() + ":" + chunk.world().getName())
                     .toList();
             section.set("land", landChunks);
+            // Todo: looks janky
             for (Role role : town.getRoles()) {
                 List permissions = new ArrayList();
                 for (Permission permission : role.getPermissions()) {
                     permissions.add(permission.name());
                 }
                 section.set("roles." + role.getName() + ".permissions", permissions);
+
+                List players = new ArrayList();
+                for(UUID player : role.getPlayers()) {
+                    players.add(player);
+                }
+                section.set("roles." + role.getName() + ".players", players);
             }
         });
     }
