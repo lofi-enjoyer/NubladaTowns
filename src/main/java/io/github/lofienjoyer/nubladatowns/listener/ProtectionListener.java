@@ -2,6 +2,7 @@ package io.github.lofienjoyer.nubladatowns.listener;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
 import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
+import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
@@ -37,7 +38,7 @@ public class ProtectionListener implements Listener {
         if (currentTown == null)
             return;
 
-        if (!currentTown.getResidents().contains(player.getUniqueId())) {
+        if (!currentTown.hasPermission(player, Permission.DESTROY)) {
             player.sendMessage(localizationManager.getMessage("cannot-break-here"));
             event.setCancelled(true);
         }
@@ -53,7 +54,7 @@ public class ProtectionListener implements Listener {
         if (currentTown == null)
             return;
 
-        if (!currentTown.getResidents().contains(player.getUniqueId())) {
+        if (!currentTown.hasPermission(player, Permission.BUILD)) {
             player.sendMessage(localizationManager.getMessage("cannot-place-here"));
             event.setCancelled(true);
         }
@@ -84,7 +85,7 @@ public class ProtectionListener implements Listener {
 
         if (blockState instanceof Container || blockData instanceof Openable) {
             var currentTown = townManager.getTownOnChunk(block.getChunk());
-            if (currentTown == null || !currentTown.getResidents().contains(player.getUniqueId())) {
+            if (currentTown == null || !currentTown.hasPermission(player, Permission.INTERACT)) {
                 event.setCancelled(true);
                 player.sendMessage(localizationManager.getMessage("cannot-interact-here"));
             }
