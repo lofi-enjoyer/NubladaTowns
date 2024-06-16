@@ -67,16 +67,19 @@ public class ProtectionListener implements Listener {
         if (event.getClickedBlock() == null)
             return;
 
+        var player = event.getPlayer();
+        if (player.hasPermission("nubladatowns.admin"))
+            return;
+
         var block = event.getClickedBlock();
-        var playerUuid = event.getPlayer().getUniqueId();
         var blockState = block.getState();
         var blockData = block.getBlockData();
 
         if (blockState instanceof Container || blockData instanceof Openable) {
             var currentTown = townManager.getTownOnChunk(block.getChunk());
-            if (currentTown == null || !currentTown.getResidents().contains(playerUuid)) {
+            if (currentTown == null || !currentTown.getResidents().contains(player.getUniqueId())) {
                 event.setCancelled(true);
-                event.getPlayer().sendMessage(localizationManager.getMessage("cannot-interact-here"));
+                player.sendMessage(localizationManager.getMessage("cannot-interact-here"));
             }
         }
     }
