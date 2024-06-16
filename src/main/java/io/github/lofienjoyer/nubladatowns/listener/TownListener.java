@@ -3,6 +3,8 @@ package io.github.lofienjoyer.nubladatowns.listener;
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
 import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
 import io.github.lofienjoyer.nubladatowns.power.PowerManager;
+import io.github.lofienjoyer.nubladatowns.roles.Permission;
+import io.github.lofienjoyer.nubladatowns.roles.Role;
 import io.github.lofienjoyer.nubladatowns.town.Town;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import io.github.lofienjoyer.nubladatowns.town.TownUtils;
@@ -10,6 +12,7 @@ import io.github.lofienjoyer.nubladatowns.utils.ComponentUtils;
 import io.github.lofienjoyer.nubladatowns.utils.ParticleUtils;
 import io.github.lofienjoyer.nubladatowns.utils.SoundUtils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.Banner;
@@ -142,6 +145,35 @@ public class TownListener implements Listener {
             return;
 
         event.setCancelled(true);
+
+        var player = event.getPlayer();
+        var item = player.getInventory().getItemInMainHand();
+
+        if(item.getType() == Material.PAPER && item.hasItemMeta()) {
+            if(!town.hasPermission(player, Permission.MANAGE_ROLES)) {
+                player.sendMessage(localizationManager.getMessage("no-permission"));
+                return;
+            }
+
+            var roleName = Objects.requireNonNull((TextComponent)item.getItemMeta().displayName()).content();
+
+            if(roleName.length() > 16) {
+                player.sendMessage(localizationManager.getMessage("role-name-too-long", true));
+                return;
+            }
+
+            if(town.getRole(roleName) != null) {
+                player.sendMessage(localizationManager.getMessage("role-already-exists", true));
+                return;
+            }
+
+            town.addRole(new Role(roleName));
+            player.playSound(player, Sound.ITEM_BOOK_PUT, 1, 1.25f);
+            item.setAmount(item.getAmount() - 1);
+            player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-created", true), "%role%", roleName));
+            return;
+        }
+
         TownUtils.showTownMenu(event.getPlayer(), town);
     }
 

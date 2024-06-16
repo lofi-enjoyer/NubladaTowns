@@ -27,9 +27,7 @@ public class ComponentUtils {
     }
 
     public static Component replacePlayerName(Component component, String name) {
-        return component.replaceText(builder -> {
-            builder.matchLiteral("%player%").replacement(name);
-        });
+        return replaceString(component, "%player%", name);
     }
 
     public static Component replaceInteger(Component component, String literal, int number) {
@@ -46,4 +44,17 @@ public class ComponentUtils {
         return component;
     }
 
+    public static Component replaceString(Component component, String literal, String string) {
+        return component.replaceText(builder -> {
+            builder.matchLiteral(literal).replacement(string);
+        });
+    }
+
+    public static Component replaceStrings(Component component, Map<String, String> replace) {
+        for (Map.Entry<String, String> entry : replace.entrySet()) {
+            component = replaceString(component, entry.getKey(), entry.getValue());
+        }
+
+        return component;
+    }
 }
