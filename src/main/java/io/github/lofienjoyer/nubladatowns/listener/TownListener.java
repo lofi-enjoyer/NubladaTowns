@@ -32,6 +32,9 @@ public class TownListener implements Listener {
     private final TownManager townManager;
     private final PowerManager powerManager;
 
+    // TODO: move to config.yml
+    private final int ROLES_HARD_LIMIT = 8;
+
     public TownListener(TownManager townManager) {
         this.localizationManager = NubladaTowns.getInstance().getLocalizationManager();;
         this.powerManager = NubladaTowns.getInstance().getPowerManager();
@@ -166,6 +169,11 @@ public class TownListener implements Listener {
 
             if(town.getRole(roleName) != null) {
                 player.sendMessage(localizationManager.getMessage("role-already-exists", true));
+                return;
+            }
+
+            if (town.getRoles().size() >= ROLES_HARD_LIMIT) {
+                player.sendMessage(localizationManager.getMessage("role-limit-exceeded"));
                 return;
             }
 
