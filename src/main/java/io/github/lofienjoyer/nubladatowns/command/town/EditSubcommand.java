@@ -56,7 +56,7 @@ public class EditSubcommand implements BiConsumer<CommandSender, String[]> {
 
             Role role = town.getRole(args[1]);
             if (role == null) {
-                player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("non-existent-role"), "%role%", role.getName()));
+                player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("non-existent-role"), "%role%", args[1]));
                 return;
             }
 
@@ -71,76 +71,101 @@ public class EditSubcommand implements BiConsumer<CommandSender, String[]> {
                 player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-deleted", true), "%role%", role.getName()));
                 town.removeRole(role);
             } else if (args.length == 4) {
-                if (args[2].equals("grant")) {
-                    if (!town.hasPermission(player, Permission.MANAGE_ROLES)) {
-                        player.sendMessage(localizationManager.getMessage("no-permission"));
-                        return;
+                switch (args[2]) {
+                    case "grant" -> {
+                        if (!town.hasPermission(player, Permission.MANAGE_ROLES)) {
+                            player.sendMessage(localizationManager.getMessage("no-permission"));
+                            return;
+                        }
+
+                        if (!Permission.contains(args[3])) {
+                            player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("invalid-value"), "%value%", args[3]));
+                            return;
+                        }
+
+                        var permission = Permission.valueOf(args[3]);
+
+                        if (permission.equals(Permission.ASSIGN_ROLES) && !town.getMayor().equals(player.getUniqueId())) {
+                            player.sendMessage(localizationManager.getMessage("no-permission"));
+                            return;
+                        }
+
+                        if (role.getPermissions().contains(permission)) {
+                            player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-already-has-permission"), "%role%", role.getName()));
+                            return;
+                        }
+
+                        role.addPermission(permission);
+                        TownUtils.showRoleEditor(player, town, role);
                     }
+                    case "revoke" -> {
+                        if (!town.hasPermission(player, Permission.MANAGE_ROLES)) {
+                            player.sendMessage(localizationManager.getMessage("no-permission"));
+                            return;
+                        }
 
-                    var permission = Permission.valueOf(args[3]);
+                        if (!Permission.contains(args[3])) {
+                            player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("invalid-value"), "%value%", args[3]));
+                            return;
+                        }
 
-                    if (role.getPermissions().contains(permission)) {
-                        player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-already-has-permission"), "%role%", role.getName()));
-                        return;
+                        var permission = Permission.valueOf(args[3]);
+
+                        if (permission.equals(Permission.ASSIGN_ROLES) && !town.getMayor().equals(player.getUniqueId())) {
+                            player.sendMessage(localizationManager.getMessage("no-permission"));
+                            return;
+                        }
+
+                        if (!role.getPermissions().contains(permission)) {
+                            player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-does-not-have-permission"), "%role%", role.getName()));
+                            return;
+                        }
+
+                        role.removePermission(permission);
+                        TownUtils.showRoleEditor(player, town, role);
                     }
+                    case "add" -> {
+                        if (!town.hasPermission(player, Permission.ASSIGN_ROLES)) {
+                            player.sendMessage(localizationManager.getMessage("no-permission"));
+                            return;
+                        }
 
-                    role.addPermission(permission);
-                    TownUtils.showRoleEditor(player, town, role);
-                } else if(args[2].equals("revoke")) {
-                    if (!town.hasPermission(player, Permission.MANAGE_ROLES)) {
-                        player.sendMessage(localizationManager.getMessage("no-permission"));
-                        return;
+                        var target = Bukkit.getOfflinePlayer(args[3]);
+                        if (!town.getResidents().contains(target.getUniqueId())) {
+                            player.sendMessage(localizationManager.getMessage("other-not-in-this-town"));
+                            return;
+                        }
+
+                        if (role.getPlayers().contains(target.getUniqueId())) {
+                            player.sendMessage(ComponentUtils.replacePlayerName(localizationManager.getMessage("already-has-role"), target.getName()));
+                            return;
+                        }
+
+                        role.addPlayer(target.getUniqueId());
+                        var replace = Map.of("%player%", player.getName(), "%role%", role.getName());
+                        player.sendMessage(ComponentUtils.replaceStrings(localizationManager.getMessage("player-added-to-role", true), replace));
                     }
+                    case "remove" -> {
+                        if (!town.hasPermission(player, Permission.ASSIGN_ROLES)) {
+                            player.sendMessage(localizationManager.getMessage("no-permission"));
+                            return;
+                        }
 
-                    var permission = Permission.valueOf(args[3]);
+                        var target = Bukkit.getOfflinePlayer(args[3]);
+                        if (!town.getResidents().contains(target.getUniqueId())) {
+                            player.sendMessage(localizationManager.getMessage("other-not-in-this-town"));
+                            return;
+                        }
 
-                    if (!role.getPermissions().contains(permission)) {
-                        player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-does-not-have-permission"), "%role%", role.getName()));
-                        return;
+                        if (!role.getPlayers().contains(target.getUniqueId())) {
+                            player.sendMessage(ComponentUtils.replacePlayerName(localizationManager.getMessage("does-not-have-role"), target.getName()));
+                            return;
+                        }
+
+                        role.removePlayer(target.getUniqueId());
+                        var replace = Map.of("%player%", player.getName(), "%role%", role.getName());
+                        player.sendMessage(ComponentUtils.replaceStrings(localizationManager.getMessage("player-removed-from-role", true), replace));
                     }
-
-                    role.removePermission(permission);
-                    TownUtils.showRoleEditor(player, town, role);
-                } else if(args[2].equals("add")) {
-                    if (!town.hasPermission(player, Permission.ASSIGN_ROLES)) {
-                        player.sendMessage(localizationManager.getMessage("no-permission"));
-                        return;
-                    }
-
-                    var target = Bukkit.getOfflinePlayer(args[3]);
-                    if (!town.getResidents().contains(target.getUniqueId())) {
-                        player.sendMessage(localizationManager.getMessage("other-not-in-this-town"));
-                        return;
-                    }
-
-                    if (role.getPlayers().contains(target.getUniqueId())) {
-                        player.sendMessage(ComponentUtils.replacePlayerName(localizationManager.getMessage("already-has-role"), target.getName()));
-                        return;
-                    }
-
-                    role.addPlayer(target.getUniqueId());
-                    var replace = Map.of("%player%", player.getName(), "%role%", role.getName());
-                    player.sendMessage(ComponentUtils.replaceStrings(localizationManager.getMessage("player-added-to-role", true), replace));
-                } else if(args[2].equals("remove")) {
-                    if (!town.hasPermission(player, Permission.ASSIGN_ROLES)) {
-                        player.sendMessage(localizationManager.getMessage("no-permission"));
-                        return;
-                    }
-
-                    var target = Bukkit.getOfflinePlayer(args[3]);
-                    if (!town.getResidents().contains(target.getUniqueId())) {
-                        player.sendMessage(localizationManager.getMessage("other-not-in-this-town"));
-                        return;
-                    }
-
-                    if (!role.getPlayers().contains(target.getUniqueId())) {
-                        player.sendMessage(ComponentUtils.replacePlayerName(localizationManager.getMessage("does-not-have-role"), target.getName()));
-                        return;
-                    }
-
-                    role.removePlayer(target.getUniqueId());
-                    var replace = Map.of("%player%", player.getName(), "%role%", role.getName());
-                    player.sendMessage(ComponentUtils.replaceStrings(localizationManager.getMessage("player-removed-from-role", true), replace));
                 }
             } else {
                 player.sendMessage(localizationManager.getMessage("invalid-command"));

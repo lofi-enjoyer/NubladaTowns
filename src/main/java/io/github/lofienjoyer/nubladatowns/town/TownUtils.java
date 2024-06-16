@@ -1,6 +1,7 @@
 package io.github.lofienjoyer.nubladatowns.town;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
+import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
 import io.github.lofienjoyer.nubladatowns.utils.ComponentUtils;
@@ -22,9 +23,9 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class TownUtils {
+    private static LocalizationManager lm = NubladaTowns.getInstance().getLocalizationManager();
 
     public static void showTownMenu(Player player, Town town) {
-        var lm = NubladaTowns.getInstance().getLocalizationManager();
         var title = Component.text("Town menu");
         var author = Component.text("NubladaTowns");
         var content = List.of(
@@ -78,6 +79,7 @@ public class TownUtils {
             componentList = componentList
                     .append(Component.text("▪ ", NamedTextColor.GRAY))
                     .append(Component.text(role.getName(), NamedTextColor.DARK_GRAY)
+                            .hoverEvent(HoverEvent.showText(lm.getMessage("town-menu-roles-list-edit")))
                             .clickEvent(ClickEvent.runCommand("/nubladatowns:town edit role " + role.getName()))
                     )
                     .appendNewline();
@@ -89,8 +91,6 @@ public class TownUtils {
     }
 
     public static void showRoleEditor(Player player, Town town, Role role) {
-        var lm = NubladaTowns.getInstance().getLocalizationManager();
-
         var componentList = Component.text()
                 .append(ComponentUtils.replaceString(lm.getMessage("role-editor-title"), "%role%", role.getName()))
                 .appendNewline()
@@ -119,17 +119,12 @@ public class TownUtils {
                 .append(lm.getMessage("role-editor-delete").clickEvent(ClickEvent.runCommand("/nubladatowns:town edit role " + role.getName() + " delete")))
                 .appendNewline();
 
-        // grant permissions
-        // revoke permissions
-        // remove role
         var title = Component.text("Town menu");
         var author = Component.text("NubladaTowns");
         player.openBook(Book.book(title, author, componentList.build()));
     }
 
     private static Component getPermissionWithColor(String message, Permission permission, Town town, Role role) {
-        var lm = NubladaTowns.getInstance().getLocalizationManager();
-
         var color = NamedTextColor.GOLD;
         var status = lm.getMessage("role-editor-permission-not-granted");
         var command = "/nubladatowns:town edit role " + role.getName() + " grant " + permission.name();
