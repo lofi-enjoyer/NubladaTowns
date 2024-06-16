@@ -21,7 +21,7 @@ public class Town {
     private Location spawn;
     private boolean open;
     private UUID mayor;
-    private List<Role> roles = new ArrayList<>();
+    private ArrayList<Role> roles = new ArrayList<>();
 
     public Town(UUID uniqueId, String name) {
         this.uniqueId = uniqueId;
@@ -103,7 +103,9 @@ public class Town {
 
     public void addRole(Role role) { this.roles.add(role); }
 
-    public void removeRole(Role role) { this.roles.remove(role); }
+    public void removeRole(Role role) {
+        roles.remove(role);
+    }
 
     public List<Role> getRoles() { return roles; }
 
@@ -115,9 +117,12 @@ public class Town {
         return null;
     }
 
-    protected void setRoles(List<Role> roles) { this.roles = roles; }
+    protected void setRoles(ArrayList<Role> roles) { this.roles = roles; }
 
     public boolean hasPermission(UUID uuid, Permission permission) {
+        if(getMayor().equals(uuid))
+            return true;
+
         for(Role role : getRoles()) {
             if(role.getPlayers().contains(uuid) && role.getPermissions().contains(permission))
                 return true;

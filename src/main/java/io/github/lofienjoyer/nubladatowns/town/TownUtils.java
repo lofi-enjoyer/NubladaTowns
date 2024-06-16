@@ -6,7 +6,9 @@ import io.github.lofienjoyer.nubladatowns.roles.Role;
 import io.github.lofienjoyer.nubladatowns.utils.ComponentUtils;
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -93,10 +95,28 @@ public class TownUtils {
                 .append(ComponentUtils.replaceString(lm.getMessage("role-editor-title"), "%role%", role.getName()))
                 .appendNewline()
                 .appendNewline()
-                .append(lm.getMessage("role-editor-edit").clickEvent(ClickEvent.runCommand("/nubladatowns:town ")))
+                .append(lm.getMessage("role-editor-edit"))
+                .appendNewline()
+                .append(getPermissionWithColor("role-editor-edit-build", Permission.BUILD, town, role))
+                .appendNewline()
+                .append(getPermissionWithColor("role-editor-edit-destroy", Permission.DESTROY, town, role))
+                .appendNewline()
+                .append(getPermissionWithColor("role-editor-edit-interact", Permission.INTERACT, town, role))
+                .appendNewline()
+                .append(getPermissionWithColor("role-editor-edit-invite", Permission.INVITE, town, role))
+                .appendNewline()
+                .append(getPermissionWithColor("role-editor-edit-kick", Permission.KICK, town, role))
+                .appendNewline()
+                .append(getPermissionWithColor("role-editor-edit-rename", Permission.RENAME, town, role))
+                .appendNewline()
+                .append(getPermissionWithColor("role-editor-edit-change-spawn", Permission.CHANGE_SPAWN, town, role))
+                .appendNewline()
+                .append(getPermissionWithColor("role-editor-edit-manage-roles", Permission.MANAGE_ROLES, town, role))
+                .appendNewline()
+                .append(getPermissionWithColor("role-editor-edit-assign-roles", Permission.ASSIGN_ROLES, town, role))
                 .appendNewline()
                 .appendNewline()
-                .append(lm.getMessage("role-editor-delete").clickEvent(ClickEvent.runCommand("/nubladatowns:town ")))
+                .append(lm.getMessage("role-editor-delete").clickEvent(ClickEvent.runCommand("/nubladatowns:town edit role " + role.getName() + " delete")))
                 .appendNewline();
 
         // grant permissions
@@ -105,6 +125,27 @@ public class TownUtils {
         var title = Component.text("Town menu");
         var author = Component.text("NubladaTowns");
         player.openBook(Book.book(title, author, componentList.build()));
+    }
+
+    private static Component getPermissionWithColor(String message, Permission permission, Town town, Role role) {
+        var lm = NubladaTowns.getInstance().getLocalizationManager();
+
+        var color = NamedTextColor.GOLD;
+        var status = lm.getMessage("role-editor-permission-not-granted");
+        var command = "/nubladatowns:town edit role " + role.getName() + " grant " + permission.name();
+        if (role.getPermissions().contains(permission)) {
+            color = NamedTextColor.GREEN;
+            status = lm.getMessage("role-editor-permission-granted");
+            command = "/nubladatowns:town edit role " + role.getName() + " revoke " + permission.name();
+        }
+
+        var component = Component.text()
+                .append(lm.getMessage(message))
+                .hoverEvent(HoverEvent.showText(status))
+                .clickEvent(ClickEvent.runCommand(command))
+                .color(color);
+
+        return component.build();
     }
 
     public static boolean checkNeighborChunks(Chunk chunk, Town town, TownManager townManager) {

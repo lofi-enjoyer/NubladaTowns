@@ -85,21 +85,23 @@ public class TownManager {
             });
             var roles = section.getConfigurationSection("roles");
             // Todo: optimize
-            Objects.requireNonNull(roles).getKeys(false).forEach(roleName -> {
-                var role = new Role(roleName);
-                var permissions = section.getStringList("roles." + roleName + ".permissions");
-                var players = section.getStringList("roles." + roleName + ".players");
+            if (roles != null) {
+                roles.getKeys(false).forEach(roleName -> {
+                    var role = new Role(roleName);
+                    var permissions = section.getStringList("roles." + roleName + ".permissions");
+                    var players = section.getStringList("roles." + roleName + ".players");
 
-                for(String permission : permissions) {
-                    role.addPermission(Permission.valueOf(permission));
-                }
+                    for(String permission : permissions) {
+                        role.addPermission(Permission.valueOf(permission));
+                    }
 
-                for(String player : players) {
-                    role.addPlayer(UUID.fromString(player));
-                }
+                    for(String player : players) {
+                        role.addPlayer(UUID.fromString(player));
+                    }
 
-                town.addRole(role);
-            });
+                    town.addRole(role);
+                });
+            }
             townMap.put(townUuid, town);
         });
     }
@@ -128,7 +130,7 @@ public class TownManager {
 
                 List players = new ArrayList();
                 for(UUID player : role.getPlayers()) {
-                    players.add(player);
+                    players.add(player.toString());
                 }
                 section.set("roles." + role.getName() + ".players", players);
             }

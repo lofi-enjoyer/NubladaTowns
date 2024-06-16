@@ -140,9 +140,17 @@ public class TownListener implements Listener {
         var item = player.getInventory().getItemInMainHand();
 
         if(item.getType() == Material.PAPER && item.hasItemMeta()) {
-            if(!town.getMayor().equals(player.getUniqueId())) return;
+            if(!town.hasPermission(player, Permission.MANAGE_ROLES)) {
+                player.sendMessage(localizationManager.getMessage("no-permission"));
+                return;
+            }
 
             var roleName = Objects.requireNonNull((TextComponent)item.getItemMeta().displayName()).content();
+
+            if(roleName.length() > 16) {
+                player.sendMessage(localizationManager.getMessage("role-name-too-long", true));
+                return;
+            }
 
             if(town.getRole(roleName) != null) {
                 player.sendMessage(localizationManager.getMessage("role-already-exists", true));
@@ -152,6 +160,7 @@ public class TownListener implements Listener {
             town.addRole(new Role(roleName));
             player.playSound(player, Sound.ITEM_BOOK_PUT, 1, 1.25f);
             item.setAmount(item.getAmount() - 1);
+            player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-created", true), "%role%", roleName));
             return;
         }
 
