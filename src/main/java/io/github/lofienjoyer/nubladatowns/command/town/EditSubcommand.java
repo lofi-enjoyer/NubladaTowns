@@ -242,7 +242,7 @@ public class EditSubcommand implements BiConsumer<CommandSender, String[]> {
                         return;
                     }
 
-                    townManager.kickResidentFromTown(target.getUniqueId(), town);
+                    townManager.removeResidentFromTown(target.getUniqueId(), town);
 
                     if (target.isOnline()) {
                         Objects.requireNonNull(target.getPlayer()).sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("kicked-from-town"), town));

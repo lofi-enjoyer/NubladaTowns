@@ -137,7 +137,7 @@ public class TownManager {
         residentsMap.put(playerUuid, town.getUniqueId());
     }
 
-    public void kickResidentFromTown(UUID playerUuid, Town town) {
+    public void removeResidentFromTown(UUID playerUuid, Town town) {
         town.removeResident(playerUuid);
         residentsMap.remove(playerUuid);
     }
