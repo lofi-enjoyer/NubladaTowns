@@ -76,7 +76,7 @@ public class ProtectionListener implements Listener {
             var currentTown = townManager.getTownOnChunk(block.getChunk());
             if (currentTown == null || !currentTown.getResidents().contains(playerUuid)) {
                 event.setCancelled(true);
-                event.getPlayer().sendMessage(localizationManager.getMessage("cannot-place-here"));
+                event.getPlayer().sendMessage(localizationManager.getMessage("cannot-interact-here"));
             }
         }
     }
