@@ -2,6 +2,7 @@ package io.github.lofienjoyer.nubladatowns.listener;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
 import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
+import io.github.lofienjoyer.nubladatowns.power.PowerManager;
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
 import io.github.lofienjoyer.nubladatowns.town.Town;
@@ -29,9 +30,11 @@ public class TownListener implements Listener {
 
     private final LocalizationManager localizationManager;
     private final TownManager townManager;
+    private final PowerManager powerManager;
 
     public TownListener(TownManager townManager) {
         this.localizationManager = NubladaTowns.getInstance().getLocalizationManager();;
+        this.powerManager = NubladaTowns.getInstance().getPowerManager();
         this.townManager = townManager;
     }
 
@@ -114,10 +117,17 @@ public class TownListener implements Listener {
             return false;
         }
 
+        if (town.getPower() < powerManager.getAmount("claim-land")) {
+            player.sendMessage(localizationManager.getMessage("not-enough-power", true));
+            return false;
+        }
+
         player.sendMessage(localizationManager.getMessage("land-claimed-successfully", true));
         Bukkit.getOnlinePlayers().forEach(resident -> {
             resident.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("town-claimed-land", true), town));
         });
+
+        town.setPower(town.getPower() - powerManager.getAmount("claim-land"));
 
         ParticleUtils.showChunkBorders(location.getChunk(), Particle.GLOW, player.getLocation().getY(), 20);
         SoundUtils.playAscendingSound(location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5f, 0.25f, 2);

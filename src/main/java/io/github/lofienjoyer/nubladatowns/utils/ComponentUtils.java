@@ -36,6 +36,14 @@ public class ComponentUtils {
         });
     }
 
+    public static Component replaceIntegers(Component component, Map<String, Integer> replace) {
+        for (Map.Entry<String, Integer> entry : replace.entrySet()) {
+            component = replaceInteger(component, entry.getKey(), entry.getValue());
+        }
+
+        return component;
+    }
+
     public static Component replaceString(Component component, String literal, String string) {
         return component.replaceText(builder -> {
             builder.matchLiteral(literal).replacement(string);

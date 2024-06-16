@@ -35,6 +35,7 @@ public class TownManager {
         town.addLand(landChunk);
         town.setSpawn(location);
         town.setRgbColor(color);
+        town.setPower(0);
         town.setMayor(founder);
 
         townMap.put(town.getUniqueId(), town);
@@ -69,6 +70,7 @@ public class TownManager {
             town.setRgbColor(section.getInt("color"));
             town.setSpawn(section.getLocation("spawn"));
             town.setOpen(section.getBoolean("open", true));
+            town.setPower(section.getInt("power", 0));
             town.setMayor(UUID.fromString(section.getString("mayor")));
             var residentUniqueIds = section.getStringList("residents");
             residentUniqueIds.forEach(resident -> {
@@ -112,6 +114,7 @@ public class TownManager {
             section.set("name", town.getName());
             section.set("color", town.getRgbColor());
             section.set("spawn", town.getSpawn());
+            section.set("power", town.getPower());
             section.set("mayor", town.getMayor().toString());
             var residentUniqueIds = town.getResidents().stream().map(UUID::toString).toList();
             section.set("residents", residentUniqueIds);

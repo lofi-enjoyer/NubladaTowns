@@ -20,6 +20,7 @@ public class Town {
     private final List<LandChunk> claimedLand;
     private Location spawn;
     private boolean open;
+    private int power;
     private UUID mayor;
     private ArrayList<Role> roles = new ArrayList<>();
 
@@ -95,6 +96,10 @@ public class Town {
         this.open = open;
     }
 
+    public int getPower() { return power; }
+
+    public void setPower(int power) { this.power = power; }
+  
     protected void setMayor(UUID uuid) { this.mayor = uuid; }
 
     protected void setMayor(Player player) { setMayor(player.getUniqueId()); }
