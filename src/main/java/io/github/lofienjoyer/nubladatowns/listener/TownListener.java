@@ -103,12 +103,6 @@ public class TownListener implements Listener {
     private boolean claimChunk(Player player, Town town, Location location) {
         var chunk = location.getChunk();
 
-        var currentTown = townManager.claimChunk(chunk, town);
-        if (currentTown != null) {
-            player.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("land-already-of", true), currentTown));
-            return false;
-        }
-
         if (!TownUtils.checkNeighborChunks(chunk, town, townManager)) {
             player.sendMessage(localizationManager.getMessage("land-not-connected", true));
             return false;
@@ -116,6 +110,12 @@ public class TownListener implements Listener {
 
         if (town.getPower() < powerManager.getAmount("claim-land")) {
             player.sendMessage(localizationManager.getMessage("not-enough-power", true));
+            return false;
+        }
+
+        var currentTown = townManager.claimChunk(chunk, town);
+        if (currentTown != null) {
+            player.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("land-already-of", true), currentTown));
             return false;
         }
 
