@@ -84,20 +84,19 @@ public class TownManager {
                 landMap.put(chunk, townUuid);
             });
             var roles = section.getConfigurationSection("roles");
-            // Todo: optimize
             if (roles != null) {
                 roles.getKeys(false).forEach(roleName -> {
                     var role = new Role(roleName);
                     var permissions = section.getStringList("roles." + roleName + ".permissions");
                     var players = section.getStringList("roles." + roleName + ".players");
 
-                    for(String permission : permissions) {
+                    permissions.forEach(permission -> {
                         role.addPermission(Permission.valueOf(permission));
-                    }
+                    });
 
-                    for(String player : players) {
-                        role.addPlayer(UUID.fromString(player));
-                    }
+                    players.forEach(uuid -> {
+                        role.addPlayer(UUID.fromString(uuid));
+                    });
 
                     town.addRole(role);
                 });
@@ -120,18 +119,11 @@ public class TownManager {
                     .map(chunk -> chunk.x() + ":" + chunk.z() + ":" + chunk.world().getName())
                     .toList();
             section.set("land", landChunks);
-            // Todo: looks janky
             for (Role role : town.getRoles()) {
-                List permissions = new ArrayList();
-                for (Permission permission : role.getPermissions()) {
-                    permissions.add(permission.name());
-                }
-                section.set("roles." + role.getName() + ".permissions", permissions);
+                var permissions = role.getPermissions().stream().map(Enum::name).toList();
+                var players = role.getPlayers().stream().map(UUID::toString).toList();
 
-                List players = new ArrayList();
-                for(UUID player : role.getPlayers()) {
-                    players.add(player.toString());
-                }
+                section.set("roles." + role.getName() + ".permissions", permissions);
                 section.set("roles." + role.getName() + ".players", players);
             }
         });
