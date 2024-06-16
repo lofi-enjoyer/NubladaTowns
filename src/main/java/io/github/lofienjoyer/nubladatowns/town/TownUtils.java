@@ -13,7 +13,9 @@ import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class TownUtils {
@@ -22,6 +24,7 @@ public class TownUtils {
         var lm = NubladaTowns.getInstance().getLocalizationManager();
         var title = Component.text("Town menu");
         var author = Component.text("NubladaTowns");
+        var power = Map.of("%count%", town.getPower(), "%max_count%", NubladaTowns.getInstance().getPowerManager().getAmount("max-power-multiplier") * town.getResidents().size());
         var content = List.of(
                 Component.empty()
                         .append(ComponentUtils.replaceTownName(lm.getMessage("town-menu-title"), town))
@@ -29,6 +32,8 @@ public class TownUtils {
                         .append(ComponentUtils.replaceInteger(lm.getMessage("town-menu-population"), "%count%", town.getResidents().size()))
                         .appendNewline()
                         .append(ComponentUtils.replaceInteger(lm.getMessage("town-menu-land"), "%count%", town.getClaimedLand().size()))
+                        .appendNewline()
+                        .append(ComponentUtils.replaceIntegers(lm.getMessage("town-menu-power"), power))
                         .appendNewline()
                         .appendNewline()
                         .append(lm.getMessage("town-menu-resident-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town list " + town.getName())))

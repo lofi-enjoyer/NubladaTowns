@@ -2,9 +2,11 @@ package io.github.lofienjoyer.nubladatowns;
 
 import io.github.lofienjoyer.nubladatowns.command.AdminCommand;
 import io.github.lofienjoyer.nubladatowns.command.TownCommand;
+import io.github.lofienjoyer.nubladatowns.listener.PowerListener;
 import io.github.lofienjoyer.nubladatowns.listener.ProtectionListener;
 import io.github.lofienjoyer.nubladatowns.listener.TownListener;
 import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
+import io.github.lofienjoyer.nubladatowns.power.PowerManager;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import io.github.lofienjoyer.nubladatowns.utils.ParticleUtils;
 import net.kyori.adventure.text.Component;
@@ -25,6 +27,7 @@ public final class NubladaTowns extends JavaPlugin {
     private static NubladaTowns INSTANCE;
 
     private LocalizationManager localizationManager;
+    private PowerManager powerManager;
     private TownManager townManager;
     private BukkitTask townBordersTask;
 
@@ -33,6 +36,7 @@ public final class NubladaTowns extends JavaPlugin {
         INSTANCE = this;
 
         this.localizationManager = new LocalizationManager();
+        this.powerManager = new PowerManager();
 
         this.townManager = new TownManager(this);
         loadData();
@@ -42,6 +46,7 @@ public final class NubladaTowns extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new TownListener(townManager), this);
         getServer().getPluginManager().registerEvents(new ProtectionListener(townManager), this);
+        getServer().getPluginManager().registerEvents(new PowerListener(townManager), this);
 
         setupTownBordersTimer();
     }
@@ -102,6 +107,8 @@ public final class NubladaTowns extends JavaPlugin {
     public LocalizationManager getLocalizationManager() {
         return localizationManager;
     }
+
+    public PowerManager getPowerManager() { return powerManager; }
 
     public TownManager getTownManager() {
         return townManager;
