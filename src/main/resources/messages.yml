@@ -1,46 +1,115 @@
-invalid-command: "<red>Invalid command.</red>"
-not-enough-arguments: "<red>Not enough arguments.</red>"
+version: 0 # DO NOT EDIT. Reserved for future use.
+
+#
+# General messages
+#
+
+prefix: "<yellow>Towns</yellow> <dark_gray>>></dark_gray> "
+reloading-plugin: "<white>Reloading plugin...</white>"
+plugin-reloaded: "<green>The plugin was successfully reloaded.</green>"
+
+# Errors
 only-player: "<red>This command can only be used by a player.</red>"
-not-in-a-town: "<red>You are not part of a town.</red>"
-non-existent-town: "<red>That town does not exist.</red>"
-resident-list: "<black><bold>List of residents</bold></black>"
-roles-list: "<black><bold>List of roles</bold></black>"
-cannot-claim-for-other-town: "<red>You can't claim land for another town.</red>"
+invalid-command: "<red>Invalid command.</red>"
+invalid-value: "<red>%value% is not a valid value.</red>"
+not-enough-arguments: "<red>Not enough arguments.</red>"
+no-permission: "<red>You do not have permission to do that.</red>"
+
+#
+# Town messages
+#
+
 player-founded-town: "<white> %player% founded %town%.</white>"
-land-not-connected: "<red>This territory is not connected to the town.</red>"
-land-already-of: "<red>This territory is already of %town%</red>"
 land-claimed-successfully: "<green>This territory has been successfully claimed.</green>"
 town-claimed-land: "<white>%town% claimed a new territory.</white>"
+joined-town: "<green>You just joined %town%!</green>"
+player-joined-town: "<gold>%player%</hold> <white>joined the town.<white>"
+kicked-from-town: "<white>You have been kicked from %town%.</white>"
+player-kicked-from-town: "<gold>%player%</gold> <white>has been kicked from town.</white>"
+set-mayor: "<white><gold>%player%</gold> has set <gold>%mayor%</gold> as the new town mayor!</white>"
+
+# Errors
+non-existent-town: "<red>That town does not exist.</red>"
+not-in-a-town: "<red>You are not part of a town.</red>"
+other-not-in-this-town: "<red>Player is not part of this town.</red>"
+cannot-claim-for-other-town: "<red>You can't claim land for another town.</red>"
+land-not-connected: "<red>This territory is not connected to your town.</red>"
+land-already-of: "<red>This territory belongs to %town%</red>"
+too-far-from-lectern: "<red>You are too far from the town lectern to do this.</red>"
+already-on-a-town: "<red>You're already part of a town.</red>"
+cannot-kick-yourself: "<red>You can't kick yourself from this town.</red>"
+mayor-cannot-be-kicked: "<red>This town's mayor cannot be kicked.</red>"
+town-already-exists: "<red>A town with that name already exists.</red>"
+not-enough-power: "<red>Your town doesn't have enough power.</red>"
+
+#
+# Role messages
+#
+
+role-created: "<white>Role <blue>%role%</blue> has been successfully created.</white>"
+role-deleted: "<white>Role <blue>%role%</blue> has been deleted.</white>"
+player-added-to-role: "<white>%player% has been added to <blue>%role%</blue>.</white>"
+player-removed-from-role: "<white>%player% has been removed from <blue>%role%</blue>.</white>"
+
+# Errors
+role-name-too-long: "<red>A role's name cannot exceed 16 characters.</red>"
+role-limit-exceeded: "<red>Your town has reached the maximum amount of roles.</red>"
+already-has-role: "<red>%player% already has this role.</red>"
+does-not-have-role: "<red>%player% does not have this role.</red>"
+non-existent-role: "<red>Role <white>%role%</white> does not exist.</red>"
+role-already-exists: "<red>A role with that name already exists in your town.</red>"
+role-already-has-permission: "<red>Role <blue>%role%</blue> already has permission to do this.</red>"
+role-does-not-have-permission: "<red>Role <blue>%role%</blue> does not have permission to do this.</red>"
+
+#
+# Action bar messages
+#
+
 entering-town: "<white>Entering %town%'s territory</white>"
 exiting-town: "<white>Exiting %town%'s territory</white>"
-too-far-from-lectern: "<red>You are too far from the town lectern to use this command.</red>"
+
+# Errors
+cannot-break-here: "<red>You can't break blocks here</red>"
+cannot-place-here: "<red>You can't place blocks here</red>"
+cannot-interact-here: "<red>You can't use that here</red>"
+
+#
+# Menus
+#
+
+cannot-be-undone: "<red><bold>Cannot be undone!</bold></red>"
+click-to-edit: "<gray>Click to edit</gray>"
+
+# Town menu
 town-menu-title: "<bold>%town%</bold>"
 town-menu-power: "<gray>Power:</gray> <dark_gray>%count%/%max_count%</dark_gray>"
 town-menu-population: "<gray>Population:</gray> <dark_gray>%count%</dark_gray>"
 town-menu-land: "<gray>Owned land:</gray> <dark_gray>%count% chunk(s)</dark_gray>"
 town-menu-mayor: "<gray>Mayor:</gray> <dark_gray>%player%</dark_gray>"
-plugin-reloaded: "<green>The plugin was successfully reloaded.</green>"
 town-menu-resident-list: "<blue>[Resident list]</blue>"
 town-menu-roles-list: "<blue>[Roles list]</blue>"
-click-to-edit: "<gray>Click to edit</gray>"
-reloading-plugin: "<white>Reloading plugin...</white>"
-already-on-a-town: "<red>You're already part of a town.</red>"
-joined-town: "<green>You just joined %town%!</green>"
-player-joined-town: "<gold>%player%</hold> <white>joined the town.<white>"
-kicked-from-town: "<white>You have been kicked from %town%.</white>"
-player-kicked-from-town: "<gold>%player%</gold> <white>has been kicked from town.</white>"
-cannot-kick-yourself: "<red>You can't kick yourself from this town.</red>"
-mayor-cannot-be-kicked: "<red>This town's mayor cannot be kicked.</red>"
-set-mayor: "<white><gold>%player%</gold> has set <gold>%mayor%</gold> as the new town mayor!</white>"
-town-already-exists: "<red>A town with that name already exists.</red>"
-prefix: "<yellow>Towns</yellow> <dark_gray>>></dark_gray> "
-cannot-break-here: "<red>You can't break blocks here</red>"
-not-enough-power: "<red>Your town doesn't have enough power.</red>"
-cannot-place-here: "<red>You can't place blocks here</red>"
-cannot-interact-here: "<red>You can't use that here</red>"
-role-name-too-long: "<red>A role's name cannot exceed 16 characters.</red>"
+
+# Resident list
+resident-list: "<black><bold>List of residents</bold></black>"
+
+# Roles list
+roles-list: "<black><bold>List of roles</bold></black>"
+create-role-hint: "<gray>Interact with this lectern with a renamed paper in your hand to create a new role.</gray>"
+
+# Resident editor
+resident-editor-title: "<bold>%player%</bold>"
+resident-editor-set-mayor: "<red>[Set mayor]</red>"
+resident-editor-manage-roles: "<blue>[Manage roles]</blue>"
+resident-editor-kick: "<red>[Kick]</red>"
+
+# Resident roles editor
+resident-role-editor-title: "<bold>%player%</bold> - Roles"
+resident-role-editor-not-granted: "<red>Not granted</red>"
+resident-role-editor-granted: "<green>Granted</green>"
+
+# Role editor
 role-editor-title: "<bold>%role%</bold>"
-role-editor-edit: "<blue>[Edit permissions]</blue>"
+role-editor-edit: "<blue>Edit permissions</blue>"
 role-editor-edit-build: "Build"
 role-editor-edit-destroy: "Destroy"
 role-editor-edit-interact: "Interact"
@@ -53,26 +122,3 @@ role-editor-edit-assign-roles: "Assign roles"
 role-editor-permission-not-granted: "<red>Not granted</red>"
 role-editor-permission-granted: "<green>Granted</green>"
 role-editor-delete: "<red>[Delete]</red>"
-non-existent-role: "<red>Role <white>%role%</white> does not exist.</red>"
-role-already-exists: "<red>A role with that name already exists in your town.</red>"
-role-already-has-permission: "<red>Role <blue>%role%</blue> already has permission to do this.</red>"
-role-does-not-have-permission: "<red>Role <blue>%role%</blue> does not have permission to do this.</red>"
-no-permission: "<red>You do not have permission to do that.</red>"
-invalid-value: "<red>%value% is not a valid value.</red>"
-other-not-in-this-town: "<red>Player is not part of this town.</red>"
-already-has-role: "<red>%player% already has this role.</red>"
-does-not-have-role: "<red>%player% does not have this role.</red>"
-role-created: "<white>Role <blue>%role%</blue> has been successfully created.</white>"
-role-deleted: "<white>Role <blue>%role%</blue> has been deleted.</white>"
-player-added-to-role: "<white>%player% has been added to <blue>%role%</blue>.</white>"
-player-removed-from-role: "<white>%player% has been removed from <blue>%role%</blue>.</white>"
-resident-editor-title: "<bold>%player%</bold>"
-resident-editor-set-mayor: "<red>[Set mayor]</red>"
-resident-editor-manage-roles: "<blue>[Manage roles]</blue>"
-resident-editor-kick: "<red>[Kick]</red>"
-cannot-be-undone: "<red><bold>Cannot be undone!</bold></red>"
-resident-role-editor-title: "<bold>%player%</bold> - Roles"
-resident-role-editor-not-granted: "<red>Not granted</red>"
-resident-role-editor-granted: "<green>Granted</green>"
-create-role-hint: "<gray>Interact with this lectern with a renamed paper in your hand to create a new role.</gray>"
-role-limit-exceeded: "<red>Your town has reached the maximum amount of roles.</red>"
