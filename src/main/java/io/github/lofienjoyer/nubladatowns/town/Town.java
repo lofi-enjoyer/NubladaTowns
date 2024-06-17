@@ -52,6 +52,10 @@ public class Town {
         addResident(player.getUniqueId());
     }
 
+    protected void removeResident(UUID uuid) { residents.remove(uuid); }
+
+    protected void removeResident(Player player) { removeResident(player.getUniqueId()); }
+
     public List<UUID> getResidents() {
         return Collections.unmodifiableList(residents);
     }
@@ -100,9 +104,9 @@ public class Town {
 
     public void setPower(int power) { this.power = power; }
   
-    protected void setMayor(UUID uuid) { this.mayor = uuid; }
+    public void setMayor(UUID uuid) { this.mayor = uuid; }
 
-    protected void setMayor(Player player) { setMayor(player.getUniqueId()); }
+    public void setMayor(Player player) { setMayor(player.getUniqueId()); }
 
     public UUID getMayor() { return mayor; }
 
