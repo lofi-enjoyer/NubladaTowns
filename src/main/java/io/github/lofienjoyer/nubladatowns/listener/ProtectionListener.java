@@ -85,7 +85,7 @@ public class ProtectionListener implements Listener {
 
         if (blockState instanceof Container || blockData instanceof Openable) {
             var currentTown = townManager.getTownOnChunk(block.getChunk());
-            if (currentTown == null || !currentTown.hasPermission(player, Permission.INTERACT)) {
+            if (currentTown != null && !currentTown.hasPermission(player, Permission.INTERACT)) {
                 event.setCancelled(true);
                 player.sendMessage(localizationManager.getMessage("cannot-interact-here"));
             }
