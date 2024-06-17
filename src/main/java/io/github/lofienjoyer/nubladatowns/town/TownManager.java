@@ -137,6 +137,11 @@ public class TownManager {
         residentsMap.put(playerUuid, town.getUniqueId());
     }
 
+    public void removeResidentFromTown(UUID playerUuid, Town town) {
+        town.removeResident(playerUuid);
+        residentsMap.remove(playerUuid);
+    }
+
     public Town getTownByName(String name) {
         return townMap.values().stream()
                 .filter(town -> town.getName().equals(name))

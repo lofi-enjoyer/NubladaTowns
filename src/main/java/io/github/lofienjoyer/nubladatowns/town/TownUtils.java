@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class TownUtils {
-    private static LocalizationManager lm = NubladaTowns.getInstance().getLocalizationManager();
+    private static final LocalizationManager lm = NubladaTowns.getInstance().getLocalizationManager();
 
     public static void showTownMenu(Player player, Town town) {
         var title = Component.text("Town menu");
@@ -36,6 +36,8 @@ public class TownUtils {
                         .append(ComponentUtils.replaceTownName(lm.getMessage("town-menu-title"), town))
                         .appendNewline()
                         .append(ComponentUtils.replaceInteger(lm.getMessage("town-menu-population"), "%count%", town.getResidents().size()))
+                        .appendNewline()
+                        .append(ComponentUtils.replacePlayerName(lm.getMessage("town-menu-mayor"), Bukkit.getOfflinePlayer(town.getMayor()).getName()))
                         .appendNewline()
                         .append(ComponentUtils.replaceInteger(lm.getMessage("town-menu-land"), "%count%", town.getClaimedLand().size()))
                         .appendNewline()
@@ -65,7 +67,10 @@ public class TownUtils {
         for (String residentName : residentNames) {
             componentList = componentList
                     .append(Component.text("▪ ", NamedTextColor.GRAY))
-                    .append(Component.text(residentName, NamedTextColor.DARK_GRAY))
+                    .append(Component.text(residentName, NamedTextColor.DARK_GRAY)
+                            .clickEvent(ClickEvent.runCommand("/nubladatowns:town edit resident " + residentName))
+                            .hoverEvent(HoverEvent.showText(lm.getMessage("click-to-edit")))
+                    )
                     .appendNewline();
         }
 
@@ -74,9 +79,77 @@ public class TownUtils {
         player.openBook(Book.book(title, author, componentList.build()));
     }
 
+    public static void showResidentEditor(Player player, String targetName) {
+        var componentList = Component.text()
+                .append(ComponentUtils.replaceString(lm.getMessage("resident-editor-title"), "%player%", targetName))
+                .appendNewline()
+                .appendNewline()
+                .append(lm.getMessage("resident-editor-manage-roles")
+                        .hoverEvent(HoverEvent.showText(lm.getMessage("click-to-edit")))
+                        .clickEvent(ClickEvent.runCommand("/nubladatowns:town edit resident " + targetName + " roles"))
+                )
+                .appendNewline()
+                .appendNewline()
+                .append(lm.getMessage("resident-editor-kick")
+                        .hoverEvent(HoverEvent.showText(lm.getMessage("cannot-be-undone")))
+                        .clickEvent(ClickEvent.runCommand("/nubladatowns:town edit resident " + targetName + " kick"))
+                )
+                .appendNewline()
+                .append(lm.getMessage("resident-editor-set-mayor")
+                        .hoverEvent(HoverEvent.showText(lm.getMessage("cannot-be-undone")))
+                        .clickEvent(ClickEvent.runCommand("/nubladatowns:town edit mayor " + targetName))
+                )
+                .appendNewline();
+
+        var title = Component.text("Town menu");
+        var author = Component.text("NubladaTowns");
+        player.openBook(Book.book(title, author, componentList.build()));
+    }
+
+    public static void showResidentRoleEditor(Player player, Town town, OfflinePlayer target) {
+        var componentList = Component.text()
+                .append(ComponentUtils.replacePlayerName(lm.getMessage("resident-role-editor-title"), target.getName()))
+                .appendNewline()
+                .appendNewline();
+
+        for (Role role : town.getRoles()) {
+            componentList = componentList
+                    .append(Component.text("▪ ", NamedTextColor.GRAY))
+                    .append(getRoleWithColor(target, role))
+                    .appendNewline();
+        }
+
+        var title = Component.text("Town menu");
+        var author = Component.text("NubladaTowns");
+        player.openBook(Book.book(title, author, componentList.build()));
+    }
+
+    private static Component getRoleWithColor(OfflinePlayer target, Role role) {
+        var color = NamedTextColor.GRAY;
+        var status = lm.getMessage("resident-role-editor-not-granted");
+        var command = "/nubladatowns:town edit role " + role.getName() + " add " + target.getName();
+        if (role.getPlayers().contains(target.getUniqueId())) {
+            color = NamedTextColor.GREEN;
+            status = lm.getMessage("resident-role-editor-granted");
+            command = "/nubladatowns:town edit role " + role.getName() + " remove " + target.getName();
+        }
+
+        var component = Component.text()
+                .append(Component.text(role.getName()))
+                .hoverEvent(HoverEvent.showText(status
+                        .appendNewline()
+                        .append(lm.getMessage("click-to-edit"))
+                ))
+                .clickEvent(ClickEvent.runCommand(command))
+                .color(color);
+
+        return component.build();
+    }
+
     public static void showRolesList(Player player, Town town) {
         var componentList = Component.text()
-                .append(NubladaTowns.getInstance().getLocalizationManager().getMessage("roles-list"))
+                .append(lm.getMessage("roles-list"))
+                .hoverEvent(HoverEvent.showText(lm.getMessage("create-role-hint")))
                 .appendNewline()
                 .appendNewline();
 
@@ -84,7 +157,7 @@ public class TownUtils {
             componentList = componentList
                     .append(Component.text("▪ ", NamedTextColor.GRAY))
                     .append(Component.text(role.getName(), NamedTextColor.DARK_GRAY)
-                            .hoverEvent(HoverEvent.showText(lm.getMessage("town-menu-roles-list-edit")))
+                            .hoverEvent(HoverEvent.showText(lm.getMessage("click-to-edit")))
                             .clickEvent(ClickEvent.runCommand("/nubladatowns:town edit role " + role.getName()))
                     )
                     .appendNewline();
@@ -121,7 +194,10 @@ public class TownUtils {
                 .append(getPermissionWithColor("role-editor-edit-assign-roles", Permission.ASSIGN_ROLES, town, role))
                 .appendNewline()
                 .appendNewline()
-                .append(lm.getMessage("role-editor-delete").clickEvent(ClickEvent.runCommand("/nubladatowns:town edit role " + role.getName() + " delete")))
+                .append(lm.getMessage("role-editor-delete")
+                        .clickEvent(ClickEvent.runCommand("/nubladatowns:town edit role " + role.getName() + " delete"))
+                        .hoverEvent(HoverEvent.showText(lm.getMessage("cannot-be-undone")))
+                )
                 .appendNewline();
 
         var title = Component.text("Town menu");
@@ -130,7 +206,7 @@ public class TownUtils {
     }
 
     private static Component getPermissionWithColor(String message, Permission permission, Town town, Role role) {
-        var color = NamedTextColor.GOLD;
+        var color = NamedTextColor.GRAY;
         var status = lm.getMessage("role-editor-permission-not-granted");
         var command = "/nubladatowns:town edit role " + role.getName() + " grant " + permission.name();
         if (role.getPermissions().contains(permission)) {

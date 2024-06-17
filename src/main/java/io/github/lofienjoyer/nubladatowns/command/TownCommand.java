@@ -1,6 +1,7 @@
 package io.github.lofienjoyer.nubladatowns.command;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
+import io.github.lofienjoyer.nubladatowns.command.town.*;
 import io.github.lofienjoyer.nubladatowns.command.town.EditSubcommand;
 import io.github.lofienjoyer.nubladatowns.command.town.JoinTownSubcommand;
 import io.github.lofienjoyer.nubladatowns.command.town.ListResidentsSubcommand;
