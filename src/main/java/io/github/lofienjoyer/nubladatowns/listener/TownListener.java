@@ -184,7 +184,7 @@ public class TownListener implements Listener {
             return;
         }
 
-        TownUtils.showTownMenu(event.getPlayer(), town);
+        player.performCommand("nubladatowns:town menu " + town.getName());
     }
 
     @EventHandler

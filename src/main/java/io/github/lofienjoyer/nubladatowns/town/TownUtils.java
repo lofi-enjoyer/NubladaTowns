@@ -60,6 +60,7 @@ public class TownUtils {
                 .toList();
 
         var componentList = Component.text()
+                .append(getBackButton("/nubladatowns:town menu " + town.getName()))
                 .append(NubladaTowns.getInstance().getLocalizationManager().getMessage("resident-list"))
                 .appendNewline()
                 .appendNewline();
@@ -79,8 +80,9 @@ public class TownUtils {
         player.openBook(Book.book(title, author, componentList.build()));
     }
 
-    public static void showResidentEditor(Player player, String targetName) {
+    public static void showResidentEditor(Player player, Town town, String targetName) {
         var componentList = Component.text()
+                .append(getBackButton("/nubladatowns:town list " + town.getName()))
                 .append(ComponentUtils.replaceString(lm.getMessage("resident-editor-title"), "%player%", targetName))
                 .appendNewline()
                 .appendNewline()
@@ -108,6 +110,7 @@ public class TownUtils {
 
     public static void showResidentRoleEditor(Player player, Town town, OfflinePlayer target) {
         var componentList = Component.text()
+                .append(getBackButton("/nubladatowns:town edit resident " + target.getName()))
                 .append(ComponentUtils.replacePlayerName(lm.getMessage("resident-role-editor-title"), target.getName()))
                 .appendNewline()
                 .appendNewline();
@@ -148,6 +151,7 @@ public class TownUtils {
 
     public static void showRolesList(Player player, Town town) {
         var componentList = Component.text()
+                .append(getBackButton("/nubladatowns:town menu " + town.getName()))
                 .append(lm.getMessage("roles-list"))
                 .hoverEvent(HoverEvent.showText(lm.getMessage("create-role-hint")))
                 .appendNewline()
@@ -170,6 +174,7 @@ public class TownUtils {
 
     public static void showRoleEditor(Player player, Town town, Role role) {
         var componentList = Component.text()
+                .append(getBackButton("/nubladatowns:town roles " + town.getName()))
                 .append(ComponentUtils.replaceString(lm.getMessage("role-editor-title"), "%role%", role.getName()))
                 .appendNewline()
                 .appendNewline()
@@ -238,6 +243,14 @@ public class TownUtils {
                 .forEach(player -> {
                     player.sendMessage(component);
                 });
+    }
+
+    private static Component getBackButton(String previousPageCommand) {
+        return Component.text()
+                .append(lm.getMessage("menu-back-button"))
+                .clickEvent(ClickEvent.runCommand(previousPageCommand))
+                .hoverEvent(HoverEvent.showText(lm.getMessage("menu-back-button-hover")))
+                .build();
     }
 
 }

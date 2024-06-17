@@ -224,7 +224,7 @@ public class EditSubcommand implements BiConsumer<CommandSender, String[]> {
             }
 
             if (args.length == 2) {
-                TownUtils.showResidentEditor(player, target.getName());
+                TownUtils.showResidentEditor(player, town, target.getName());
             } else if (args.length == 3) {
                 if (args[2].equals("kick")) {
                     if (!town.hasPermission(player, Permission.KICK)) {
