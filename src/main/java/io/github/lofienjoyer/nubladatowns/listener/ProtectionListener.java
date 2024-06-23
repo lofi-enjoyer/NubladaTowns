@@ -39,7 +39,7 @@ public class ProtectionListener implements Listener {
             return;
 
         if (!currentTown.hasPermission(player, Permission.DESTROY)) {
-            player.sendMessage(localizationManager.getMessage("cannot-break-here"));
+            player.sendActionBar(localizationManager.getMessage("cannot-break-here"));
             event.setCancelled(true);
         }
     }
@@ -55,7 +55,7 @@ public class ProtectionListener implements Listener {
             return;
 
         if (!currentTown.hasPermission(player, Permission.BUILD)) {
-            player.sendMessage(localizationManager.getMessage("cannot-place-here"));
+            player.sendActionBar(localizationManager.getMessage("cannot-place-here"));
             event.setCancelled(true);
         }
     }
@@ -87,7 +87,7 @@ public class ProtectionListener implements Listener {
             var currentTown = townManager.getTownOnChunk(block.getChunk());
             if (currentTown != null && !currentTown.hasPermission(player, Permission.INTERACT)) {
                 event.setCancelled(true);
-                player.sendMessage(localizationManager.getMessage("cannot-interact-here"));
+                player.sendActionBar(localizationManager.getMessage("cannot-interact-here"));
             }
         }
     }
