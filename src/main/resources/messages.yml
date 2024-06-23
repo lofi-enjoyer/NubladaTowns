@@ -79,6 +79,8 @@ cannot-interact-here: "<red>You can't use that here</red>"
 
 cannot-be-undone: "<red><bold>Cannot be undone!</bold></red>"
 click-to-edit: "<gray>Click to edit</gray>"
+menu-back-button: "<red><bold>◀ </bold></red>"
+menu-back-button-hover: "<gray>Go back</gray>"
 
 # Town menu
 town-menu-title: "<bold>%town%</bold>"
