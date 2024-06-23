@@ -61,7 +61,7 @@ public class TownListener implements Listener {
 
         if (playerTown != null) {
             if (!playerTown.getName().equals(townName)) {
-                player.sendMessage(localizationManager.getMessage("cannot-claim-for-other-town", true));
+                player.sendActionBar(localizationManager.getMessage("cannot-claim-for-other-town"));
                 return;
             }
             if (!claimChunk(player, playerTown, event.getBlock().getLocation())) {
