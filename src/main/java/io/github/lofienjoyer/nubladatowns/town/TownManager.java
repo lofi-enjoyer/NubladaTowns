@@ -1,6 +1,7 @@
 package io.github.lofienjoyer.nubladatowns.town;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
+import io.github.lofienjoyer.nubladatowns.plot.Plot;
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
 import org.bukkit.Bukkit;
@@ -140,6 +141,14 @@ public class TownManager {
     public void removeResidentFromTown(UUID playerUuid, Town town) {
         town.removeResident(playerUuid);
         residentsMap.remove(playerUuid);
+    }
+
+    public void addPlotToTown(Plot plot, Town town) {
+        town.addPlot(plot);
+    }
+
+    public void removePlotFromTown(Plot plot, Town town) {
+        town.removePlot(plot);
     }
 
     public Town getTownByName(String name) {
