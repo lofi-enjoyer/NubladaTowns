@@ -5,14 +5,13 @@ import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.Openable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -89,6 +88,34 @@ public class ProtectionListener implements Listener {
                 event.setCancelled(true);
                 player.sendActionBar(localizationManager.getMessage("cannot-interact-here"));
             }
+        }
+    }
+
+    @EventHandler
+    public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+        var pistonTown = townManager.getTownOnChunk(event.getBlock().getChunk());
+
+        for (Block movedBlock : event.getBlocks()) {
+            Location location = movedBlock.getLocation().add(event.getDirection().getDirection());
+            var movedBlockTown = townManager.getTownOnChunk(location.getChunk());
+
+            if (movedBlockTown == null || movedBlockTown.equals(pistonTown))
+                return;
+
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+        var pistonTown = townManager.getTownOnChunk(event.getBlock().getChunk());
+
+        for (Block movedBlock : event.getBlocks()) {
+            var movedBlockTown = townManager.getTownOnChunk(movedBlock.getChunk());
+            if (movedBlockTown == null || movedBlockTown.equals(pistonTown))
+                return;
+
+            event.setCancelled(true);
         }
     }
 
