@@ -1,5 +1,6 @@
 package io.github.lofienjoyer.nubladatowns.town;
 
+import io.github.lofienjoyer.nubladatowns.plot.Plot;
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
 import org.bukkit.Location;
@@ -22,13 +23,15 @@ public class Town {
     private boolean open;
     private int power;
     private UUID mayor;
-    private ArrayList<Role> roles = new ArrayList<>();
+    private List<Role> roles;
+    private List<Plot> plots;
 
     public Town(UUID uniqueId, String name) {
         this.uniqueId = uniqueId;
         this.name = name;
         this.residents = new ArrayList<>();
         this.claimedLand = new ArrayList<>();
+        this.roles = new ArrayList<>();
     }
 
     public Town(String name) {
@@ -55,6 +58,14 @@ public class Town {
     protected void removeResident(UUID uuid) { residents.remove(uuid); }
 
     protected void removeResident(Player player) { removeResident(player.getUniqueId()); }
+
+    protected void addPlot(Plot plot) {
+        plots.add(plot);
+    }
+
+    protected void removePlot(Plot plot) {
+        plots.remove(plot);
+    }
 
     public List<UUID> getResidents() {
         return Collections.unmodifiableList(residents);

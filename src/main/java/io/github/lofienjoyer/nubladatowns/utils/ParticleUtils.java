@@ -1,10 +1,7 @@
 package io.github.lofienjoyer.nubladatowns.utils;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Color;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -93,6 +90,65 @@ public class ParticleUtils {
                 }
             }
         }
+    }
+
+    public static void showPlot(Location posA, Location posB, Particle particle) {
+        var world = posA.getWorld();
+        var counter = new AtomicInteger();
+        var taskReference = new AtomicReference<BukkitTask>();
+        taskReference.set(Bukkit.getScheduler().runTaskTimer(NubladaTowns.getPlugin(NubladaTowns.class), () -> {
+            for (int i = 0; i < Math.abs(posB.x() - posA.x()); i++) {
+                world.spawnParticle(particle, posA.x() + i, posA.y(), posA.z(), 1);
+            }
+
+            for (int i = 0; i < Math.abs(posB.x() - posA.x()); i++) {
+                world.spawnParticle(particle, posA.x() + i, posA.y(), posB.z() + 1, 1);
+            }
+
+            for (int i = 0; i < Math.abs(posB.x() - posA.x()); i++) {
+                world.spawnParticle(particle, posA.x() + i, posB.y() + 1, posA.z(), 1);
+            }
+
+            for (int i = 0; i < Math.abs(posB.x() - posA.x()); i++) {
+                world.spawnParticle(particle, posA.x() + i, posB.y() + 1, posB.z() + 1, 1);
+            }
+
+            for (int i = 0; i < Math.abs(posB.z() - posA.z()); i++) {
+                world.spawnParticle(particle, posA.x(), posA.y(), posA.z() + i, 1);
+            }
+
+            for (int i = 0; i < Math.abs(posB.z() - posA.z()); i++) {
+                world.spawnParticle(particle, posB.x() + 1, posA.y(), posA.z() + i, 1);
+            }
+
+            for (int i = 0; i < Math.abs(posB.z() - posA.z()); i++) {
+                world.spawnParticle(particle, posA.x(), posB.y() + 1, posA.z() + i, 1);
+            }
+
+            for (int i = 0; i < Math.abs(posB.z() - posA.z()); i++) {
+                world.spawnParticle(particle, posB.x() + 1, posB.y() + 1, posA.z() + i, 1);
+            }
+
+            for (int i = 0; i < Math.abs(posB.y() - posA.y()); i++) {
+                world.spawnParticle(particle, posA.x(), posA.y() + i, posA.z(), 1);
+            }
+
+            for (int i = 0; i < Math.abs(posB.y() - posA.y()); i++) {
+                world.spawnParticle(particle, posB.x() + 1, posA.y() + i, posA.z(), 1);
+            }
+
+            for (int i = 0; i < Math.abs(posB.y() - posA.y()); i++) {
+                world.spawnParticle(particle, posA.x(), posA.y() + i, posB.z() + 1, 1);
+            }
+
+            for (int i = 0; i < Math.abs(posB.y() - posA.y()); i++) {
+                world.spawnParticle(particle, posB.x() + 1, posA.y() + i, posB.z() + 1, 1);
+            }
+
+            if (counter.incrementAndGet() > 5) {
+                taskReference.get().cancel();
+            }
+        }, 0, 1));
     }
 
 }

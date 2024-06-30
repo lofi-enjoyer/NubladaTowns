@@ -28,6 +28,13 @@ kicked-from-town: "<white>You have been kicked from %town%.</white>"
 player-kicked-from-town: "<gold>%player%</gold> <white>has been kicked from town.</white>"
 set-mayor: "<white><gold>%player%</gold> has set <gold>%mayor%</gold> as the new town mayor!</white>"
 
+#
+# Town messages
+#
+
+started-plot-creation: "<green>Right click on the opposite corner to create a plot.</green>"
+plot-outside-town: "<red>The plot must be in the town's territory.</red>"
+
 # Errors
 non-existent-town: "<red>That town does not exist.</red>"
 not-in-a-town: "<red>You are not part of a town.</red>"
