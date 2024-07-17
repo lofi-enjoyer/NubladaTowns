@@ -1,6 +1,7 @@
 package io.github.lofienjoyer.nubladatowns.command;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
+import io.github.lofienjoyer.nubladatowns.command.admin.PowerSubcommand;
 import io.github.lofienjoyer.nubladatowns.command.admin.ReloadSubcommand;
 import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
 import org.bukkit.command.Command;
@@ -25,6 +26,7 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
         this.localizationManager = NubladaTowns.getInstance().getLocalizationManager();
         this.subCommands = new HashMap<>();
         subCommands.put("reload", new ReloadSubcommand(localizationManager));
+        subCommands.put("power", new PowerSubcommand(localizationManager));
     }
 
     @Override
