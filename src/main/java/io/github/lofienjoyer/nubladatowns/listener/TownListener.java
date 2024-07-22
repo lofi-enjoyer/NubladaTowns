@@ -23,7 +23,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
+import java.util.List;
 import java.util.Objects;
 
 public class TownListener implements Listener {
@@ -181,6 +184,28 @@ public class TownListener implements Listener {
             player.playSound(player, Sound.ITEM_BOOK_PUT, 1, 1.25f);
             item.setAmount(item.getAmount() - 1);
             player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-created", true), "%role%", roleName));
+            return;
+        }
+
+        if (item.getType() == Material.BOOK && (!item.hasItemMeta() || !item.getItemMeta().getPersistentDataContainer().has(NubladaTowns.Keys.TOWN_INVITE_KEY))) {
+            if (!town.hasPermission(player, Permission.INVITE)) {
+                player.sendMessage(localizationManager.getMessage("no-permission"));
+                return;
+            }
+
+            item.subtract();
+
+            var inviteItem = new ItemStack(Material.BOOK);
+            var itemMeta = inviteItem.getItemMeta();
+            itemMeta.itemName(localizationManager.getMessage("town-invite-book-name"));
+            itemMeta.lore(List.of(ComponentUtils.replaceTownName(localizationManager.getMessage("town-invite-book-description"), town)));
+            itemMeta.setMaxStackSize(1);
+            itemMeta.setEnchantmentGlintOverride(true);
+            var pdc = itemMeta.getPersistentDataContainer();
+            pdc.set(NubladaTowns.Keys.TOWN_INVITE_KEY, PersistentDataType.STRING, town.getUniqueId().toString());
+            inviteItem.setItemMeta(itemMeta);
+            player.getInventory().addItem(inviteItem);
+            player.sendMessage(localizationManager.getMessage("town-invite-created"));
             return;
         }
 

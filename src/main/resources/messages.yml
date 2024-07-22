@@ -134,3 +134,13 @@ role-editor-edit-assign-roles: "Assign roles"
 role-editor-permission-not-granted: "<red>Not granted</red>"
 role-editor-permission-granted: "<green>Granted</green>"
 role-editor-delete: "<red>[Delete]</red>"
+
+#
+# Invites
+#
+
+town-invite-book-name: "<white>Town invite</white>"
+town-invite-book-description: "<gray>Use it to join <gold>%town%</gold></gray>"
+town-invite-created: "<green>Invite created!</green>"
+town-invite-required: "<red>You need a town invite in your hand to join %town%.</red>"
+town-invite-wrong-town: "<red>This invite is not valid for this town.</red>"
