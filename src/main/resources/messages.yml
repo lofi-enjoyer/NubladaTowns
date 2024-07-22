@@ -29,10 +29,12 @@ player-founded-town: "<white> %player% founded %town%.</white>"
 land-claimed-successfully: "<green>This territory has been successfully claimed.</green>"
 town-claimed-land: "<white>%town% claimed a new territory.</white>"
 joined-town: "<green>You just joined %town%!</green>"
-player-joined-town: "<gold>%player%</hold> <white>joined the town.<white>"
+player-joined-town: "<gold>%player%</gold> <white>joined the town.<white>"
 kicked-from-town: "<white>You have been kicked from %town%.</white>"
 player-kicked-from-town: "<gold>%player%</gold> <white>has been kicked from town.</white>"
 set-mayor: "<white><gold>%player%</gold> has set <gold>%mayor%</gold> as the new town mayor!</white>"
+left-town: "<red>You just left %town%.</red>"
+player-left-town: "<gold>%player%</gold> <white>left the town.<white>"
 
 # Errors
 non-existent-town: "<red>That town does not exist.</red>"
@@ -96,6 +98,8 @@ town-menu-land: "<gray>Owned land:</gray> <dark_gray>%count% chunk(s)</dark_gray
 town-menu-mayor: "<gray>Mayor:</gray> <dark_gray>%player%</dark_gray>"
 town-menu-resident-list: "<blue>[Resident list]</blue>"
 town-menu-roles-list: "<blue>[Roles list]</blue>"
+town-menu-join: "<green>[Join city]</green>"
+town-menu-leave: "<red>[Leave city]</red>"
 
 # Resident list
 resident-list: "<black><bold>List of residents</bold></black>"

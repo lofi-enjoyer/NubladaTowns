@@ -34,6 +34,7 @@ public class TownCommand implements CommandExecutor, TabCompleter {
         this.subCommands = new HashMap<>();
         subCommands.put("list", new ListResidentsSubcommand(townManager));
         subCommands.put("join", new JoinTownSubcommand(townManager));
+        subCommands.put("leave", new LeaveTownSubcommand(townManager));
         subCommands.put("roles", new RolesSubcommand(townManager));
         subCommands.put("edit", new EditSubcommand(townManager));
         subCommands.put("menu", new MenuSubcommand(townManager));

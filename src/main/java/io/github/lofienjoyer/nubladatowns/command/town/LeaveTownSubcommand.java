@@ -2,7 +2,6 @@ package io.github.lofienjoyer.nubladatowns.command.town;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
 import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
-import io.github.lofienjoyer.nubladatowns.town.Town;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import io.github.lofienjoyer.nubladatowns.town.TownUtils;
 import io.github.lofienjoyer.nubladatowns.utils.ComponentUtils;
@@ -11,12 +10,12 @@ import org.bukkit.entity.Player;
 
 import java.util.function.BiConsumer;
 
-public class JoinTownSubcommand implements BiConsumer<CommandSender, String[]> {
+public class LeaveTownSubcommand implements BiConsumer<CommandSender, String[]> {
 
     private final LocalizationManager localizationManager;
     private final TownManager townManager;
 
-    public JoinTownSubcommand(TownManager townManager) {
+    public LeaveTownSubcommand(TownManager townManager) {
         this.localizationManager = NubladaTowns.getInstance().getLocalizationManager();
         this.townManager = townManager;
     }
@@ -29,31 +28,20 @@ public class JoinTownSubcommand implements BiConsumer<CommandSender, String[]> {
         }
 
         var playerTown = townManager.getPlayerTown(player);
-        if (playerTown != null) {
-            sender.sendMessage(localizationManager.getMessage("already-on-a-town"));
+        if (playerTown == null) {
+            sender.sendMessage(localizationManager.getMessage("not-in-a-town"));
             return;
         }
 
-        if (args.length == 0) {
-            sender.sendMessage(localizationManager.getMessage("not-enough-arguments"));
-            return;
-        }
-
-        var town = townManager.getTownByName(String.join(" ", args));
-        if (town == null) {
-            sender.sendMessage(localizationManager.getMessage("non-existent-town"));
-            return;
-        }
-
-        if (player.getLocation().distanceSquared(town.getSpawn()) > 5 * 5) {
+        if (player.getLocation().distanceSquared(playerTown.getSpawn()) > 5 * 5) {
             player.sendMessage(localizationManager.getMessage("too-far-from-lectern"));
             return;
         }
 
         var playerUuid = player.getUniqueId();
-        townManager.addResidentToTown(playerUuid, town);
-        sender.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("joined-town"), town));
-        TownUtils.broadcastToTown(ComponentUtils.replacePlayerName(localizationManager.getMessage("player-joined-town"), player.getName()), town);
+        townManager.removeResidentFromTown(playerUuid, playerTown);
+        sender.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("left-town"), playerTown));
+        TownUtils.broadcastToTown(ComponentUtils.replacePlayerName(localizationManager.getMessage("player-left-town"), player.getName()), playerTown);
     }
 
 }
