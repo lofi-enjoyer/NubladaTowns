@@ -119,7 +119,7 @@ public final class NubladaTowns extends JavaPlugin {
     }
 
     public static class Keys {
-        public static final NamespacedKey TOWN_CREATION_BANNER_KEY = new NamespacedKey("nubladatowns", "town-creation-banner");
+        public static final NamespacedKey TOWN_INVITE_KEY = new NamespacedKey("nubladatowns", "town-invite");
     }
 
 }

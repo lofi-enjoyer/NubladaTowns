@@ -31,23 +31,30 @@ public class TownUtils {
         var title = Component.text("Town menu");
         var author = Component.text("NubladaTowns");
         var power = Map.of("%count%", town.getPower(), "%max_count%", NubladaTowns.getInstance().getPowerManager().getAmount("max-power-multiplier") * town.getResidents().size());
-        var content = List.of(
-                Component.empty()
-                        .append(ComponentUtils.replaceTownName(lm.getMessage("town-menu-title"), town))
-                        .appendNewline()
-                        .append(ComponentUtils.replaceInteger(lm.getMessage("town-menu-population"), "%count%", town.getResidents().size()))
-                        .appendNewline()
-                        .append(ComponentUtils.replacePlayerName(lm.getMessage("town-menu-mayor"), Bukkit.getOfflinePlayer(town.getMayor()).getName()))
-                        .appendNewline()
-                        .append(ComponentUtils.replaceInteger(lm.getMessage("town-menu-land"), "%count%", town.getClaimedLand().size()))
-                        .appendNewline()
-                        .append(ComponentUtils.replaceIntegers(lm.getMessage("town-menu-power"), power))
-                        .appendNewline()
-                        .appendNewline()
-                        .append(lm.getMessage("town-menu-resident-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town list " + town.getName())))
-                        .appendNewline()
-                        .append(lm.getMessage("town-menu-roles-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town roles " + town.getName())))
-        );
+        var content = Component.empty()
+                .append(ComponentUtils.replaceTownName(lm.getMessage("town-menu-title"), town))
+                .appendNewline()
+                .append(ComponentUtils.replaceInteger(lm.getMessage("town-menu-population"), "%count%", town.getResidents().size()))
+                .appendNewline()
+                .append(ComponentUtils.replacePlayerName(lm.getMessage("town-menu-mayor"), Bukkit.getOfflinePlayer(town.getMayor()).getName()))
+                .appendNewline()
+                .append(ComponentUtils.replaceInteger(lm.getMessage("town-menu-land"), "%count%", town.getClaimedLand().size()))
+                .appendNewline()
+                .append(ComponentUtils.replaceIntegers(lm.getMessage("town-menu-power"), power))
+                .appendNewline()
+                .appendNewline()
+                .append(lm.getMessage("town-menu-resident-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town list " + town.getName())))
+                .appendNewline()
+                .append(lm.getMessage("town-menu-roles-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town roles " + town.getName())));
+
+        var playerCity = NubladaTowns.getInstance().getTownManager().getPlayerTown(player);
+        if (playerCity == null) {
+            content = content.appendNewline()
+                    .append(lm.getMessage("town-menu-join").clickEvent(ClickEvent.runCommand("/nubladatowns:town join " + town.getName())));
+        } else if (playerCity.getUniqueId().equals(town.getUniqueId())) {
+            content = content.appendNewline()
+                    .append(lm.getMessage("town-menu-leave").clickEvent(ClickEvent.runCommand("/nubladatowns:town leave")));
+        }
 
         player.openBook(Book.book(title, author, content));
     }
