@@ -33,6 +33,11 @@ public class LeaveTownSubcommand implements BiConsumer<CommandSender, String[]> 
             return;
         }
 
+        if (playerTown.getMayor().equals(player.getUniqueId()) && playerTown.getResidents().size() > 1) {
+            sender.sendMessage(localizationManager.getMessage("mayor-cannot-leave"));
+            return;
+        }
+
         if (player.getLocation().distanceSquared(playerTown.getSpawn()) > 5 * 5) {
             player.sendMessage(localizationManager.getMessage("too-far-from-lectern"));
             return;
