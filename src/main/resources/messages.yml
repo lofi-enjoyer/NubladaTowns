@@ -47,6 +47,7 @@ too-far-from-lectern: "<red>You are too far from the town lectern to do this.</r
 already-on-a-town: "<red>You're already part of a town.</red>"
 cannot-kick-yourself: "<red>You can't kick yourself from this town.</red>"
 mayor-cannot-be-kicked: "<red>This town's mayor cannot be kicked.</red>"
+mayor-cannot-leave: "<red>You can't leave the town until you name someone else as mayor or there is nobody left on it.</red>"
 town-already-exists: "<red>A town with that name already exists.</red>"
 not-enough-power: "<red>Your town doesn't have enough power.</red>"
 
@@ -98,8 +99,8 @@ town-menu-land: "<gray>Owned land:</gray> <dark_gray>%count% chunk(s)</dark_gray
 town-menu-mayor: "<gray>Mayor:</gray> <dark_gray>%player%</dark_gray>"
 town-menu-resident-list: "<blue>[Resident list]</blue>"
 town-menu-roles-list: "<blue>[Roles list]</blue>"
-town-menu-join: "<green>[Join city]</green>"
-town-menu-leave: "<red>[Leave city]</red>"
+town-menu-join: "<green>[Join town]</green>"
+town-menu-leave: "<red>[Leave town]</red>"
 
 # Resident list
 resident-list: "<black><bold>List of residents</bold></black>"
