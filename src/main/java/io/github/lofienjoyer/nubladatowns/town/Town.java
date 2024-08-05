@@ -24,15 +24,15 @@ public class Town {
     private UUID mayor;
     private ArrayList<Role> roles = new ArrayList<>();
 
-    public Town(UUID uniqueId, String name) {
+    public Town(UUID uniqueId, String name, List<UUID> residents, List<LandChunk> claimedLand) {
         this.uniqueId = uniqueId;
         this.name = name;
-        this.residents = new ArrayList<>();
-        this.claimedLand = new ArrayList<>();
+        this.residents = residents;
+        this.claimedLand = claimedLand;
     }
 
     public Town(String name) {
-        this(UUID.randomUUID(), name);
+        this(UUID.randomUUID(), name, new ArrayList<>(), new ArrayList<>());
     }
 
     protected void addLand(LandChunk chunk) {
@@ -85,7 +85,7 @@ public class Town {
         return spawn;
     }
 
-    protected void setSpawn(Location spawn) {
+    public void setSpawn(Location spawn) {
         this.spawn = spawn;
     }
 
@@ -97,7 +97,7 @@ public class Town {
         return rgbColor;
     }
 
-    protected void setRgbColor(int rgbColor) {
+    public void setRgbColor(int rgbColor) {
         this.rgbColor = rgbColor;
     }
 
@@ -105,17 +105,17 @@ public class Town {
         return open;
     }
 
-    protected void setOpen(boolean open) {
+    public void setOpen(boolean open) {
         this.open = open;
     }
 
     public int getPower() { return power; }
 
     public void setPower(int power) { this.power = power; }
-  
+
     public void setMayor(UUID uuid) { this.mayor = uuid; }
 
-    public void setMayor(Player player) { setMayor(player.getUniqueId()); }
+    protected void setMayor(Player player) { setMayor(player.getUniqueId()); }
 
     public UUID getMayor() { return mayor; }
 

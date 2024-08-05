@@ -21,6 +21,12 @@ no-permission: "<red>You do not have permission to do that.</red>"
 
 town-power: "<green>The power of %town% is currently %value%</green>"
 town-power-changed: "<green>The power of %town% was not set to %value%</green>"
+saving-data: "<white>Saving data...</white>"
+data-saved: "<green>Data saved!</green>"
+confirm-loading: "<yellow>Be careful!</yellow> <white>Any new or modified data since the last save will be lost. Use <bold>/nta load --confirm</bold> to continue.</white>"
+loading-data: "<white>Loading data...</white>"
+data-loaded: "<green>Data loaded!</green>"
+error-loading-data: "<red>An error has occurred while saving the data. Check the console for more information.</red>"
 
 #
 # Town messages

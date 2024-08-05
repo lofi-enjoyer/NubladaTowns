@@ -2,6 +2,8 @@ package io.github.lofienjoyer.nubladatowns;
 
 import io.github.lofienjoyer.nubladatowns.command.AdminCommand;
 import io.github.lofienjoyer.nubladatowns.command.TownCommand;
+import io.github.lofienjoyer.nubladatowns.data.DataManager;
+import io.github.lofienjoyer.nubladatowns.data.YamlDataManager;
 import io.github.lofienjoyer.nubladatowns.listener.PowerListener;
 import io.github.lofienjoyer.nubladatowns.listener.ProtectionListener;
 import io.github.lofienjoyer.nubladatowns.listener.TownListener;
@@ -9,13 +11,9 @@ import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
 import io.github.lofienjoyer.nubladatowns.power.PowerManager;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import io.github.lofienjoyer.nubladatowns.utils.ParticleUtils;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -30,6 +28,7 @@ public final class NubladaTowns extends JavaPlugin {
     private PowerManager powerManager;
     private TownManager townManager;
     private BukkitTask townBordersTask;
+    private DataManager dataManager;
 
     @Override
     public void onEnable() {
@@ -39,6 +38,7 @@ public final class NubladaTowns extends JavaPlugin {
         this.powerManager = new PowerManager();
 
         this.townManager = new TownManager(this);
+        dataManager = new YamlDataManager(new File(getDataFolder(), "data.yml"));
         loadData();
 
         getCommand("town").setExecutor(new TownCommand(townManager));
@@ -71,24 +71,12 @@ public final class NubladaTowns extends JavaPlugin {
         loadData();
     }
 
-    private void loadData() {
-        var dataFile = new File(getDataFolder(), "data.yml");
-        if (!dataFile.exists())
-            return;
-
-        var dataConfig = YamlConfiguration.loadConfiguration(dataFile);
-        townManager.loadData(dataConfig);
+    public void loadData() {
+        townManager.loadData(dataManager);
     }
 
-    private void saveData() throws IOException {
-        var dataFile = new File(getDataFolder(), "data.yml");
-        if (!dataFile.exists()) {
-            dataFile.createNewFile();
-        }
-
-        var dataConfig = new YamlConfiguration();
-        townManager.saveData(dataConfig);
-        dataConfig.save(dataFile);
+    public void saveData() throws IOException {
+        townManager.saveData(dataManager);
     }
 
     private void setupTownBordersTimer() {
