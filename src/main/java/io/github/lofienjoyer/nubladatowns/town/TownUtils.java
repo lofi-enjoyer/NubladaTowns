@@ -47,12 +47,17 @@ public class TownUtils {
                 .appendNewline()
                 .append(lm.getMessage("town-menu-roles-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town roles " + town.getName())));
 
+        if (town.hasPermission(player, Permission.CHANGE_BANNER)) {
+            content = content.appendNewline()
+                    .append(lm.getMessage("town-menu-change-banner").clickEvent(ClickEvent.runCommand("/nubladatowns:town setbanner")));
+        }
+
         var playerCity = NubladaTowns.getInstance().getTownManager().getPlayerTown(player);
         if (playerCity == null) {
-            content = content.appendNewline()
+            content = content.appendNewline().appendNewline()
                     .append(lm.getMessage("town-menu-join").clickEvent(ClickEvent.runCommand("/nubladatowns:town join " + town.getName())));
         } else if (playerCity.getUniqueId().equals(town.getUniqueId())) {
-            content = content.appendNewline()
+            content = content.appendNewline().appendNewline()
                     .append(lm.getMessage("town-menu-leave").clickEvent(ClickEvent.runCommand("/nubladatowns:town leave")));
         }
 

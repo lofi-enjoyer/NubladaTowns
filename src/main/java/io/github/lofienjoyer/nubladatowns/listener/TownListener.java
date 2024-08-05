@@ -16,6 +16,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.Banner;
+import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,6 +25,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
@@ -62,23 +64,27 @@ public class TownListener implements Listener {
         var townName = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(meta.displayName()));
         var playerTown = townManager.getPlayerTown(player);
 
+        var state = (Banner) event.getBlock().getState();
         if (playerTown != null) {
             if (!playerTown.getName().equals(townName)) {
                 player.sendActionBar(localizationManager.getMessage("cannot-claim-for-other-town"));
                 return;
             }
-            if (!claimChunk(player, playerTown, event.getBlock().getLocation())) {
+            if (!playerTown.hasPermission(player, Permission.CLAIM_TERRITORY)) {
+                player.sendActionBar(localizationManager.getMessage("no-permission"));
+                return;
+            }
+            if (!claimChunk(player, playerTown, event.getBlock().getLocation(), state)) {
                 player.playSound(player, Sound.ITEM_WOLF_ARMOR_CRACK, 1, 1.25f);
                 return;
             }
             event.getBlock().setType(Material.AIR);
         } else {
-            var townColor = ((Banner) event.getBlock().getState()).getBaseColor().getColor().asARGB();
-            createTown(player, event.getBlock().getLocation(), townName, townColor);
+            createTown(player, event.getBlock().getLocation(), townName, state);
         }
     }
 
-    private boolean createTown(Player player, Location location, String townName, int color) {
+    private boolean createTown(Player player, Location location, String townName, Banner banner) {
         var currentTown = townManager.getTownOnChunk(location.getChunk());
         if (currentTown != null) {
             player.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("land-already-of", true), currentTown));
@@ -91,7 +97,14 @@ public class TownListener implements Listener {
             return false;
         }
 
-        townManager.createTown(townName, location, player, color);
+        var patterns = banner.getPatterns();
+        if (patterns.isEmpty()) {
+            player.sendActionBar(localizationManager.getMessage("invalid-banner", true));
+            return false;
+        }
+
+        var color = banner.getBaseColor().getColor().asARGB();
+        townManager.createTown(townName, location, player, color, banner.getPatterns());
 
         Bukkit.broadcast(ComponentUtils.replacePlayerName(
                 ComponentUtils.replaceTownName(localizationManager.getMessage("player-founded-town", true), townName, color),
@@ -109,7 +122,7 @@ public class TownListener implements Listener {
         return true;
     }
 
-    private boolean claimChunk(Player player, Town town, Location location) {
+    private boolean claimChunk(Player player, Town town, Location location, Banner banner) {
         var chunk = location.getChunk();
 
         var currentTown = townManager.getTownOnChunk(chunk);
@@ -125,6 +138,11 @@ public class TownListener implements Listener {
 
         if (town.getPower() < powerManager.getAmount("claim-land")) {
             player.sendMessage(localizationManager.getMessage("not-enough-power", true));
+            return false;
+        }
+
+        if (town.getRgbColor() != banner.getBaseColor().getColor().asARGB() || !town.getBannerPatterns().equals(banner.getPatterns())) {
+            player.sendMessage(localizationManager.getMessage("not-same-banner", true));
             return false;
         }
 

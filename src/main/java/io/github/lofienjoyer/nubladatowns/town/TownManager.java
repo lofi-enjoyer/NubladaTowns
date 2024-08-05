@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.banner.Pattern;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -30,13 +31,14 @@ public class TownManager {
         this.residentsMap = new HashMap<>();
     }
 
-    public void createTown(String name, Location location, Player founder, int color) {
+    public void createTown(String name, Location location, Player founder, int color, List<Pattern> patterns) {
         var town = new Town(name);
         addResidentToTown(founder.getUniqueId(), town);
         var landChunk = new LandChunk(location.getChunk().getX(), location.getChunk().getZ(), location.getWorld());
         town.addLand(landChunk);
         town.setSpawn(location);
         town.setRgbColor(color);
+        town.setBannerPatterns(patterns);
         town.setPower(0);
         town.setMayor(founder);
 

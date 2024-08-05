@@ -1,17 +1,21 @@
 package io.github.lofienjoyer.nubladatowns.data;
 
-import io.github.lofienjoyer.nubladatowns.NubladaTowns;
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
 import io.github.lofienjoyer.nubladatowns.town.LandChunk;
 import io.github.lofienjoyer.nubladatowns.town.Town;
-import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class YamlDataManager implements DataManager {
@@ -49,6 +53,13 @@ public class YamlDataManager implements DataManager {
 
             var town = new Town(townUuid, name, residentUniqueIds, landChunks);
             town.setRgbColor(section.getInt("color"));
+            var patterns = section.getStringList("banner-patterns").stream()
+                            .map(s -> {
+                                var parts = s.split(":");
+                                return new Pattern(DyeColor.getByColor(Color.fromARGB(Integer.parseInt(parts[0]))), PatternType.valueOf(parts[1]));
+                            })
+                                    .toList();
+            town.setBannerPatterns(patterns);
             town.setSpawn(section.getLocation("spawn"));
             town.setOpen(section.getBoolean("open", true));
             town.setPower(section.getInt("power", 0));
@@ -92,6 +103,12 @@ public class YamlDataManager implements DataManager {
             var section = townsSection.createSection(town.getUniqueId().toString());
             section.set("name", town.getName());
             section.set("color", town.getRgbColor());
+            var patterns = town.getBannerPatterns().stream()
+                            .map(pattern -> {
+                                return pattern.getColor().getColor().asARGB() + ":" + pattern.getPattern().name();
+                            })
+                                    .toList();
+            section.set("banner-patterns", patterns);
             section.set("spawn", town.getSpawn());
             section.set("power", town.getPower());
             section.set("mayor", town.getMayor().toString());

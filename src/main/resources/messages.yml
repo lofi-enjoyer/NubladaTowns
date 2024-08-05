@@ -45,6 +45,8 @@ player-left-town: "<gold>%player%</gold> <white>left the town.<white>"
 town-deleted: "<white>The town of </white><gold>%town%</gold><white> has been deleted.</white>"
 land-abandoned-successfully: "<green>This territory has been successfully abandoned.</green>"
 town-abandoned-land: "<white>%town% abandoned a territory.</white>"
+banner-changed: "<green>The town's banner was successfully changed.</green>"
+town-banner-changed: "%town%<white>'s banner was changed.</white>"
 
 # Errors
 non-existent-town: "<red>That town does not exist.</red>"
@@ -61,6 +63,10 @@ mayor-cannot-be-kicked: "<red>This town's mayor cannot be kicked.</red>"
 mayor-cannot-leave: "<red>You can't leave the town until you name someone else as mayor or there is nobody left on it.</red>"
 town-already-exists: "<red>A town with that name already exists.</red>"
 not-enough-power: "<red>Your town doesn't have enough power.</red>"
+invalid-banner: "<red>You have to use a banner with at least one pattern.</red>"
+not-same-banner: "<red>You have to use the banner of your town to claim territory.</red>"
+not-enough-xp: "<red>You need %amount% levels of experience to do this.</red>"
+not-banner-in-hand: "<red>Hold in your hand the banner you want to use.</red>"
 
 #
 # Role messages
@@ -112,6 +118,7 @@ town-menu-resident-list: "<blue>[Resident list]</blue>"
 town-menu-roles-list: "<blue>[Roles list]</blue>"
 town-menu-join: "<green>[Join town]</green>"
 town-menu-leave: "<red>[Leave town]</red>"
+town-menu-change-banner: "<aqua>[Change banner]</aqua>"
 
 # Resident list
 resident-list: "<black><bold>List of residents</bold></black>"
