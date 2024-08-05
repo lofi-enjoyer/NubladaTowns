@@ -4,6 +4,7 @@ import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.banner.Pattern;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class Town {
     private final UUID uniqueId;
     private String name;
     private int rgbColor;
+    private List<Pattern> bannerPatterns;
     private final List<UUID> residents;
     private final List<LandChunk> claimedLand;
     private Location spawn;
@@ -99,6 +101,14 @@ public class Town {
 
     public void setRgbColor(int rgbColor) {
         this.rgbColor = rgbColor;
+    }
+
+    public List<Pattern> getBannerPatterns() {
+        return bannerPatterns;
+    }
+
+    public void setBannerPatterns(List<Pattern> bannerPatterns) {
+        this.bannerPatterns = bannerPatterns;
     }
 
     public boolean isOpen() {
