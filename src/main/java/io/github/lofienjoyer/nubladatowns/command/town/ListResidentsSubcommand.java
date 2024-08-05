@@ -35,6 +35,7 @@ public class ListResidentsSubcommand implements BiConsumer<CommandSender, String
             return;
         }
 
+        // TODO: Check if using own town's lectern
         Town town;
         if (args.length == 0) {
             town = townManager.getPlayerTown(player);
