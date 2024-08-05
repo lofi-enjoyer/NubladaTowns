@@ -14,6 +14,7 @@ invalid-command: "<red>Invalid command.</red>"
 invalid-value: "<red>%value% is not a valid value.</red>"
 not-enough-arguments: "<red>Not enough arguments.</red>"
 no-permission: "<red>You do not have permission to do that.</red>"
+only-alphanumeric: "<red>You can only use alphanumeric characters.</red>"
 
 #
 # Admin messages

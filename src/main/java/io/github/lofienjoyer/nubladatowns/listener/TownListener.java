@@ -16,7 +16,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.Banner;
-import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,6 +29,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class TownListener implements Listener {
 
@@ -182,6 +182,11 @@ public class TownListener implements Listener {
             }
 
             var roleName = Objects.requireNonNull((TextComponent)item.getItemMeta().displayName()).content();
+            var regexPattern = Pattern.compile("^[a-zA-Z0-9]*$");
+            if (!regexPattern.matcher(roleName).find()) {
+                player.sendMessage(localizationManager.getMessage("only-alphanumeric", true));
+                return;
+            }
 
             if(roleName.length() > 16) {
                 player.sendMessage(localizationManager.getMessage("role-name-too-long", true));
