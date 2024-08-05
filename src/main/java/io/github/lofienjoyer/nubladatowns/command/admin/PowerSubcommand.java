@@ -1,15 +1,22 @@
 package io.github.lofienjoyer.nubladatowns.command.admin;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
+import io.github.lofienjoyer.nubladatowns.command.SubCommand;
 import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
 import io.github.lofienjoyer.nubladatowns.town.Town;
 import io.github.lofienjoyer.nubladatowns.utils.ComponentUtils;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
-public class PowerSubcommand implements BiConsumer<CommandSender, String[]> {
+public class PowerSubcommand implements SubCommand {
 
     private final LocalizationManager localizationManager;
 
@@ -39,6 +46,7 @@ public class PowerSubcommand implements BiConsumer<CommandSender, String[]> {
         }
 
         switch (args[0]) {
+            case "get" -> handleGet(town, sender);
             case "add" -> handleAdd(value, town, sender);
             case "set" -> handleSet(value, town, sender);
             default -> sender.sendMessage(localizationManager.getMessage("invalid-command"));
@@ -60,6 +68,41 @@ public class PowerSubcommand implements BiConsumer<CommandSender, String[]> {
                 ComponentUtils.replaceInteger(localizationManager.getMessage("town-power-changed"), "%value%", value),
                 town
         ));
+    }
+
+    private void handleGet(Town town, CommandSender sender) {
+        var value = town.getPower();
+        sender.sendMessage(ComponentUtils.replaceTownName(
+                ComponentUtils.replaceInteger(localizationManager.getMessage("town-power"), "%value%", value),
+                town
+        ));
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+        if (args.length == 1) {
+            return Stream.of("get", "add", "set")
+                    .filter(s1 -> s1.startsWith(args[0]))
+                    .toList();
+        }
+
+        if ("get".equals(args[0])) {
+            var townName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+
+            return NubladaTowns.getInstance().getTownManager().getTowns().stream()
+                    .map(Town::getName)
+                    .filter(s1 -> s1.startsWith(townName))
+                    .toList();
+        } else if (args.length == 2) {
+            return List.of("<amount>");
+        }
+
+        var townName = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+
+        return NubladaTowns.getInstance().getTownManager().getTowns().stream()
+                .map(Town::getName)
+                .filter(s1 -> s1.startsWith(townName))
+                .toList();
     }
 
 }

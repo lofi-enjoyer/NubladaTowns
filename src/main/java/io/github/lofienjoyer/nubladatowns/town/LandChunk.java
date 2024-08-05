@@ -11,11 +11,11 @@ public record LandChunk(int x, int z, World world) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LandChunk landChunk = (LandChunk) o;
-        return x == landChunk.x && z == landChunk.z && Objects.equals(world, landChunk.world);
+        return x == landChunk.x && z == landChunk.z && Objects.equals(world.getUID(), landChunk.world.getUID());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, z, world);
+        return Objects.hash(x, z, world.getUID());
     }
 }

@@ -42,6 +42,18 @@ public class TownManager {
         landMap.put(landChunk, town.getUniqueId());
     }
 
+    public void removeTown(Town town) {
+        town.getResidents().forEach(uuid -> {
+            residentsMap.remove(uuid);
+        });
+
+        town.getClaimedLand().forEach(chunk -> {
+            landMap.remove(chunk);
+        });
+
+        townMap.remove(town.getUniqueId());
+    }
+
     public Town claimChunk(Chunk chunk, Town town) {
         var currentTown = getTownOnChunk(chunk);
         if (currentTown != null) {
@@ -53,6 +65,19 @@ public class TownManager {
         town.addLand(landChunk);
         landMap.put(landChunk, town.getUniqueId());
         return null;
+    }
+
+    public Town abandonChunk(Chunk chunk) {
+        var currentTown = getTownOnChunk(chunk);
+        if (currentTown == null) {
+            instance.getLogger().warning("Tried to abandon a non-claimed chunk.");
+            return null;
+        }
+
+        var landChunk = new LandChunk(chunk.getX(), chunk.getZ(), chunk.getWorld());
+        currentTown.removeLand(chunk.getX(), chunk.getZ(), chunk.getWorld());
+        landMap.remove(landChunk);
+        return currentTown;
     }
 
     public void loadData(YamlConfiguration dataConfig) {

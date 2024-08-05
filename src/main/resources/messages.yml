@@ -19,6 +19,7 @@ no-permission: "<red>You do not have permission to do that.</red>"
 # Admin messages
 #
 
+town-power: "<green>The power of %town% is currently %value%</green>"
 town-power-changed: "<green>The power of %town% was not set to %value%</green>"
 
 #
@@ -35,11 +36,15 @@ player-kicked-from-town: "<gold>%player%</gold> <white>has been kicked from town
 set-mayor: "<white><gold>%player%</gold> has set <gold>%mayor%</gold> as the new town mayor!</white>"
 left-town: "<red>You just left %town%.</red>"
 player-left-town: "<gold>%player%</gold> <white>left the town.<white>"
+town-deleted: "<white>The town of </white><gold>%town%</gold><white> has been deleted.</white>"
+land-abandoned-successfully: "<green>This territory has been successfully abandoned.</green>"
+town-abandoned-land: "<white>%town% abandoned a territory.</white>"
 
 # Errors
 non-existent-town: "<red>That town does not exist.</red>"
 not-in-a-town: "<red>You are not part of a town.</red>"
 other-not-in-this-town: "<red>Player is not part of this town.</red>"
+land-not-claimed-yet: "<red>This territory has not been claimed yet.</red>"
 cannot-claim-for-other-town: "<red>You can't claim land for another town.</red>"
 land-not-connected: "<red>This territory is not connected to your town.</red>"
 land-already-of: "<red>This territory belongs to %town%</red>"

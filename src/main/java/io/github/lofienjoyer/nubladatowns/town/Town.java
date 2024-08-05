@@ -41,7 +41,16 @@ public class Town {
 
     protected void addLand(int x, int z, World world) {
         var landChunk = new LandChunk(x, z, world);
-        claimedLand.add(landChunk);
+        addLand(landChunk);
+    }
+
+    protected void removeLand(LandChunk chunk) {
+        claimedLand.remove(chunk);
+    }
+
+    protected void removeLand(int x, int z, World world) {
+        var landChunk = new LandChunk(x, z, world);
+        removeLand(landChunk);
     }
 
     protected void addResident(UUID uuid) {
