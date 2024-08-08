@@ -243,7 +243,7 @@ public class TownListener implements Listener {
             }
 
             var townName = PlainTextComponentSerializer.plainText().serialize(itemMeta.displayName());
-            var regexPattern = Pattern.compile("^[a-zA-Z0-9]*$");
+            var regexPattern = Pattern.compile("^[a-zA-Z0-9 ]*$");
             if (!regexPattern.matcher(townName).find()) {
                 player.sendMessage(localizationManager.getMessage("only-alphanumeric", true));
                 return;
