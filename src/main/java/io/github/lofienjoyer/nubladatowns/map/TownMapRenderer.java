@@ -5,7 +5,6 @@ import io.github.lofienjoyer.nubladatowns.town.Town;
 import io.github.lofienjoyer.nubladatowns.utils.BannerUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.map.*;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +26,10 @@ public class TownMapRenderer extends MapRenderer {
         for (int x = 0; x < chunkSide; x++) {
             for (int z = 0; z < chunkSide; z++) {
                 var town = townManager.getTownOnChunk(x + startX, z + startZ, map.getWorld());
-                if (town == null)
+                if (town == null) {
+                    clearChunk(x * (16 / scale), z * (16 / scale), canvas, 16 / scale);
                     continue;
+                }
 
                 foundTowns.add(town);
                 var townColor = new Color(town.getRgbColor(), false);
@@ -55,6 +56,14 @@ public class TownMapRenderer extends MapRenderer {
             for (int z = 0; z < size; z++) {
                 var color = canvas.getBasePixelColor(x + startX, z + startZ);
                 canvas.setPixelColor(x + startX, z + startZ, new Color((color.getRed() + townColor.getRed()) / 2, (color.getGreen() + townColor.getGreen()) / 2, (color.getBlue() + townColor.getBlue()) / 2));
+            }
+        }
+    }
+
+    private void clearChunk(int startX, int startZ, MapCanvas canvas, int size) {
+        for (int x = 0; x < size; x++) {
+            for (int z = 0; z < size; z++) {
+                canvas.setPixelColor(x + startX, z + startZ, canvas.getBasePixelColor(x + startX, z + startZ));
             }
         }
     }
