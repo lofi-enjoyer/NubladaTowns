@@ -232,6 +232,38 @@ public class TownListener implements Listener {
             return;
         }
 
+        if (item.getType() == Material.NAME_TAG && item.hasItemMeta()) {
+            var itemMeta = item.getItemMeta();
+            if (!itemMeta.hasDisplayName())
+                return;
+
+            if (!town.hasPermission(player, Permission.RENAME)) {
+                player.sendMessage(localizationManager.getMessage("no-permission"));
+                return;
+            }
+
+            var townName = PlainTextComponentSerializer.plainText().serialize(itemMeta.displayName());
+            var regexPattern = Pattern.compile("^[a-zA-Z0-9]*$");
+            if (!regexPattern.matcher(townName).find()) {
+                player.sendMessage(localizationManager.getMessage("only-alphanumeric", true));
+                return;
+            }
+
+            var oldName = town.getName();
+            item.subtract();
+            town.setName(townName);
+
+            player.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("name-changed"), town));
+            Bukkit.getOnlinePlayers().forEach(resident -> {
+                resident.sendMessage(ComponentUtils.replaceString(
+                        ComponentUtils.replaceTownName(localizationManager.getMessage("town-name-changed", true), town),
+                        "%old-name%",
+                        oldName
+                ));
+            });
+            return;
+        }
+
         player.performCommand("nubladatowns:town menu " + town.getName());
     }
 
