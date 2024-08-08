@@ -48,6 +48,8 @@ land-abandoned-successfully: "<green>This territory has been successfully abando
 town-abandoned-land: "<white>%town% abandoned a territory.</white>"
 banner-changed: "<green>The town's banner was successfully changed.</green>"
 town-banner-changed: "%town%<white>'s banner was changed.</white>"
+name-changed: "<green>The town was successfully renamed to %town%.</green>"
+town-name-changed: "<gray>%old-name%</gray><white> was renamed to %town%.</white>"
 
 # Errors
 non-existent-town: "<red>That town does not exist.</red>"
