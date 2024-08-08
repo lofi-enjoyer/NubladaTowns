@@ -8,6 +8,7 @@ import io.github.lofienjoyer.nubladatowns.listener.PowerListener;
 import io.github.lofienjoyer.nubladatowns.listener.ProtectionListener;
 import io.github.lofienjoyer.nubladatowns.listener.TownListener;
 import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
+import io.github.lofienjoyer.nubladatowns.map.MapListener;
 import io.github.lofienjoyer.nubladatowns.power.PowerManager;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import io.github.lofienjoyer.nubladatowns.utils.ParticleUtils;
@@ -47,6 +48,7 @@ public final class NubladaTowns extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new TownListener(townManager), this);
         getServer().getPluginManager().registerEvents(new ProtectionListener(townManager), this);
         getServer().getPluginManager().registerEvents(new PowerListener(townManager), this);
+        getServer().getPluginManager().registerEvents(new MapListener(), this);
 
         setupTownBordersTimer();
     }
