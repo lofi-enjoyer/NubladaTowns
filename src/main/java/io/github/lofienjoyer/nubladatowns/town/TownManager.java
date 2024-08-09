@@ -140,6 +140,14 @@ public class TownManager {
         return townMap.get(townUuid);
     }
 
+    public boolean hasTown(Player player) {
+        return hasTown(player.getUniqueId());
+    }
+
+    public boolean hasTown(UUID uuid) {
+        return getPlayerTown(uuid) != null;
+    }
+
     public Collection<Town> getTowns() {
         return townMap.values();
     }
