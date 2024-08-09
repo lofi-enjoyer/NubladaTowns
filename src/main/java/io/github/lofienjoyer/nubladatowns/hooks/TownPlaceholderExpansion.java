@@ -3,7 +3,9 @@ package io.github.lofienjoyer.nubladatowns.hooks;
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,39 +54,72 @@ public class TownPlaceholderExpansion extends PlaceholderExpansion {
     public String onRequest(OfflinePlayer player, @NotNull String identifier) {
         final @NotNull UUID uuid = player.getUniqueId();
 
-        switch (identifier) {
-            case "town":
+        return switch (identifier) {
+            case "town" -> {
                 if (townManager.hasTown(uuid))
-                    return townManager.getPlayerTown(uuid).getName();
-                return "";
-            case "town_power":
+                    yield townManager.getPlayerTown(uuid).getName();
+                yield "";
+            }
+            case "town_power" -> {
                 if (townManager.hasTown(uuid))
-                    return String.valueOf(townManager.getPlayerTown(uuid).getPower());
-                return "";
-            case "town_mayor":
+                    yield String.valueOf(townManager.getPlayerTown(uuid).getPower());
+                yield "";
+            }
+            case "town_mayor" -> {
                 if (townManager.hasTown(uuid))
-                    return Bukkit.getOfflinePlayer(townManager.getPlayerTown(uuid).getMayor()).getName();
-                return "";
-            case "town_residents_amount":
+                    yield Bukkit.getOfflinePlayer(townManager.getPlayerTown(uuid).getMayor()).getName();
+                yield "";
+            }
+            case "town_residents_amount" -> {
                 if (townManager.hasTown(uuid))
-                    return String.valueOf(townManager.getPlayerTown(uuid).getResidents().size());
-                return "";
-            case "town_claimed_land_amount":
+                    yield String.valueOf(townManager.getPlayerTown(uuid).getResidents().size());
+                yield "";
+            }
+            case "town_claimed_land_amount" -> {
                 if (townManager.hasTown(uuid))
-                    return String.valueOf(townManager.getClaimedLand().size());
-                return "";
-            case "town_spawn":
+                    yield String.valueOf(townManager.getClaimedLand().size());
+                yield "";
+            }
+            case "town_spawn" -> {
+                if (townManager.hasTown(uuid)) {
+                    Location spawn = townManager.getPlayerTown(uuid).getSpawn();
+                    yield String.format("%s %s %s",
+                            spawn.x(),
+                            spawn.y(),
+                            spawn.z()
+                    );
+                }
+                yield "";
+            }
+            case "town_spawn_x" -> {
                 if (townManager.hasTown(uuid))
-                    return townManager.getPlayerTown(uuid).getSpawn().toString();
-                return "";
-            case "town_is_open":
+                    yield townManager.getPlayerTown(uuid).getSpawn().x() + "";
+                yield "";
+            }
+            case "town_spawn_y" -> {
                 if (townManager.hasTown(uuid))
-                    return String.valueOf(townManager.getPlayerTown(uuid).isOpen());
-                return "";
-            case "has_town":
-                return String.valueOf(townManager.hasTown(player.getUniqueId()));
-        }
+                    yield townManager.getPlayerTown(uuid).getSpawn().y() + "";
+                yield "";
+            }
+            case "town_spawn_z" -> {
+                if (townManager.hasTown(uuid))
+                    yield townManager.getPlayerTown(uuid).getSpawn().z() + "";
+                yield "";
+            }
+            case "town_color_hex" -> {
+                if (townManager.hasTown(uuid)) {
+                    yield TextColor.color(townManager.getPlayerTown(uuid).getRgbColor()) + "";
+                }
+                yield "";
+            }
+            case "town_is_open" -> {
+                if (townManager.hasTown(uuid))
+                    yield String.valueOf(townManager.getPlayerTown(uuid).isOpen());
+                yield "";
+            }
+            case "has_town" -> String.valueOf(townManager.hasTown(player.getUniqueId()));
+            default -> null;
+        };
 
-        return  null;
     }
 }
