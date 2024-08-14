@@ -101,6 +101,7 @@ exiting-town: "<white>Exiting %town%'s territory</white>"
 cannot-break-here: "<red>You can't break blocks here</red>"
 cannot-place-here: "<red>You can't place blocks here</red>"
 cannot-interact-here: "<red>You can't use that here</red>"
+cannot-attack-animals-here: "<red>You can't attack animals here</red>"
 
 #
 # Menus
