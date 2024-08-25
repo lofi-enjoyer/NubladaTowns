@@ -5,6 +5,7 @@ import io.github.lofienjoyer.nubladatowns.command.TownCommand;
 import io.github.lofienjoyer.nubladatowns.configuration.ConfigValues;
 import io.github.lofienjoyer.nubladatowns.data.DataManager;
 import io.github.lofienjoyer.nubladatowns.data.YamlDataManager;
+import io.github.lofienjoyer.nubladatowns.hooks.TownPlaceholderExpansion;
 import io.github.lofienjoyer.nubladatowns.listener.MapListener;
 import io.github.lofienjoyer.nubladatowns.listener.PowerListener;
 import io.github.lofienjoyer.nubladatowns.listener.ProtectionListener;
@@ -56,6 +57,9 @@ public final class NubladaTowns extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MapListener(), this);
 
         setupTownBordersTimer();
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
+            new TownPlaceholderExpansion(this, this.townManager);
     }
 
     @Override

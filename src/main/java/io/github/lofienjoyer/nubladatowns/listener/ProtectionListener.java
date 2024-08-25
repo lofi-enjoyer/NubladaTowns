@@ -9,13 +9,17 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.Openable;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ProtectionListener implements Listener {
 
@@ -117,6 +121,23 @@ public class ProtectionListener implements Listener {
 
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player damager))
+            return;
+        if (!(event.getEntity() instanceof Animals))
+            return;
+        if (damager.hasPermission("nubladatowns.admin"))
+            return;
+
+        var eventTown = townManager.getTownOnChunk(event.getEntity().getChunk());
+        if (eventTown == null || Objects.equals(townManager.getPlayerTown(damager), eventTown))
+            return;
+
+        damager.sendActionBar(localizationManager.getMessage("cannot-attack-animals-here"));
+        event.setCancelled(true);
     }
 
     private void handleExplosion(List<Block> blocks) {
