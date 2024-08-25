@@ -1,7 +1,10 @@
 package io.github.lofienjoyer.nubladatowns.power;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
+import org.bukkit.Registry;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,35 +14,31 @@ import java.util.Map;
 
 public class PowerManager {
 
-    private Map<String, Integer> power;
+    private Map<EntityType, Integer> power;
 
-    public PowerManager() { reloadConfig(); }
+    public PowerManager() {
+        reloadConfig();
+    }
 
-    public void reloadConfig() { this.power = loadPower(NubladaTowns.getInstance()); }
+    public void reloadConfig() {
+        this.power = loadPower(NubladaTowns.getInstance());
+    }
 
-    private Map<String, Integer> loadPower(NubladaTowns instance) {
-        var powerFile = new File(instance.getDataFolder(), "power.yml");
-        if (!powerFile.exists())
-            instance.saveResource("power.yml", false);
+    private Map<EntityType, Integer> loadPower(NubladaTowns instance) {
+        var powerSection = instance.getConfig().getConfigurationSection("power-by-entity");
+        if (powerSection == null)
+            return Map.of();
 
-        var powerConfig = YamlConfiguration.loadConfiguration(powerFile);
-        var defaultPowerConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(instance.getResource("power.yml")));
-
-        var powerMap = new HashMap<String, Integer>();
-        for ( String key : defaultPowerConfig.getKeys(true)) {
-            var value = powerConfig.getInt(key, defaultPowerConfig.getInt(key));
-            powerConfig.set(key, value);
-            powerMap.put(key, value);
-        }
-        try {
-            powerConfig.save(powerFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        var powerMap = new HashMap<EntityType, Integer>();
+        powerSection.getKeys(false).forEach(key -> {
+            var entityType = EntityType.fromName(key);
+            if (entityType != null)
+                powerMap.put(entityType, powerSection.getInt(key));
+        });
         return powerMap;
     }
 
-    public Integer getAmount(String key) {
-        return power.get(key);
+    public Integer getAmount(EntityType key) {
+        return power.getOrDefault(key, NubladaTowns.getInstance().getConfigValues().getDefaultPowerAmount());
     }
 }
