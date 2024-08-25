@@ -30,7 +30,7 @@ public class TownUtils {
     public static void showTownMenu(Player player, Town town) {
         var title = Component.text("Town menu");
         var author = Component.text("NubladaTowns");
-        var power = Map.of("%count%", town.getPower(), "%max_count%", NubladaTowns.getInstance().getPowerManager().getAmount("max-power-multiplier") * town.getResidents().size());
+        var power = Map.of("%count%", town.getPower(), "%max_count%", NubladaTowns.getInstance().getConfigValues().getMaxTownPowerMultiplier() * town.getResidents().size());
         var content = Component.empty()
                 .append(ComponentUtils.replaceTownName(lm.getMessage("town-menu-title"), town))
                 .appendNewline()

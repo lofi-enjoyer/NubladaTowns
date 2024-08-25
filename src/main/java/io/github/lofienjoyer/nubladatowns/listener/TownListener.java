@@ -35,14 +35,9 @@ public class TownListener implements Listener {
 
     private final LocalizationManager localizationManager;
     private final TownManager townManager;
-    private final PowerManager powerManager;
-
-    // TODO: move to config.yml
-    private final int ROLES_HARD_LIMIT = 8;
 
     public TownListener(TownManager townManager) {
-        this.localizationManager = NubladaTowns.getInstance().getLocalizationManager();;
-        this.powerManager = NubladaTowns.getInstance().getPowerManager();
+        this.localizationManager = NubladaTowns.getInstance().getLocalizationManager();
         this.townManager = townManager;
     }
 
@@ -136,7 +131,7 @@ public class TownListener implements Listener {
             return false;
         }
 
-        if (town.getPower() < powerManager.getAmount("claim-land")) {
+        if (town.getPower() < NubladaTowns.getInstance().getConfigValues().getClaimLandPower()) {
             player.sendMessage(localizationManager.getMessage("not-enough-power", true));
             return false;
         }
@@ -153,7 +148,7 @@ public class TownListener implements Listener {
             resident.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("town-claimed-land", true), town));
         });
 
-        town.setPower(town.getPower() - powerManager.getAmount("claim-land"));
+        town.setPower(town.getPower() - NubladaTowns.getInstance().getConfigValues().getClaimLandPower());
 
         ParticleUtils.showChunkBorders(location.getChunk(), Particle.GLOW, player.getLocation().getY(), 20);
         SoundUtils.playAscendingSound(location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5f, 0.25f, 2);
@@ -198,7 +193,7 @@ public class TownListener implements Listener {
                 return;
             }
 
-            if (town.getRoles().size() >= ROLES_HARD_LIMIT) {
+            if (town.getRoles().size() >= NubladaTowns.getInstance().getConfigValues().getMaxRolesPerTown()) {
                 player.sendMessage(localizationManager.getMessage("role-limit-exceeded"));
                 return;
             }

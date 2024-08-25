@@ -31,10 +31,9 @@ public class PowerListener implements Listener {
             if(event.getEntity() instanceof Player victim && townManager.getPlayerTown(victim) == town)
                 return;
 
-            var amount = powerManager.getAmount(targetEntity.getType().toString().toLowerCase());
-            var max_amount = powerManager.getAmount("max-power-multiplier") * town.getResidents().size();
+            var amount = powerManager.getAmount(targetEntity.getType());
+            var max_amount = NubladaTowns.getInstance().getConfigValues().getMaxTownPowerMultiplier() * town.getResidents().size();
 
-            if(amount == null) amount = powerManager.getAmount("fallback-amount");
             if(town.getPower() + amount > max_amount) {
                 town.setPower(max_amount);
                 return;

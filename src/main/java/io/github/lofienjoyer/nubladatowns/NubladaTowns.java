@@ -2,6 +2,7 @@ package io.github.lofienjoyer.nubladatowns;
 
 import io.github.lofienjoyer.nubladatowns.command.AdminCommand;
 import io.github.lofienjoyer.nubladatowns.command.TownCommand;
+import io.github.lofienjoyer.nubladatowns.configuration.ConfigValues;
 import io.github.lofienjoyer.nubladatowns.data.DataManager;
 import io.github.lofienjoyer.nubladatowns.data.YamlDataManager;
 import io.github.lofienjoyer.nubladatowns.listener.MapListener;
@@ -30,10 +31,14 @@ public final class NubladaTowns extends JavaPlugin {
     private TownManager townManager;
     private BukkitTask townBordersTask;
     private DataManager dataManager;
+    private ConfigValues configValues;
 
     @Override
     public void onEnable() {
         INSTANCE = this;
+
+        saveDefaultConfig();
+        this.configValues = new ConfigValues();
 
         this.localizationManager = new LocalizationManager();
         this.powerManager = new PowerManager();
@@ -64,13 +69,9 @@ public final class NubladaTowns extends JavaPlugin {
     }
 
     public void reloadPlugin() {
+        this.configValues = new ConfigValues();
+        powerManager.reloadConfig();
         this.localizationManager.reloadConfig();
-        try {
-            saveData();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        loadData();
     }
 
     public void loadData() {
@@ -102,6 +103,10 @@ public final class NubladaTowns extends JavaPlugin {
 
     public TownManager getTownManager() {
         return townManager;
+    }
+
+    public ConfigValues getConfigValues() {
+        return configValues;
     }
 
     public static NubladaTowns getInstance() {
