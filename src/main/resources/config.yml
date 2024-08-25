@@ -1,0 +1,52 @@
+max-roles-per-town: 8
+claim-land-power: 16
+max-town-power-multiplier: 64
+default-entity-power-amount: 1
+power-by-entity:
+  bee: 2
+  dolphin: 2
+  drowned: 2
+  fox: 2
+  goat: 2
+  iron_golem: 4
+  llama: 2
+  panda: 2
+  piglin: 2
+  polar_bear: 2
+  trader_llama: 2
+  wolf: 2
+  blaze: 4
+  bogged: 4
+  breeze: 4
+  cave_spider: 4
+  creeper: 4
+  elder_guardian: 16
+  enderman: 4
+  endermite: 4
+  ender_dragon: 64
+  evoker: 4
+  ghast: 4
+  guardian: 4
+  hoglin: 4
+  husk: 4
+  magma_cube: 4
+  phantom: 4
+  piglin_brute: 4
+  pillager: 4
+  ravager: 4
+  shulker: 4
+  silverfish: 4
+  skeleton: 4
+  slime: 4
+  spider: 4
+  stray: 4
+  vex: 4
+  vindicator: 4
+  warden: 4
+  witch: 4
+  wither: 64
+  wither_skeleton: 4
+  zoglin: 4
+  zombie: 4
+  zombie_villager: 4
+  zombified_piglin: 4

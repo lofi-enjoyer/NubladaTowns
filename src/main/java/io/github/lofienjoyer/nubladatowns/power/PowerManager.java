@@ -25,7 +25,7 @@ public class PowerManager {
     }
 
     private Map<EntityType, Integer> loadPower(NubladaTowns instance) {
-        var powerSection = instance.getConfig().getConfigurationSection("power");
+        var powerSection = instance.getConfig().getConfigurationSection("power-by-entity");
         if (powerSection == null)
             return Map.of();
 
