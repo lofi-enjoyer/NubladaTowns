@@ -69,6 +69,7 @@ public final class NubladaTowns extends JavaPlugin {
     }
 
     public void reloadPlugin() {
+        reloadConfig();
         this.configValues = new ConfigValues();
         powerManager.reloadConfig();
         this.localizationManager.reloadConfig();
