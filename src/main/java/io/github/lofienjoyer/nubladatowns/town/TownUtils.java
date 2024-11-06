@@ -185,36 +185,50 @@ public class TownUtils {
     }
 
     public static void showRoleEditor(Player player, Town town, Role role) {
+        showRoleEditor(player, town, role, 0);
+    }
+
+    public static void showRoleEditor(Player player, Town town, Role role, int page) {
+        if (page < 0)
+            return;
+
+        var minPermission = page * 5;
+        if (minPermission >= Permission.values().length)
+            return;
+        var maxPermission = Math.min(minPermission + 5, Permission.values().length);
+
         var componentList = Component.text()
                 .append(getBackButton("/nubladatowns:town roles " + town.getName()))
                 .append(ComponentUtils.replaceString(lm.getMessage("role-editor-title"), "%role%", role.getName()))
                 .appendNewline()
-                .appendNewline()
                 .append(lm.getMessage("role-editor-edit"))
-                .appendNewline()
-                .append(getPermissionWithColor("role-editor-edit-build", Permission.BUILD, town, role))
-                .appendNewline()
-                .append(getPermissionWithColor("role-editor-edit-destroy", Permission.DESTROY, town, role))
-                .appendNewline()
-                .append(getPermissionWithColor("role-editor-edit-interact", Permission.INTERACT, town, role))
-                .appendNewline()
-                .append(getPermissionWithColor("role-editor-edit-invite", Permission.INVITE, town, role))
-                .appendNewline()
-                .append(getPermissionWithColor("role-editor-edit-kick", Permission.KICK, town, role))
-                .appendNewline()
-                .append(getPermissionWithColor("role-editor-edit-rename", Permission.RENAME, town, role))
-                .appendNewline()
-                .append(getPermissionWithColor("role-editor-edit-change-spawn", Permission.CHANGE_SPAWN, town, role))
-                .appendNewline()
-                .append(getPermissionWithColor("role-editor-edit-manage-roles", Permission.MANAGE_ROLES, town, role))
-                .appendNewline()
-                .append(getPermissionWithColor("role-editor-edit-assign-roles", Permission.ASSIGN_ROLES, town, role))
-                .appendNewline()
-                .appendNewline()
-                .append(lm.getMessage("role-editor-delete")
-                        .clickEvent(ClickEvent.runCommand("/nubladatowns:town edit role " + role.getName() + " delete"))
-                        .hoverEvent(HoverEvent.showText(lm.getMessage("cannot-be-undone")))
-                )
+                .appendNewline();
+
+        for (int i = minPermission; i < maxPermission; i++) {
+            var permission = Permission.values()[i];
+            var permissionName = permission.name().toLowerCase().replace("_", "-");
+            componentList = componentList.appendNewline().append(getPermissionWithColor("role-editor-edit-" + permissionName, permission, role));
+        }
+
+        componentList = componentList.appendNewline();
+
+        var hasButtons = false;
+        if (minPermission != 0) {
+            componentList = componentList.append(getPreviousButton("/nubladatowns:town edit role " + role.getName() + " " + (page - 1)));
+            hasButtons = true;
+        }
+
+        if (maxPermission != Permission.values().length) {
+            componentList = componentList.append(getNextButton("/nubladatowns:town edit role " + role.getName() + " " + (page + 1)));
+            hasButtons = true;
+        }
+
+        if (hasButtons) {
+            componentList = componentList.appendNewline();
+        }
+        componentList = componentList.appendNewline().append(lm.getMessage("role-editor-delete")
+                .clickEvent(ClickEvent.runCommand("/nubladatowns:town edit role " + role.getName() + " delete"))
+                .hoverEvent(HoverEvent.showText(lm.getMessage("cannot-be-undone"))))
                 .appendNewline();
 
         var title = Component.text("Town menu");
@@ -222,7 +236,7 @@ public class TownUtils {
         player.openBook(Book.book(title, author, componentList.build()));
     }
 
-    private static Component getPermissionWithColor(String message, Permission permission, Town town, Role role) {
+    private static Component getPermissionWithColor(String message, Permission permission, Role role) {
         var color = NamedTextColor.GRAY;
         var status = lm.getMessage("role-editor-permission-not-granted");
         var command = "/nubladatowns:town edit role " + role.getName() + " grant " + permission.name();
@@ -262,6 +276,22 @@ public class TownUtils {
                 .append(lm.getMessage("menu-back-button"))
                 .clickEvent(ClickEvent.runCommand(previousPageCommand))
                 .hoverEvent(HoverEvent.showText(lm.getMessage("menu-back-button-hover")))
+                .build();
+    }
+
+    private static Component getPreviousButton(String command) {
+        return Component.text()
+                .append(lm.getMessage("menu-previous-button"))
+                .clickEvent(ClickEvent.runCommand(command))
+                .hoverEvent(HoverEvent.showText(lm.getMessage("menu-previous-button-hover")))
+                .build();
+    }
+
+    private static Component getNextButton(String command) {
+        return Component.text()
+                .append(lm.getMessage("menu-next-button"))
+                .clickEvent(ClickEvent.runCommand(command))
+                .hoverEvent(HoverEvent.showText(lm.getMessage("menu-next-button-hover")))
                 .build();
     }
 

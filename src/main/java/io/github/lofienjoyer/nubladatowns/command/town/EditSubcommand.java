@@ -73,15 +73,10 @@ public class EditSubcommand implements BiConsumer<CommandSender, String[]> {
                     player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-deleted", true), "%role%", role.getName()));
                     town.removeRole(role);
                     return;
+                } else {
+                    var page = Integer.parseInt(args[2]);
+                    TownUtils.showRoleEditor(player, town, role, page);
                 }
-            } else if (args.length == 3 && args[2].equals("delete")) {
-                if (!town.hasPermission(player, Permission.MANAGE_ROLES)) {
-                    player.sendMessage(localizationManager.getMessage("no-permission"));
-                    return;
-                }
-
-                player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-deleted", true), "%role%", role.getName()));
-                town.removeRole(role);
             } else if (args.length == 4) {
                 switch (args[2]) {
                     case "grant" -> {
