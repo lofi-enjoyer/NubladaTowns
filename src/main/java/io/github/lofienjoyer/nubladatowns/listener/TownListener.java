@@ -111,6 +111,11 @@ public class TownListener implements Listener {
             return;
         }
 
+        if (!playerTown.getUniqueId().equals(townManager.getTownOnChunk(event.getBlock().getChunk()).getUniqueId())) {
+            player.sendActionBar(localizationManager.getMessage("land-not-claimed-yet"));
+            return;
+        }
+
         if (!playerTown.hasPermission(player, Permission.CHANGE_SPAWN)) {
             player.sendActionBar(localizationManager.getMessage("no-permission"));
             return;
