@@ -79,6 +79,50 @@ public class TownListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onLecternPlace(BlockPlaceEvent event) {
+        if (event.getItemInHand().getType() != Material.LECTERN)
+            return;
+
+        if (!event.getItemInHand().hasItemMeta())
+            return;
+
+        var meta = event.getItemInHand().getItemMeta();
+
+        var player = event.getPlayer();
+        if (!meta.hasDisplayName()) {
+            return;
+        }
+
+        var townName = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(meta.displayName()));
+        var lecternTown = townManager.getTownByName(townName);
+        if (lecternTown == null)
+            return;
+
+        var playerTown = townManager.getPlayerTown(player);
+
+        if (playerTown == null) {
+            player.sendMessage(localizationManager.getMessage("not-in-a-town", true));
+            return;
+        }
+
+        if (!playerTown.getUniqueId().equals(lecternTown.getUniqueId())) {
+            player.sendActionBar(localizationManager.getMessage("cannot-move-other-town-lectern"));
+            return;
+        }
+
+        if (!playerTown.hasPermission(player, Permission.CHANGE_SPAWN)) {
+            player.sendActionBar(localizationManager.getMessage("no-permission"));
+            return;
+        }
+
+        playerTown.getSpawn().getBlock().setType(Material.AIR);
+        var location = event.getBlock().getLocation();
+        playerTown.setSpawn(location);
+        player.sendMessage(localizationManager.getMessage("lectern-moved"));
+        location.getWorld().playSound(location, Sound.ITEM_LODESTONE_COMPASS_LOCK, 1, 0.75f);
+    }
+
     private boolean createTown(Player player, Location location, String townName, Banner banner) {
         var currentTown = townManager.getTownOnChunk(location.getChunk());
         if (currentTown != null) {
