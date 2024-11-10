@@ -10,6 +10,7 @@ public class ConfigValues {
     private final int claimLandPower = getValue("claim-land-power", Integer.class, 16);
     private final int maxTownPowerMultiplier = getValue("max-town-power-multiplier", Integer.class, 64);
     private final int defaultPowerAmount = getValue("default-entity-power-amount", Integer.class, 1);
+    private final int townInviteXpLevels = getValue("town-invite-xp-levels", Integer.class, 5);
 
     public static <T> T getValue(String path, Class<T> type, T defaultValue) {
         var value = NubladaTowns.getInstance().getConfig().get(path);
