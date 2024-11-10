@@ -5,6 +5,7 @@ import io.github.lofienjoyer.nubladatowns.command.TownCommand;
 import io.github.lofienjoyer.nubladatowns.configuration.ConfigValues;
 import io.github.lofienjoyer.nubladatowns.data.DataManager;
 import io.github.lofienjoyer.nubladatowns.data.YamlDataManager;
+import io.github.lofienjoyer.nubladatowns.hooks.SquareMapIntegration;
 import io.github.lofienjoyer.nubladatowns.hooks.TownPlaceholderExpansion;
 import io.github.lofienjoyer.nubladatowns.listener.MapListener;
 import io.github.lofienjoyer.nubladatowns.listener.PowerListener;
@@ -34,6 +35,8 @@ public final class NubladaTowns extends JavaPlugin {
     private DataManager dataManager;
     private ConfigValues configValues;
 
+    private SquareMapIntegration squareMapIntegration;
+
     @Override
     public void onEnable() {
         INSTANCE = this;
@@ -60,6 +63,9 @@ public final class NubladaTowns extends JavaPlugin {
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
             new TownPlaceholderExpansion(this, this.townManager);
+
+        if (Bukkit.getPluginManager().isPluginEnabled("squaremap"))
+            this.squareMapIntegration = new SquareMapIntegration(this, this.townManager);
     }
 
     @Override
