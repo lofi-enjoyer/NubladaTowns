@@ -207,7 +207,7 @@ public class TownUtils {
         for (int i = minPermission; i < maxPermission; i++) {
             var permission = Permission.values()[i];
             var permissionName = permission.name().toLowerCase().replace("_", "-");
-            componentList = componentList.appendNewline().append(getPermissionWithColor("role-editor-edit-" + permissionName, permission, role));
+            componentList = componentList.appendNewline().append(getPermissionWithColor("role-editor-edit-" + permissionName, permission, role, page));
         }
 
         componentList = componentList.appendNewline();
@@ -236,14 +236,14 @@ public class TownUtils {
         player.openBook(Book.book(title, author, componentList.build()));
     }
 
-    private static Component getPermissionWithColor(String message, Permission permission, Role role) {
+    private static Component getPermissionWithColor(String message, Permission permission, Role role, int currentPage) {
         var color = NamedTextColor.GRAY;
         var status = lm.getMessage("role-editor-permission-not-granted");
-        var command = "/nubladatowns:town edit role " + role.getName() + " grant " + permission.name();
+        var command = "/nubladatowns:town edit role " + role.getName() + " grant " + permission.name() + " " + currentPage;
         if (role.getPermissions().contains(permission)) {
             color = NamedTextColor.GREEN;
             status = lm.getMessage("role-editor-permission-granted");
-            command = "/nubladatowns:town edit role " + role.getName() + " revoke " + permission.name();
+            command = "/nubladatowns:town edit role " + role.getName() + " revoke " + permission.name() + " " + currentPage;
         }
 
         var component = Component.text()
