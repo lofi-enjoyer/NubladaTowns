@@ -44,9 +44,12 @@ public class TownMapRenderer extends MapRenderer {
                 return;
 
             var townSpawn = town.getSpawn();
-            var cursorX = ((townSpawn.getBlockX() - startX * 16) / scale) * 2 - 128;
-            var cursorZ = ((townSpawn.getBlockZ() - startZ * 16) / scale) * 2 - 128;
-            cursors.addCursor(new MapCursor((byte)cursorX, (byte)cursorZ, (byte)8, BannerUtils.getBannerByColor(town.getRgbColor()), true, Component.text(town.getName(), TextColor.color(town.getRgbColor()))));
+            var cursorX = ((townSpawn.getBlockX() - startX * 16) / scale);
+            var cursorZ = ((townSpawn.getBlockZ() - startZ * 16) / scale);
+            if (canvas.getBasePixelColor(cursorX, cursorZ).getAlpha() == 0)
+                return;
+
+            cursors.addCursor(new MapCursor((byte)(cursorX * 2 - 128), (byte)(cursorZ * 2 - 128), (byte)8, BannerUtils.getBannerByColor(town.getRgbColor()), true, Component.text(town.getName(), TextColor.color(town.getRgbColor()))));
         });
         canvas.setCursors(cursors);
     }
@@ -55,6 +58,9 @@ public class TownMapRenderer extends MapRenderer {
         for (int x = 0; x < size; x++) {
             for (int z = 0; z < size; z++) {
                 var color = canvas.getBasePixelColor(x + startX, z + startZ);
+                if (color.getAlpha() == 0)
+                    continue;
+
                 canvas.setPixelColor(x + startX, z + startZ, new Color((color.getRed() + townColor.getRed()) / 2, (color.getGreen() + townColor.getGreen()) / 2, (color.getBlue() + townColor.getBlue()) / 2));
             }
         }
