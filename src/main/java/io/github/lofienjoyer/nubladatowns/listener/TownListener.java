@@ -260,6 +260,13 @@ public class TownListener implements Listener {
                 return;
             }
 
+            var levelsNeeded = NubladaTowns.getInstance().getConfigValues().getTownInviteXpLevels();
+            if (player.getLevel() < levelsNeeded) {
+                player.sendMessage(localizationManager.getMessage("town-invite-not-enough-xp"));
+                return;
+            }
+
+            player.setLevel(player.getLevel() - levelsNeeded);
             item.subtract();
 
             var inviteItem = new ItemStack(Material.BOOK);

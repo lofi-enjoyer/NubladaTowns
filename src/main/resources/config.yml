@@ -2,6 +2,7 @@ max-roles-per-town: 8
 claim-land-power: 16
 max-town-power-multiplier: 64
 default-entity-power-amount: 1
+town-invite-xp-levels: 5
 power-by-entity:
   bee: 2
   dolphin: 2
