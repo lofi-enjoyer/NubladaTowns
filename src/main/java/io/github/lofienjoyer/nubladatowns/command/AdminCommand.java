@@ -28,6 +28,7 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
         subCommands.put("tp", new TeleportSubcommand(localizationManager));
         subCommands.put("load", new LoadSubcommand(localizationManager));
         subCommands.put("save", new SaveSubcommand(localizationManager));
+        subCommands.put("info", new InfoSubcommand(localizationManager));
     }
 
     @Override
