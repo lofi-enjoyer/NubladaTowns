@@ -25,16 +25,18 @@ public class Town {
     private int power;
     private UUID mayor;
     private ArrayList<Role> roles = new ArrayList<>();
+    private List<TownHistoryEvent> historyEvents;
 
-    public Town(UUID uniqueId, String name, List<UUID> residents, List<LandChunk> claimedLand) {
+    public Town(UUID uniqueId, String name, List<UUID> residents, List<LandChunk> claimedLand, List<TownHistoryEvent> historyEvents) {
         this.uniqueId = uniqueId;
         this.name = name;
         this.residents = residents;
         this.claimedLand = claimedLand;
+        this.historyEvents = historyEvents;
     }
 
     public Town(String name) {
-        this(UUID.randomUUID(), name, new ArrayList<>(), new ArrayList<>());
+        this(UUID.randomUUID(), name, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     protected void addLand(LandChunk chunk) {
@@ -67,12 +69,20 @@ public class Town {
 
     protected void removeResident(Player player) { removeResident(player.getUniqueId()); }
 
+    protected void addHistoryEvent(TownHistoryEvent event) {
+        historyEvents.add(event);
+    }
+
     public List<UUID> getResidents() {
         return Collections.unmodifiableList(residents);
     }
 
     public List<LandChunk> getClaimedLand() {
         return Collections.unmodifiableList(claimedLand);
+    }
+
+    public List<TownHistoryEvent> getHistoryEvents() {
+        return historyEvents;
     }
 
     public String getName() {
