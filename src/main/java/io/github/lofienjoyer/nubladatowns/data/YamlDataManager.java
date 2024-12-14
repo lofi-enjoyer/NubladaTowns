@@ -1,9 +1,11 @@
 package io.github.lofienjoyer.nubladatowns.data;
 
+import io.github.lofienjoyer.nubladatowns.NubladaTowns;
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
 import io.github.lofienjoyer.nubladatowns.town.LandChunk;
 import io.github.lofienjoyer.nubladatowns.town.Town;
+import io.github.lofienjoyer.nubladatowns.town.TownHistoryEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -13,12 +15,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class YamlDataManager implements DataManager {
+
+    private static final SimpleDateFormat HISTORY_EVENTS_TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm");
 
     private final File file;
 
@@ -51,7 +55,9 @@ public class YamlDataManager implements DataManager {
                     })
                     .collect(Collectors.toList());
 
-            var town = new Town(townUuid, name, residentUniqueIds, landChunks);
+            var historyEvents = parseTownHistoryEvents(section.getStringList("history"));
+
+            var town = new Town(townUuid, name, residentUniqueIds, landChunks, historyEvents);
             town.setRgbColor(section.getInt("color"));
             var patterns = section.getStringList("banner-patterns").stream()
                     .map(s -> {
@@ -125,9 +131,31 @@ public class YamlDataManager implements DataManager {
                 section.set("roles." + role.getName() + ".permissions", permissions);
                 section.set("roles." + role.getName() + ".players", players);
             }
+            var historyEvents = town.getHistoryEvents().stream()
+                    .map(event -> {
+                        return String.format("%s:%s:%s", HISTORY_EVENTS_TIMESTAMP_FORMAT.format(event.getTimestamp()), event.getDescription().replace(":", ""), event.getType());
+                    })
+                    .toList();
+            section.set("history", historyEvents);
         });
 
         dataConfig.save(file);
+    }
+
+    private List<TownHistoryEvent> parseTownHistoryEvents(List<String> eventsList) {
+        return eventsList.stream()
+                .map(s -> {
+                    try {
+                        var parts = s.split(":");
+                        var date = HISTORY_EVENTS_TIMESTAMP_FORMAT.parse(parts[0]);
+                        return new TownHistoryEvent(date, parts[1], TownHistoryEvent.Type.valueOf(parts[2].toUpperCase()));
+                    } catch (Exception e) {
+                        NubladaTowns.getInstance().getLogger().severe(String.format("Could not parse town event: '%s'", s));
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
 }

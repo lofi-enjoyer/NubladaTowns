@@ -177,3 +177,14 @@ town-invite-created: "<green>Invite created!</green>"
 town-invite-required: "<red>You need a town invite in your hand to join %town%.</red>"
 town-invite-wrong-town: "<red>This invite is not valid for this town.</red>"
 town-invite-not-enough-xp: "<red>You need at least %levels% levels of experience to create an invite.</red>"
+
+#
+# Town history
+#
+
+town-history-title: "<blue><bold>Town history</bold></blue>"
+town-history-event-format: "<gold>%timestamp%</gold> <gray>%type%</gray> <dark_gray>%description%</dark_gray>"
+town-history-type-creation: "Creation"
+town-history-type-player-join: "Player joined"
+town-history-type-player-leave: "Player left"
+town-history-list: "<blue>[Town history]</blue>"

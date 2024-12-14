@@ -13,11 +13,14 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +28,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class TownUtils {
+
+    private static final SimpleDateFormat HISTORY_EVENTS_TIMESTAMP_FORMAT = new SimpleDateFormat("dd/MM/yy");
     private static final LocalizationManager lm = NubladaTowns.getInstance().getLocalizationManager();
+
 
     public static void showTownMenu(Player player, Town town) {
         var title = Component.text("Town menu");
@@ -45,7 +51,9 @@ public class TownUtils {
                 .appendNewline()
                 .append(lm.getMessage("town-menu-resident-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town list " + town.getName())))
                 .appendNewline()
-                .append(lm.getMessage("town-menu-roles-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town roles " + town.getName())));
+                .append(lm.getMessage("town-menu-roles-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town roles " + town.getName())))
+                .appendNewline()
+                .append(lm.getMessage("town-history-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town history")));
 
         if (town.hasPermission(player, Permission.CHANGE_BANNER)) {
             content = content.appendNewline()
@@ -132,6 +140,50 @@ public class TownUtils {
                     .append(Component.text("▪ ", NamedTextColor.GRAY))
                     .append(getRoleWithColor(target, role))
                     .appendNewline();
+        }
+
+        var title = Component.text("Town menu");
+        var author = Component.text("NubladaTowns");
+        player.openBook(Book.book(title, author, componentList.build()));
+    }
+
+    public static void showTownHistory(Player player, Town town, int page) {
+        if (page < 0)
+            return;
+
+        var minEvent = page * 5;
+        if (minEvent >= Permission.values().length)
+            return;
+        var maxEvent = Math.min(minEvent + 5, town.getHistoryEvents().size());
+
+        var componentList = Component.text()
+                .append(getBackButton("/nubladatowns:town menu " + town.getName()))
+                .append(lm.getMessage("town-history-title"))
+                .appendNewline();
+
+        for (int i = minEvent; i < maxEvent; i++) {
+            var event = town.getHistoryEvents().get(i);
+            var eventName = PlainTextComponentSerializer.plainText().serialize(lm.getMessage("town-history-type-" + event.getType().name().toLowerCase().replace("_", "-")));
+            var timestamp = HISTORY_EVENTS_TIMESTAMP_FORMAT.format(event.getTimestamp());
+            var description = event.getDescription().isBlank() ? "" : "(" + event.getDescription() + ")";
+            componentList = componentList.appendNewline().append(
+                    ComponentUtils.replaceString(ComponentUtils.replaceString(ComponentUtils.replaceString(
+                                    lm.getMessage("town-history-event-format"), "%timestamp%", timestamp),
+                            "%type%",
+                            eventName),
+                            "%description%",
+                            description)
+            );
+        }
+
+        componentList = componentList.appendNewline();
+
+        if (minEvent != 0) {
+            componentList = componentList.append(getPreviousButton("/nubladatowns:town history " + (page - 1)));
+        }
+
+        if (maxEvent != town.getHistoryEvents().size()) {
+            componentList = componentList.append(getNextButton("/nubladatowns:town history " + (page + 1)));
         }
 
         var title = Component.text("Town menu");
