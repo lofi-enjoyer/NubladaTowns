@@ -2,7 +2,6 @@ package io.github.lofienjoyer.nubladatowns.command.town;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
 import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
-import io.github.lofienjoyer.nubladatowns.town.Town;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import io.github.lofienjoyer.nubladatowns.town.TownUtils;
 import org.bukkit.command.CommandSender;
@@ -28,19 +27,10 @@ public class HistorySubcommand implements BiConsumer<CommandSender, String[]> {
         }
 
         // TODO: Check if using own town's lectern
-        Town town;
-        if (args.length == 0) {
-            town = townManager.getPlayerTown(player);
-            if (town == null) {
-                sender.sendMessage(localizationManager.getMessage("not-in-a-town"));
-                return;
-            }
-        } else {
-            town = townManager.getTownByName(String.join(" ", args));
-            if (town == null) {
-                sender.sendMessage(localizationManager.getMessage("non-existent-town"));
-                return;
-            }
+        var town = townManager.getPlayerTown(player);
+        if (town == null) {
+            sender.sendMessage(localizationManager.getMessage("not-in-a-town"));
+            return;
         }
 
         if (player.getLocation().distanceSquared(town.getSpawn()) > 5 * 5) {
@@ -48,9 +38,16 @@ public class HistorySubcommand implements BiConsumer<CommandSender, String[]> {
             return;
         }
 
-        town.getHistoryEvents().forEach(event -> {
-            player.sendMessage(event.getDescription());
-        });
+        var page = 0;
+        if (args.length != 0) {
+            try {
+                page = Integer.parseInt(args[0]);
+            } catch (Exception ignored) {
+
+            }
+        }
+
+        TownUtils.showTownHistory(player, town, page);
     }
 
 }
