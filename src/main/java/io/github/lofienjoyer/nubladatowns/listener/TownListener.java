@@ -17,7 +17,9 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.Banner;
 import org.bukkit.block.data.Directional;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -77,6 +79,68 @@ public class TownListener implements Listener {
         } else {
             createTown(player, event.getBlock().getLocation(), townName, state);
         }
+    }
+
+    @EventHandler
+    public void onUnclaim(BlockPlaceEvent event) {
+        if (event.getItemInHand().getType() != Material.TNT)
+            return;
+
+        if (!event.getItemInHand().hasItemMeta())
+            return;
+
+        var meta = event.getItemInHand().getItemMeta();
+
+        var player = event.getPlayer();
+        if (!meta.hasDisplayName()) {
+            return;
+        }
+
+        var townName = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(meta.displayName()));
+        var tntTown = townManager.getTownByName(townName);
+        if (tntTown == null)
+            return;
+
+        var playerTown = townManager.getPlayerTown(player);
+
+        if (playerTown == null) {
+            player.sendMessage(localizationManager.getMessage("not-in-a-town", true));
+            return;
+        }
+
+        if (!playerTown.hasPermission(player, Permission.CLAIM_TERRITORY)) {
+            player.sendActionBar(localizationManager.getMessage("no-permission"));
+            return;
+        }
+
+        if (!playerTown.getUniqueId().equals(tntTown.getUniqueId())) {
+            player.sendActionBar(localizationManager.getMessage("cannot-abandon-for-other-town"));
+            return;
+        }
+
+        if (!playerTown.getUniqueId().equals(townManager.getTownOnChunk(event.getBlock().getChunk()).getUniqueId())) {
+            player.sendActionBar(localizationManager.getMessage("land-not-claimed-yet"));
+            return;
+        }
+
+        if (playerTown.getSpawn().getChunk().equals(event.getBlock().getChunk())) {
+            player.sendActionBar(localizationManager.getMessage("move-lectern-before-abandoning"));
+            return;
+        }
+
+        townManager.abandonChunk(event.getBlock().getChunk());
+        event.setCancelled(true);
+        event.getItemInHand().subtract();
+
+        var tnt = (TNTPrimed) event.getBlock().getWorld().spawnEntity(event.getBlock().getLocation().toCenterLocation(), EntityType.TNT);
+        tnt.setYield((float) NubladaTowns.getInstance().getConfigValues().getTownAbandonTntYield());
+        tnt.setIsIncendiary(NubladaTowns.getInstance().getConfigValues().isTownAbandonTntFire());
+        tnt.setFuseTicks(NubladaTowns.getInstance().getConfigValues().getTownAbandonTntFuseTicks());
+
+        player.sendMessage(localizationManager.getMessage("land-abandoned-successfully"));
+        Bukkit.broadcast(ComponentUtils.replaceTownName(localizationManager.getMessage("town-abandoned-land", true), playerTown));
+        var returnedPower = NubladaTowns.getInstance().getConfigValues().getClaimLandPower() * (int) (NubladaTowns.getInstance().getConfigValues().getTownAbandonPowerReturnPercentage() / 100f);
+        playerTown.setPower(playerTown.getPower() + returnedPower);
     }
 
     @EventHandler
