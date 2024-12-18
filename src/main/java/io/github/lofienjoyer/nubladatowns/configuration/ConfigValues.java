@@ -11,6 +11,10 @@ public class ConfigValues {
     private final int maxTownPowerMultiplier = getValue("max-town-power-multiplier", Integer.class, 64);
     private final int defaultPowerAmount = getValue("default-entity-power-amount", Integer.class, 1);
     private final int townInviteXpLevels = getValue("town-invite-xp-levels", Integer.class, 5);
+    private final double townAbandonPowerReturnPercentage = getValue("town-abandon.power-return-percentage", Double.class, 20.0);
+    private final double townAbandonTntYield = getValue("town-abandon.tnt.yield", Double.class, 2.0);
+    private final boolean townAbandonTntFire = getValue("town-abandon.tnt.fire", Boolean.class, false);
+    private final int townAbandonTntFuseTicks = getValue("town-abandon.tnt.fuse-ticks", Integer.class, 100);
 
     public static <T> T getValue(String path, Class<T> type, T defaultValue) {
         var value = NubladaTowns.getInstance().getConfig().get(path);

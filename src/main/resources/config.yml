@@ -51,3 +51,9 @@ power-by-entity:
   zombie: 4
   zombie_villager: 4
   zombified_piglin: 4
+town-abandon:
+  power-return-percentage: 20.0 # Returns 20% of the claiming cost to the town
+  tnt:
+    yield: 2.0
+    fire: false
+    fuse-ticks: 100
