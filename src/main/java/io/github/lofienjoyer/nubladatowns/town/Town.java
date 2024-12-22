@@ -2,10 +2,14 @@ package io.github.lofienjoyer.nubladatowns.town;
 
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,17 +30,22 @@ public class Town {
     private UUID mayor;
     private ArrayList<Role> roles = new ArrayList<>();
     private List<TownHistoryEvent> historyEvents;
+    private Inventory inventory;
 
-    public Town(UUID uniqueId, String name, List<UUID> residents, List<LandChunk> claimedLand, List<TownHistoryEvent> historyEvents) {
+    public Town(UUID uniqueId, String name, List<UUID> residents, List<LandChunk> claimedLand, List<TownHistoryEvent> historyEvents, List<ItemStack> inventoryItems) {
         this.uniqueId = uniqueId;
         this.name = name;
         this.residents = residents;
         this.claimedLand = claimedLand;
         this.historyEvents = historyEvents;
+        this.inventory = Bukkit.createInventory(null, 9, Component.text(name));
+        for (int i = 0; i < 9; i++) {
+            inventory.setItem(i, inventoryItems.get(i));
+        }
     }
 
     public Town(String name) {
-        this(UUID.randomUUID(), name, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        this(UUID.randomUUID(), name, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     protected void addLand(LandChunk chunk) {
@@ -138,6 +147,10 @@ public class Town {
     protected void setMayor(Player player) { setMayor(player.getUniqueId()); }
 
     public UUID getMayor() { return mayor; }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
 
     public void addRole(Role role) { this.roles.add(role); }
 

@@ -12,7 +12,8 @@ public enum Permission {
     ASSIGN_ROLES,
     CHANGE_BANNER,
     CLAIM_TERRITORY,
-    ABANDON_TERRITORY;
+    ABANDON_TERRITORY,
+    OPEN_INVENTORY;
 
     public static boolean contains(String literal) {
         for (Permission permission : Permission.values()) {

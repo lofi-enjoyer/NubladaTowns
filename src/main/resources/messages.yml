@@ -190,4 +190,10 @@ town-history-event-format: "<gold>%timestamp%</gold> <gray>%type%</gray> <dark_g
 town-history-type-creation: "Creation"
 town-history-type-player-join: "Player joined"
 town-history-type-player-leave: "Player left"
-town-history-list: "<blue>[Town history]</blue>"
+town-history-list: "<blue>[⌚]</blue>"
+
+#
+# Town inventory
+#
+
+town-inventory-list: "<blue>[💰]</blue>"
