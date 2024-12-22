@@ -5,6 +5,7 @@ import io.github.lofienjoyer.nubladatowns.command.TownCommand;
 import io.github.lofienjoyer.nubladatowns.configuration.ConfigValues;
 import io.github.lofienjoyer.nubladatowns.data.DataManager;
 import io.github.lofienjoyer.nubladatowns.data.YamlDataManager;
+import io.github.lofienjoyer.nubladatowns.economy.NubladaEconomyHandler;
 import io.github.lofienjoyer.nubladatowns.hooks.SquareMapIntegration;
 import io.github.lofienjoyer.nubladatowns.hooks.TownPlaceholderExpansion;
 import io.github.lofienjoyer.nubladatowns.listener.MapListener;
@@ -15,6 +16,7 @@ import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
 import io.github.lofienjoyer.nubladatowns.power.PowerManager;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import io.github.lofienjoyer.nubladatowns.utils.ParticleUtils;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -36,6 +38,9 @@ public final class NubladaTowns extends JavaPlugin {
     private ConfigValues configValues;
 
     private SquareMapIntegration squareMapIntegration;
+    private NubladaEconomyHandler economyHandler;
+
+    private boolean economyEnabled;
 
     @Override
     public void onEnable() {
@@ -66,6 +71,9 @@ public final class NubladaTowns extends JavaPlugin {
 
         if (Bukkit.getPluginManager().isPluginEnabled("squaremap"))
             this.squareMapIntegration = new SquareMapIntegration(this, this.townManager);
+
+        if (Bukkit.getPluginManager().isPluginEnabled("vault"))
+            setupEconomy();
     }
 
     @Override
@@ -106,6 +114,15 @@ public final class NubladaTowns extends JavaPlugin {
         townBordersTask.cancel();
     }
 
+    private void setupEconomy() {
+        var rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null)
+            return;
+
+        this.economyHandler = new NubladaEconomyHandler(rsp.getProvider());
+        this.economyEnabled = true;
+    }
+
     public LocalizationManager getLocalizationManager() {
         return localizationManager;
     }
@@ -118,6 +135,14 @@ public final class NubladaTowns extends JavaPlugin {
 
     public ConfigValues getConfigValues() {
         return configValues;
+    }
+
+    public NubladaEconomyHandler getEconomyHandler() {
+        return economyHandler;
+    }
+
+    public boolean isEconomyEnabled() {
+        return economyEnabled;
     }
 
     public static NubladaTowns getInstance() {

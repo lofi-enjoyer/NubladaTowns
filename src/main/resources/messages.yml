@@ -29,6 +29,9 @@ loading-data: "<white>Loading data...</white>"
 data-loaded: "<green>Data loaded!</green>"
 error-loading-data: "<red>An error has occurred while saving the data. Check the console for more information.</red>"
 town-information: "<bold><dark_gray>-</dark_gray> %town% <dark_gray>-</dark_gray></bold><newline> <gray>Residents:</gray> %residents% player(s)<newline> <gray>Power:</gray> %power%<newline> <gray>Territory:</gray> %territory% chunk(s)"
+town-balance: "<green>The balance of %town% is currently %value%</green>"
+town-balance-changed: "<green>The balance of %town% was not set to %value%</green>"
+economy-disabled: "<red>Economy is disabled.</red>"
 
 #
 # Town messages
