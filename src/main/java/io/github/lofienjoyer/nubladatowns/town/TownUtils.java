@@ -55,6 +55,10 @@ public class TownUtils {
                 .appendNewline()
                 .append(lm.getMessage("town-history-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town history")));
 
+        if (town.hasPermission(player, Permission.OPEN_INVENTORY)) {
+            content = content.append(Component.text(" ")).append(lm.getMessage("town-inventory-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town inventory")));
+        }
+
         if (town.hasPermission(player, Permission.CHANGE_BANNER)) {
             content = content.appendNewline()
                     .append(lm.getMessage("town-menu-change-banner").clickEvent(ClickEvent.runCommand("/nubladatowns:town setbanner")));
