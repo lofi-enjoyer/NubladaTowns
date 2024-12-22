@@ -12,6 +12,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +58,11 @@ public class YamlDataManager implements DataManager {
 
             var historyEvents = parseTownHistoryEvents(section.getStringList("history"));
 
-            var town = new Town(townUuid, name, residentUniqueIds, landChunks, historyEvents);
+            var inventoryItems = section.getList("inventory", new ArrayList<>()).stream()
+                    .map(o -> (ItemStack) o)
+                    .toList();
+
+            var town = new Town(townUuid, name, residentUniqueIds, landChunks, historyEvents, inventoryItems);
             town.setRgbColor(section.getInt("color"));
             var patterns = section.getStringList("banner-patterns").stream()
                     .map(s -> {
@@ -137,6 +142,8 @@ public class YamlDataManager implements DataManager {
                     })
                     .toList();
             section.set("history", historyEvents);
+            var inventoryItems = Arrays.stream(town.getInventory().getContents()).toList();
+            section.set("inventory", inventoryItems);
         });
 
         dataConfig.save(file);
