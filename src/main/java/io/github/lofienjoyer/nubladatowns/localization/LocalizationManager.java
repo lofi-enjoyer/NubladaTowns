@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class LocalizationManager {
 
@@ -25,25 +26,52 @@ public class LocalizationManager {
 
     private Map<String, Component> loadMessages(NubladaTowns instance) {
         var messagesFile = new File(instance.getDataFolder(), "messages.yml");
+        
+        // Asegurarse de que el directorio de datos existe
+        if (!instance.getDataFolder().exists()) {
+            instance.getDataFolder().mkdirs();
+        }
+        
+        // Copiar el archivo predeterminado si no existe
         if (!messagesFile.exists()) {
-            instance.saveResource("messages.yml", false);
+            try {
+                instance.saveResource("messages.yml", false);
+            } catch (Exception e) {
+                instance.getLogger().severe("Failed to save default messages.yml file: " + e.getMessage());
+                throw new RuntimeException("Failed to save default messages.yml file", e);
+            }
         }
 
         var mm = MiniMessage.miniMessage();
         var messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
-        var defaultMessagesConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(instance.getResource("messages.yml")));
+        
+        // Cargar el archivo predeterminado del jar
+        var defaultMessagesConfig = YamlConfiguration.loadConfiguration(
+            new InputStreamReader(Objects.requireNonNull(instance.getResource("messages.yml")))
+        );
 
         var messagesMap = new HashMap<String, Component>();
         for (String key : defaultMessagesConfig.getKeys(true)) {
             var message = messagesConfig.getString(key, defaultMessagesConfig.getString(key));
+            if (message == null) {
+                instance.getLogger().warning("Missing message key: " + key);
+                continue;
+            }
             messagesConfig.set(key, message);
-            messagesMap.put(key, mm.deserialize(message));
+            try {
+                messagesMap.put(key, mm.deserialize(message));
+            } catch (Exception e) {
+                instance.getLogger().warning("Failed to parse message for key " + key + ": " + e.getMessage());
+            }
         }
+        
         try {
             messagesConfig.save(messagesFile);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            instance.getLogger().severe("Failed to save messages.yml: " + e.getMessage());
+            throw new RuntimeException("Failed to save messages.yml", e);
         }
+        
         return messagesMap;
     }
 
@@ -53,10 +81,15 @@ public class LocalizationManager {
 
     public Component getMessage(String key, boolean prefix) {
         if (prefix) {
-            return messages.get("prefix").append(messages.get(key));
+            var prefixMessage = messages.get("prefix");
+            var message = messages.get(key);
+            if (prefixMessage == null || message == null) {
+                return Component.text("Missing message: " + key);
+            }
+            return prefixMessage.append(message);
         } else {
-            return messages.get(key);
+            var message = messages.get(key);
+            return message != null ? message : Component.text("Missing message: " + key);
         }
     }
-
 }

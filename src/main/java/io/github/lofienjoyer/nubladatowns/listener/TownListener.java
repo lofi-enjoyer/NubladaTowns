@@ -195,29 +195,41 @@ public class TownListener implements Listener {
     private boolean createTown(Player player, Location location, String townName, Banner banner) {
         var currentTown = townManager.getTownOnChunk(location.getChunk());
         if (currentTown != null) {
-            player.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("land-already-of", true), currentTown));
+            var message = ComponentUtils.replaceTownName(localizationManager.getMessage("land-already-of", true), currentTown);
+            if (message != null) {
+                player.sendMessage(message);
+            }
             return false;
         }
 
         var townWithSameName = townManager.getTownByName(townName);
         if (townWithSameName != null) {
-            player.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("town-already-exists", true), townWithSameName));
+            var message = ComponentUtils.replaceTownName(localizationManager.getMessage("town-already-exists", true), townWithSameName);
+            if (message != null) {
+                player.sendMessage(message);
+            }
             return false;
         }
 
         var patterns = banner.getPatterns();
         if (patterns.isEmpty()) {
-            player.sendActionBar(localizationManager.getMessage("invalid-banner", true));
+            var message = localizationManager.getMessage("invalid-banner", true);
+            if (message != null) {
+                player.sendActionBar(message);
+            }
             return false;
         }
 
         var color = banner.getBaseColor().getColor().asARGB();
         townManager.createTown(townName, location, player, color, banner.getPatterns());
 
-        Bukkit.broadcast(ComponentUtils.replacePlayerName(
+        var broadcastMessage = ComponentUtils.replacePlayerName(
                 ComponentUtils.replaceTownName(localizationManager.getMessage("player-founded-town", true), townName, color),
-                player.getName())
+                player.getName()
         );
+        if (broadcastMessage != null) {
+            Bukkit.broadcast(broadcastMessage);
+        }
 
         ParticleUtils.showChunkBorders(location.getChunk(), Particle.HAPPY_VILLAGER, player.getLocation().getY(), 40);
         SoundUtils.playAscendingSound(location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5f, 0.25f, 4);
