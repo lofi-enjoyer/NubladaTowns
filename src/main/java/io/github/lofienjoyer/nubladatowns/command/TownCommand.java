@@ -41,6 +41,7 @@ public class TownCommand implements CommandExecutor, TabCompleter {
         subCommands.put("setbanner", new SetBannerTownSubcommand(townManager));
         subCommands.put("history", new HistorySubcommand(townManager));
         subCommands.put("inventory", new InventorySubcommand(townManager));
+        subCommands.put("howtouse", new HowToUseSubcommand(townManager));
     }
 
     @Override

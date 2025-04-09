@@ -4,7 +4,7 @@ version: 0 # DO NOT EDIT. Reserved for future use.
 # General messages
 #
 
-prefix: "<yellow>Towns</yellow> <dark_gray>>></dark_gray> "
+prefix: "<blue>Towns</blue> <dark_gray>>></dark_gray> "
 reloading-plugin: "<white>Reloading plugin...</white>"
 plugin-reloaded: "<green>The plugin was successfully reloaded.</green>"
 
@@ -24,7 +24,7 @@ town-power: "<green>The power of %town% is currently %value%</green>"
 town-power-changed: "<green>The power of %town% was not set to %value%</green>"
 saving-data: "<white>Saving data...</white>"
 data-saved: "<green>Data saved!</green>"
-confirm-loading: "<yellow>Be careful!</yellow> <white>Any new or modified data since the last save will be lost. Use <bold>/nta load --confirm</bold> to continue.</white>"
+confirm-loading: "<blue>Be careful!</blue> <white>Any new or modified data since the last save will be lost. Use <bold>/nta load --confirm</bold> to continue.</white>"
 loading-data: "<white>Loading data...</white>"
 data-loaded: "<green>Data loaded!</green>"
 error-loading-data: "<red>An error has occurred while saving the data. Check the console for more information.</red>"
@@ -129,9 +129,44 @@ town-menu-land: "<gray>Owned land:</gray> <dark_gray>%count% chunk(s)</dark_gray
 town-menu-mayor: "<gray>Mayor:</gray> <dark_gray>%player%</dark_gray>"
 town-menu-resident-list: "<blue>[Resident list]</blue>"
 town-menu-roles-list: "<blue>[Roles list]</blue>"
+town-menu-how-to-use: "<blue>[How to Use]</blue>"
 town-menu-join: "<green>[Join town]</green>"
 town-menu-leave: "<red>[Leave town]</red>"
 town-menu-change-banner: "<aqua>[Change banner]</aqua>"
+
+# How to use menu
+how-to-use-title: "<bold>How to Use</bold>"
+how-to-use-content: |
+  <blue>Basic Commands:</blue>
+  - <gray>To create a town:</gray> Place a renamed banner
+  - <gray>To claim land:</gray> Place a renamed banner on adjacent land
+  - <gray>To move lectern:</gray> Place a renamed lectern
+  - <gray>To create roles:</gray> Right-click lectern with renamed paper
+  - <gray>To invite players:</gray> Right-click lectern with a book
+
+  <blue>Power System:</blue>
+  - <gray>Earn power by killing mobs</gray>
+  - <gray>Use power to claim land</gray>
+  - <gray>Power limit based on residents</gray>
+
+  <blue>Protection:</blue>
+  - <gray>Automatic protection in town land</gray>
+  - <gray>Prevents block breaking/placing</gray>
+  - <gray>Prevents explosions and animal damage</gray>
+
+  <blue>Navigation:</blue>
+  - <gray>Use compass to see borders</gray>
+  - <gray>Get notified when entering/exiting towns</gray>
+  - <gray>Use maps to see claimed land</gray>
+
+  <blue>Roles & Permissions:</blue>
+  - <gray>Create custom roles with paper</gray>
+  - <gray>Assign permissions to roles</gray>
+  - <gray>Assign roles to residents</gray>
+
+  <blue>Inventory:</blue>
+  - <gray>Access town inventory through lectern</gray>
+  - <gray>Share items with town members</gray>
 
 # Resident list
 resident-list: "<black><bold>List of residents</bold></black>"

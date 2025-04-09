@@ -21,6 +21,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,6 @@ public class TownUtils {
 
     private static final SimpleDateFormat HISTORY_EVENTS_TIMESTAMP_FORMAT = new SimpleDateFormat("dd/MM/yy");
     private static final LocalizationManager lm = NubladaTowns.getInstance().getLocalizationManager();
-
 
     public static void showTownMenu(Player player, Town town) {
         var title = Component.text("Town menu");
@@ -63,6 +63,9 @@ public class TownUtils {
             content = content.appendNewline()
                     .append(lm.getMessage("town-menu-change-banner").clickEvent(ClickEvent.runCommand("/nubladatowns:town setbanner")));
         }
+
+        content = content.appendNewline()
+                .append(lm.getMessage("town-menu-how-to-use").clickEvent(ClickEvent.runCommand("/nubladatowns:town howtouse")));
 
         var playerCity = NubladaTowns.getInstance().getTownManager().getPlayerTown(player);
         if (playerCity == null) {
@@ -349,6 +352,36 @@ public class TownUtils {
                 .clickEvent(ClickEvent.runCommand(command))
                 .hoverEvent(HoverEvent.showText(lm.getMessage("menu-next-button-hover")))
                 .build();
+    }
+
+    public static void showHowToUseBook(Player player, Town town) {
+        Component title = lm.getMessage("how-to-use-title");
+        Component author = Component.text("NubladaTowns");
+        
+        // Split content into pages
+        Component fullContent = lm.getMessage("how-to-use-content");
+        String contentText = PlainTextComponentSerializer.plainText().serialize(fullContent);
+        String[] sections = contentText.split("\n\n");
+        
+        List<Component> pages = new ArrayList<>();
+        
+        // First page with introduction
+        TextComponent.Builder firstPage = Component.text()
+            .append(Component.text("Welcome to NubladaTowns!\n\n", NamedTextColor.BLUE, TextDecoration.BOLD))
+            .append(Component.text("This guide will help you understand how to use the town system.\n\n"))
+            .append(Component.text("Use the arrow buttons to navigate through the pages.\n\n"))
+            .append(getBackButton("/nubladatowns:town menu " + town.getName()));
+        pages.add(firstPage.build());
+        
+        // Add each section as a new page
+        for (String section : sections) {
+            TextComponent.Builder page = Component.text()
+                .append(Component.text(section + "\n\n"))
+                .append(getBackButton("/nubladatowns:town menu " + town.getName()));
+            pages.add(page.build());
+        }
+
+        player.openBook(Book.book(title, author, pages));
     }
 
 }
