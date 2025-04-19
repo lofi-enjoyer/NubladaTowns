@@ -55,6 +55,13 @@ public class TownUtils {
                 .appendNewline()
                 .append(lm.getMessage("town-history-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town history")));
 
+        if (town.hasPermission(player, Permission.MANAGE_ROLES)) {
+            content = content.appendNewline()
+                    .append(Component.text("[Gestionar Alianzas]", NamedTextColor.GOLD)
+                            .clickEvent(ClickEvent.runCommand("/nubladatowns:town alliance"))
+                            .hoverEvent(HoverEvent.showText(Component.text("Administra las alianzas con otros towns"))));
+        }
+
         if (town.hasPermission(player, Permission.OPEN_INVENTORY)) {
             content = content.append(Component.text(" ")).append(lm.getMessage("town-inventory-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town inventory")));
         }
@@ -355,33 +362,62 @@ public class TownUtils {
     }
 
     public static void showHowToUseBook(Player player, Town town) {
-        Component title = lm.getMessage("how-to-use-title");
-        Component author = Component.text("NubladaTowns");
-        
-        // Split content into pages
-        Component fullContent = lm.getMessage("how-to-use-content");
-        String contentText = PlainTextComponentSerializer.plainText().serialize(fullContent);
-        String[] sections = contentText.split("\n\n");
-        
-        List<Component> pages = new ArrayList<>();
-        
-        // First page with introduction
-        TextComponent.Builder firstPage = Component.text()
-            .append(Component.text("Welcome to NubladaTowns!\n\n", NamedTextColor.BLUE, TextDecoration.BOLD))
-            .append(Component.text("This guide will help you understand how to use the town system.\n\n"))
-            .append(Component.text("Use the arrow buttons to navigate through the pages.\n\n"))
-            .append(getBackButton("/nubladatowns:town menu " + town.getName()));
-        pages.add(firstPage.build());
-        
-        // Add each section as a new page
-        for (String section : sections) {
-            TextComponent.Builder page = Component.text()
-                .append(Component.text(section + "\n\n"))
-                .append(getBackButton("/nubladatowns:town menu " + town.getName()));
-            pages.add(page.build());
-        }
+        var title = Component.text("Town menu");
+        var author = Component.text("NubladaTowns");
+        var content = Component.text()
+                .append(getBackButton("/nubladatowns:town menu " + town.getName()))
+                .append(lm.getMessage("how-to-use-title"))
+                .appendNewline()
+                .appendNewline()
+                .append(Component.text("Guía básica:"))
+                .appendNewline()
+                .append(Component.text("- Para crear un town: Coloca un banner renombrado"))
+                .appendNewline()
+                .append(Component.text("- Para reclamar territorio: Coloca un banner renombrado del town"))
+                .appendNewline()
+                .append(Component.text("- Para mover el lectern: Coloca un lectern renombrado"))
+                .appendNewline()
+                .append(Component.text("- Para crear roles: Haz clic en el lectern con papel renombrado"))
+                .appendNewline()
+                .append(Component.text("- Para crear alianzas: Haz clic en el lectern con un banner renombrado con el nombre del town aliado"))
+                .appendNewline()
+                .append(Component.text("- Para invitar jugadores: Haz clic en el lectern con un libro"))
+                .appendNewline()
+                .appendNewline()
+                .append(Component.text("Sistema de Alianzas:"))
+                .appendNewline()
+                .append(Component.text("- Todos los miembros de un town aliado tendrán los permisos definidos en el rol 'Aliados'"))
+                .appendNewline()
+                .append(Component.text("- Por defecto, los aliados tienen permiso INTERACT"))
+                .appendNewline()
+                .append(Component.text("- Puedes editar los permisos del rol 'Aliados' como cualquier otro rol"))
+                .appendNewline()
+                .appendNewline()
+                .append(Component.text("Listado de permisos:"))
+                .appendNewline()
+                .append(Component.text("- BUILD: Construir"))
+                .appendNewline()
+                .append(Component.text("- DESTROY: Destruir"))
+                .appendNewline()
+                .append(Component.text("- INTERACT: Interactuar"))
+                .appendNewline()
+                .append(Component.text("- INVITE: Invitar jugadores"))
+                .appendNewline()
+                .append(Component.text("- KICK: Expulsar jugadores"))
+                .appendNewline()
+                .append(Component.text("- RENAME: Renombrar town"))
+                .appendNewline()
+                .append(Component.text("- CHANGE_SPAWN: Cambiar spawn"))
+                .appendNewline()
+                .append(Component.text("- MANAGE_ROLES: Gestionar roles"))
+                .appendNewline()
+                .append(Component.text("- ASSIGN_ROLES: Asignar roles"))
+                .appendNewline()
+                .append(Component.text("- CLAIM_TERRITORY: Reclamar territorio"))
+                .appendNewline()
+                .append(Component.text("- ABANDON_TERRITORY: Abandonar territorio"));
 
-        player.openBook(Book.book(title, author, pages));
+        player.openBook(Book.book(title, author, content.build()));
     }
 
 }

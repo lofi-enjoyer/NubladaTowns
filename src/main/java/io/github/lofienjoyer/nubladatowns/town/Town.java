@@ -48,6 +48,12 @@ public class Town {
 
     public Town(String name) {
         this(UUID.randomUUID(), name, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        
+        // Añadir rol de Aliados por defecto
+        Role aliadosRole = new Role("Aliados");
+        // Dar permisos básicos a los aliados: pueden interactuar pero no construir ni destruir
+        aliadosRole.addPermission(Permission.INTERACT);
+        this.roles.add(aliadosRole);
     }
 
     protected void addLand(LandChunk chunk) {
@@ -186,5 +192,89 @@ public class Town {
 
     public boolean hasPermission(Player player, Permission permission) {
         return hasPermission(player.getUniqueId(), permission);
+    }
+
+    // Modificar el método isAlly para considerar a todos los miembros de towns aliados
+    public boolean isAlly(UUID playerUuid) {
+        // Obtener o crear el rol de Aliados si no existe
+        var aliadosRole = getRole("Aliados");
+        if (aliadosRole == null) {
+            // Recrear el rol de Aliados si fue eliminado
+            aliadosRole = new Role("Aliados");
+            aliadosRole.addPermission(Permission.INTERACT);
+            this.roles.add(aliadosRole);
+            // Como acabamos de crear el rol, no hay aliados todavía
+            return false;
+        }
+        
+        // Verificar si el jugador es directamente un aliado (para compatibilidad con código existente)
+        if (aliadosRole.getPlayers().contains(playerUuid)) {
+            return true;
+        }
+        
+        // Verificar si el jugador pertenece a un town aliado
+        TownManager townManager = NubladaTowns.getInstance().getTownManager();
+        Town playerTown = townManager.getPlayerTown(playerUuid);
+        
+        // Si el jugador no pertenece a ningún town, no es aliado
+        if (playerTown == null) {
+            return false;
+        }
+        
+        // Obtener el alcalde del town del jugador
+        UUID mayorUUID = playerTown.getMayor();
+        if (mayorUUID == null) {
+            return false;
+        }
+        
+        // Verificar si el town del jugador está aliado con este town
+        // Si el alcalde del town del jugador está en nuestro rol de aliados, consideramos
+        // que todos los jugadores de ese town son aliados
+        return aliadosRole.getPlayers().contains(mayorUUID);
+    }
+
+    public boolean isAlly(Player player) {
+        return isAlly(player.getUniqueId());
+    }
+
+    // Método para obtener una lista de Towns aliados
+    public List<Town> getAlliedTowns() {
+        var aliadosRole = getRole("Aliados");
+        if (aliadosRole == null) {
+            return Collections.emptyList();
+        }
+        
+        List<Town> alliedTowns = new ArrayList<>();
+        TownManager townManager = NubladaTowns.getInstance().getTownManager();
+        
+        // Buscar towns cuyos alcaldes estén en nuestro rol de aliados
+        for (UUID playerUuid : aliadosRole.getPlayers()) {
+            for (Town town : townManager.getTowns()) {
+                UUID mayor = town.getMayor();
+                // Evitar NullPointerException si el alcalde es null
+                if (mayor != null && mayor.equals(playerUuid)) {
+                    alliedTowns.add(town);
+                    break;
+                }
+            }
+        }
+        
+        return alliedTowns;
+    }
+
+    // Método para verificar si un town es aliado
+    public boolean isAlliedWith(Town otherTown) {
+        if (otherTown == null) {
+            return false;
+        }
+        
+        var aliadosRole = getRole("Aliados");
+        if (aliadosRole == null) {
+            return false;
+        }
+        
+        UUID otherMayor = otherTown.getMayor();
+        // Evitar NPE si el alcalde del otro town es null
+        return otherMayor != null && aliadosRole.getPlayers().contains(otherMayor);
     }
 }

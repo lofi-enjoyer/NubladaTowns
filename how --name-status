@@ -1,0 +1,16 @@
+[33mcommit e4c5a326d8b546b2625a77436966c2726d119434[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mNT-How-to[m[33m, [m[1;31morigin/NT-How-to[m[33m)[m
+Author: Jean Paul <jpcdlalito@hotmail.com>
+Date:   Wed Apr 9 00:57:50 2025 -0600
+
+    Bump version to 1.0.3 and enhance README with usage instructions. Added 'howtouse' command for in-game guidance and improved localization handling.
+
+ README.md                                          | 179 [32m+++++++++++++[m[31m--------[m
+ pom.xml                                            |   2 [32m+[m[31m-[m
+ .../nubladatowns/command/TownCommand.java          |   1 [32m+[m
+ .../command/town/HowToUseSubcommand.java           |  52 [32m++++++[m
+ .../nubladatowns/listener/TownListener.java        |  22 [32m++[m[31m-[m
+ .../localization/LocalizationManager.java          |  47 [32m+++++[m[31m-[m
+ .../github/lofienjoyer/nubladatowns/town/Town.java |   6 [32m+[m[31m-[m
+ .../lofienjoyer/nubladatowns/town/TownUtils.java   |  35 [32m+++[m[31m-[m
+ src/main/resources/messages.yml                    |  41 [32m++++[m[31m-[m
+ 9 files changed, 300 insertions(+), 85 deletions(-)

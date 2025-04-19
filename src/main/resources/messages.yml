@@ -232,3 +232,14 @@ town-history-list: "<blue>[⌚]</blue>"
 #
 
 town-inventory-list: "<blue>[💰]</blue>"
+
+#
+# Alliance messages
+#
+alliance-request-sent: "<green>Se ha enviado una solicitud de alianza a %town%.</green>"
+alliance-accepted: "<green>¡%town% ha aceptado tu solicitud de alianza!</green>"
+alliance-established: "<green>¡Se ha establecido una alianza entre %town1% y %town2%!</green>"
+alliance-broken: "<red>La alianza entre %town1% y %town2% ha sido disuelta.</red>"
+town-already-allied: "<red>Ya tienes una alianza con %town%.</red>"
+town-not-allied: "<red>No tienes una alianza con %town%.</red>"
+cannot-ally-own-town: "<red>No puedes crear una alianza con tu propio town.</red>"

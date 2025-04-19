@@ -30,6 +30,7 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -327,6 +328,58 @@ public class TownListener implements Listener {
             player.playSound(player, Sound.ITEM_BOOK_PUT, 1, 1.25f);
             item.setAmount(item.getAmount() - 1);
             player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-created", true), "%role%", roleName));
+            return;
+        }
+
+        if(item.getType().toString().contains("BANNER") && item.hasItemMeta()) {
+            if(!town.hasPermission(player, Permission.MANAGE_ROLES)) {
+                player.sendMessage(localizationManager.getMessage("no-permission"));
+                return;
+            }
+            
+            if (!item.getItemMeta().hasDisplayName()) {
+                player.sendMessage("El banner debe tener el nombre del town con el que quieres aliarte.");
+                return;
+            }
+            
+            var targetTownName = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(item.getItemMeta().displayName()));
+            var targetTown = townManager.getTownByName(targetTownName);
+            
+            if (targetTown == null) {
+                player.sendMessage(localizationManager.getMessage("non-existent-town"));
+                return;
+            }
+            
+            if (town.getUniqueId().equals(targetTown.getUniqueId())) {
+                player.sendMessage(localizationManager.getMessage("cannot-ally-own-town"));
+                return;
+            }
+            
+            if (town.isAlliedWith(targetTown)) {
+                player.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("town-already-allied"), targetTown));
+                return;
+            }
+            
+            var townAliadosRole = town.getRole("Aliados");
+            
+            if (townAliadosRole == null) {
+                player.sendMessage("Tu town no tiene un rol de Aliados. Este rol debería crearse automáticamente.");
+                return;
+            }
+            
+            townAliadosRole.addPlayer(targetTown.getMayor());
+            
+            player.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("alliance-established"), targetTown));
+            player.playSound(player, Sound.BLOCK_AMETHYST_BLOCK_CHIME, 1.0f, 1.0f);
+            
+            targetTown.getResidents().forEach(residentUuid -> {
+                var resident = NubladaTowns.getInstance().getServer().getPlayer(residentUuid);
+                if (resident != null && resident.isOnline()) {
+                    var replacements = Map.of("%town1%", town.getName(), "%town2%", targetTown.getName());
+                    resident.sendMessage(ComponentUtils.replaceStrings(localizationManager.getMessage("alliance-established", true), replacements));
+                }
+            });
+            
             return;
         }
 
