@@ -3,6 +3,7 @@ package io.github.lofienjoyer.nubladatowns.command.town;
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
 import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
+import io.github.lofienjoyer.nubladatowns.roles.Role;
 import io.github.lofienjoyer.nubladatowns.town.Town;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import io.github.lofienjoyer.nubladatowns.utils.ComponentUtils;
@@ -132,6 +133,29 @@ public class AllySubcommand implements BiConsumer<CommandSender, String[]> {
     
     // Método para obtener el rol de Aliados de un town
     private io.github.lofienjoyer.nubladatowns.roles.Role getAliadosRole(Town town) {
-        return town.getRole("Aliados");
+        var role = town.getRole("Aliados");
+        if (role == null) {
+            // Recrear el rol de Aliados si fue eliminado
+            role = new Role("Aliados");
+            role.addPermission(Permission.INTERACT);
+            town.addRole(role);
+        }
+        
+        // Verificar si existe el rol de Asistente y crearlo si no existe
+        checkAndCreateAsistenteRole(town);
+        
+        return role;
+    }
+    
+    // Método para verificar y crear el rol de Asistente si no existe
+    private void checkAndCreateAsistenteRole(Town town) {
+        if (town.getRole("Asistente") == null) {
+            Role asistenteRole = new Role("Asistente");
+            // Configurar permisos básicos para el rol de Asistente
+            asistenteRole.addPermission(Permission.BUILD);
+            asistenteRole.addPermission(Permission.DESTROY);
+            asistenteRole.addPermission(Permission.INTERACT);
+            town.addRole(asistenteRole);
+        }
     }
 } 

@@ -363,8 +363,19 @@ public class TownListener implements Listener {
             var townAliadosRole = town.getRole("Aliados");
             
             if (townAliadosRole == null) {
-                player.sendMessage("Tu town no tiene un rol de Aliados. Este rol debería crearse automáticamente.");
-                return;
+                townAliadosRole = new Role("Aliados");
+                townAliadosRole.addPermission(Permission.INTERACT);
+                town.addRole(townAliadosRole);
+                player.sendMessage("Se ha creado automáticamente el rol de Aliados en tu town.");
+            }
+            
+            if (town.getRole("Asistente") == null) {
+                Role asistenteRole = new Role("Asistente");
+                asistenteRole.addPermission(Permission.BUILD);
+                asistenteRole.addPermission(Permission.DESTROY);
+                asistenteRole.addPermission(Permission.INTERACT);
+                town.addRole(asistenteRole);
+                player.sendMessage("Se ha creado automáticamente el rol de Asistente en tu town.");
             }
             
             townAliadosRole.addPlayer(targetTown.getMayor());

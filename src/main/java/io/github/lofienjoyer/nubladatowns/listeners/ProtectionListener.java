@@ -1,9 +1,9 @@
 package io.github.lofienjoyer.nubladatowns.listeners;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
-import io.github.lofienjoyer.nubladatowns.core.LocalizationManager;
-import io.github.lofienjoyer.nubladatowns.town.Permission;
-import io.github.lofienjoyer.nubladatowns.town.Role;
+import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
+import io.github.lofienjoyer.nubladatowns.roles.Permission;
+import io.github.lofienjoyer.nubladatowns.roles.Role;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,7 +11,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent.Action;
+import org.bukkit.event.block.Action;
+import org.bukkit.block.Container;
+import org.bukkit.block.data.Openable;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Animals;
 import java.util.Objects;
@@ -20,8 +22,8 @@ public class ProtectionListener implements Listener {
     private final TownManager townManager;
     private final LocalizationManager localizationManager;
 
-    public ProtectionListener() {
-        this.townManager = NubladaTowns.getInstance().getTownManager();
+    public ProtectionListener(TownManager townManager) {
+        this.townManager = townManager;
         this.localizationManager = NubladaTowns.getInstance().getLocalizationManager();
     }
 
