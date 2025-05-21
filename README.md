@@ -1,80 +1,127 @@
-# NubladaTowns  
+# NubladaTowns
 
 Protect your land without any command, just using vanilla items and in-game actions!
 
 ![imagen](https://github.com/user-attachments/assets/91209640-f229-4b36-ab9e-2965b2a1eee5)
 
 ## Features
+
 - Command-less town management without custom items or resource packs
 - Protection against block breaking, placing, explosions and animal damage
 - Role and permission system
 - In-game maps integration
-- Power system thorugh mob killing
+- Power system through mob killing
 - 100% translatable
 - PlaceholderAPI integration
+- Town invitation system
+- Town inventory system
+- Town history tracking
 
-## How to start
+## Manual de Uso
 
-### Creating a town
+### Creación de un Town
 
-1. Create a custom banner and make some copies, you will need them later.
-2. Rename the banner with the name you want to give to your town.
-3. Place the banner where you want to found it. It will create the town and claim the chunk the banner was placed in.
-4. Now you can manage your town through the lectern that just appeared.
+1. Crea un banner personalizado y haz algunas copias (las necesitarás más tarde)
+2. Renombra el banner con el nombre que quieras darle a tu town
+3. Coloca el banner donde quieras fundar el town. Esto creará el town y reclamará el chunk donde se colocó el banner
+4. Un lectern aparecerá automáticamente, que será el centro de operaciones de tu town
 
-![found](https://github.com/user-attachments/assets/a1991749-403a-4297-9961-707b622981e8)
+### Reclamar Territorio
 
-### Claiming land
+1. Renombra uno de los banners copiados con el nombre del town
+2. Asegúrate de tener suficiente poder para reclamar (cada servidor puede requerir una cantidad diferente)
+3. Coloca el banner en el territorio que quieras reclamar. Debe ser adyacente a territorio que ya poseas
 
-1. Rename one of the banners you copied earlier to the name of the town.
-2. Make sure you have enough power to claim (each server may require a different amount). Power is earned through killing mobs.
-3. Place the banner on the land you want to claim. Keep in mind it has to be adjacent to land you already own.
+### Sistema de Invitaciones
 
-![claim](https://github.com/user-attachments/assets/8502cd66-c4d0-43c1-a931-022d4a7e595f)
+1. Para invitar a un jugador:
+   - Ve al lectern del town
+   - Ten un libro en la mano
+   - Necesitas 5 niveles de experiencia (configurable)
+   - Debes tener el permiso de invitar en el town
+2. El jugador invitado debe:
+   - Ir al lectern del town
+   - Tener el libro de invitación en la mano
+   - No estar en ningún otro town
+   - Estar a menos de 5 bloques del lectern
 
-### Creating a town role
-1. Rename a paper with the name of the role
-2. Right click the town lectern with it
-3. Use the lectern's role menu to edit its permissions
-4. Assign it to a resident through the lectern's resident menu
+### Sistema de Roles
 
-### Moving the town's lectern
-1. Rename a lectern with the town's name
-2. Place it where you want it to be. The previous one will be removed.
+1. Crear un rol:
+   - Renombra un papel con el nombre del rol
+   - Haz clic derecho en el lectern del town con el papel
+   - Usa el menú de roles del lectern para editar sus permisos
+2. Asignar un rol:
+   - Usa el menú de residentes del lectern
+   - Selecciona el jugador
+   - Asigna el rol deseado
 
-## Extra information
-- You can see claimed land using maps
-- If you have a compass on your inventory you will be notified when entering/exiting a town's territory, and you will be able to see nearby borders if you have it on your main hand
+### Gestión del Town
 
-## Commands & Permissions
-Although players do not directly use commands, menus do. Also, there are some commands for administrators.
+1. Mover el lectern:
+   - Renombra un lectern con el nombre del town
+   - Colócalo donde quieras que esté
+2. Cambiar el banner:
+   - Renombra un banner con el nombre del town
+   - Haz clic derecho en el lectern con el banner
+3. Ver el inventario del town:
+   - Usa el menú del lectern
+   - Accede a la opción de inventario
 
-| Command | Description | Permission | Default |
-| --- | --- | --- | --- |
-| /t  | Internally used by town menus | nubladatowns.user | `true` |
-| /nta  | Used by administrators | nubladatowns.admin | `op` |
-| /nta info | Information about the specified town | nubladatowns.admin | `op` |
-| /nta tp | Teleports the user to the specified town | nubladatowns.admin | `op` |
-| /nta power | Manages towns' power | nubladatowns.admin | `op` |
-| /nta claim | Claims the current chunk for a town | nubladatowns.admin | `op` |
-| /nta abandon | Removes the current chunk from the town that has it | nubladatowns.admin | `op` |
-| /nta delete | Deletes the specified town | nubladatowns.admin | `op` |
-| /nta load | Loads the plugin data. **WARNING: This will erase the changes since the last load, so make sure to save first to avoid losing data** | nubladatowns.admin | `op` |
-| /nta save | Saves the plugin data | nubladatowns.admin | `op` |
-| /nta reload | Reloads the plugin's configuration and language files | nubladatowns.admin | `op` |
+### Sistema de Poder
+
+- El poder se obtiene matando mobs
+- Cada mob da una cantidad diferente de poder
+- El poder se usa para reclamar territorio
+- El poder máximo está limitado por el número de residentes
+
+### Protección
+
+- Los towns protegen contra:
+  - Romper bloques
+  - Colocar bloques
+  - Explosiones
+  - Daño a animales
+- La protección se aplica automáticamente en todo el territorio del town
+
+### Navegación
+
+- Usa una brújula para:
+  - Ver las fronteras del town
+  - Recibir notificaciones al entrar/salir de towns
+- Usa mapas para ver el territorio reclamado
+
+## Comandos & Permisos
+
+Aunque los jugadores no usan comandos directamente, los menús sí los usan internamente. También hay comandos para administradores.
+
+| Comando      | Descripción                                                                                 | Permiso            | Por defecto |
+| ------------ | ------------------------------------------------------------------------------------------- | ------------------ | ----------- |
+| /t           | Usado internamente por los menús del town                                                   | nubladatowns.user  | `true`      |
+| /nta         | Usado por administradores                                                                   | nubladatowns.admin | `op`        |
+| /nta info    | Información sobre un town específico                                                        | nubladatowns.admin | `op`        |
+| /nta tp      | Teletransporta al usuario al town especificado                                              | nubladatowns.admin | `op`        |
+| /nta power   | Gestiona el poder de los towns                                                              | nubladatowns.admin | `op`        |
+| /nta claim   | Reclama el chunk actual para un town                                                        | nubladatowns.admin | `op`        |
+| /nta abandon | Elimina el chunk actual del town que lo posee                                               | nubladatowns.admin | `op`        |
+| /nta delete  | Elimina el town especificado                                                                | nubladatowns.admin | `op`        |
+| /nta load    | Carga los datos del plugin. **ADVERTENCIA: Esto borrará los cambios desde la última carga** | nubladatowns.admin | `op`        |
+| /nta save    | Guarda los datos del plugin                                                                 | nubladatowns.admin | `op`        |
+| /nta reload  | Recarga la configuración y archivos de idioma                                               | nubladatowns.admin | `op`        |
 
 ## PlaceholderAPI
-| Identifier | Description |
-| --- | --- |
-| nubladatowns_town | Player town. |
-| nubladatowns_power | Player town's power. |
-| nubladatowns_mayor | Player town's mayor. |
-| nubladatowns_residents_amount | Player town's residents. |
-| nubladatowns_claimed_land_amount | Player town's claimed land. |
-| nubladatowns_town_spawn | Player town's spawn coordinates. |
-| nubladatowns_town_spawn_x | Player town's spawn X coordinate. |
-| nubladatowns_town_spawn_y | Player town's spawn Y coordinate. |
-| nubladatowns_town_spawn_z | Player town's spawn Z coordinate. |
-| nubladatowns_town_color_hex | Player town's color in hex format. |
-| nubladatowns_town_is_open | Player town's open status. |
-| nubladatowns_has_town | `true` if the player is part of a town, otherwise `false` |
+
+| Identificador                    | Descripción                                         |
+| -------------------------------- | --------------------------------------------------- |
+| nubladatowns_town                | Town del jugador                                    |
+| nubladatowns_power               | Poder del town del jugador                          |
+| nubladatowns_mayor               | Alcalde del town del jugador                        |
+| nubladatowns_residents_amount    | Número de residentes del town                       |
+| nubladatowns_claimed_land_amount | Cantidad de territorio reclamado                    |
+| nubladatowns_town_spawn          | Coordenadas del spawn del town                      |
+| nubladatowns_town_spawn_x        | Coordenada X del spawn                              |
+| nubladatowns_town_spawn_y        | Coordenada Y del spawn                              |
+| nubladatowns_town_spawn_z        | Coordenada Z del spawn                              |
+| nubladatowns_town_color_hex      | Color del town en formato hexadecimal               |
+| nubladatowns_town_is_open        | Estado de apertura del town                         |
+| nubladatowns_has_town            | `true` si el jugador está en un town, `false` si no |

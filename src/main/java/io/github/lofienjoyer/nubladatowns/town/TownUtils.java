@@ -21,6 +21,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,6 @@ public class TownUtils {
 
     private static final SimpleDateFormat HISTORY_EVENTS_TIMESTAMP_FORMAT = new SimpleDateFormat("dd/MM/yy");
     private static final LocalizationManager lm = NubladaTowns.getInstance().getLocalizationManager();
-
 
     public static void showTownMenu(Player player, Town town) {
         var title = Component.text("Town menu");
@@ -61,6 +61,13 @@ public class TownUtils {
                 .appendNewline()
                 .append(lm.getMessage("town-history-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town history")));
 
+        if (town.hasPermission(player, Permission.MANAGE_ROLES)) {
+            content = content.appendNewline()
+                    .append(Component.text("[Gestionar Alianzas]", NamedTextColor.GOLD)
+                            .clickEvent(ClickEvent.runCommand("/nubladatowns:town alliance"))
+                            .hoverEvent(HoverEvent.showText(Component.text("Administra las alianzas con otros towns"))));
+        }
+
         if (town.hasPermission(player, Permission.OPEN_INVENTORY)) {
             content = content.append(Component.text(" ")).append(lm.getMessage("town-inventory-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town inventory")));
         }
@@ -69,6 +76,9 @@ public class TownUtils {
             content = content.appendNewline()
                     .append(lm.getMessage("town-menu-change-banner").clickEvent(ClickEvent.runCommand("/nubladatowns:town setbanner")));
         }
+
+        content = content.appendNewline()
+                .append(lm.getMessage("town-menu-how-to-use").clickEvent(ClickEvent.runCommand("/nubladatowns:town howtouse")));
 
         var playerCity = NubladaTowns.getInstance().getTownManager().getPlayerTown(player);
         if (playerCity == null) {
@@ -355,6 +365,65 @@ public class TownUtils {
                 .clickEvent(ClickEvent.runCommand(command))
                 .hoverEvent(HoverEvent.showText(lm.getMessage("menu-next-button-hover")))
                 .build();
+    }
+
+    public static void showHowToUseBook(Player player, Town town) {
+        var title = Component.text("Town menu");
+        var author = Component.text("NubladaTowns");
+        var content = Component.text()
+                .append(getBackButton("/nubladatowns:town menu " + town.getName()))
+                .append(lm.getMessage("how-to-use-title"))
+                .appendNewline()
+                .appendNewline()
+                .append(Component.text("Guía básica:"))
+                .appendNewline()
+                .append(Component.text("- Para crear un town: Coloca un banner renombrado"))
+                .appendNewline()
+                .append(Component.text("- Para reclamar territorio: Coloca un banner renombrado del town"))
+                .appendNewline()
+                .append(Component.text("- Para mover el lectern: Coloca un lectern renombrado"))
+                .appendNewline()
+                .append(Component.text("- Para crear roles: Haz clic en el lectern con papel renombrado"))
+                .appendNewline()
+                .append(Component.text("- Para crear alianzas: Haz clic en el lectern con un banner renombrado con el nombre del town aliado"))
+                .appendNewline()
+                .append(Component.text("- Para invitar jugadores: Haz clic en el lectern con un libro"))
+                .appendNewline()
+                .appendNewline()
+                .append(Component.text("Sistema de Alianzas:"))
+                .appendNewline()
+                .append(Component.text("- Todos los miembros de un town aliado tendrán los permisos definidos en el rol 'Aliados'"))
+                .appendNewline()
+                .append(Component.text("- Por defecto, los aliados tienen permiso INTERACT"))
+                .appendNewline()
+                .append(Component.text("- Puedes editar los permisos del rol 'Aliados' como cualquier otro rol"))
+                .appendNewline()
+                .appendNewline()
+                .append(Component.text("Listado de permisos:"))
+                .appendNewline()
+                .append(Component.text("- BUILD: Construir"))
+                .appendNewline()
+                .append(Component.text("- DESTROY: Destruir"))
+                .appendNewline()
+                .append(Component.text("- INTERACT: Interactuar"))
+                .appendNewline()
+                .append(Component.text("- INVITE: Invitar jugadores"))
+                .appendNewline()
+                .append(Component.text("- KICK: Expulsar jugadores"))
+                .appendNewline()
+                .append(Component.text("- RENAME: Renombrar town"))
+                .appendNewline()
+                .append(Component.text("- CHANGE_SPAWN: Cambiar spawn"))
+                .appendNewline()
+                .append(Component.text("- MANAGE_ROLES: Gestionar roles"))
+                .appendNewline()
+                .append(Component.text("- ASSIGN_ROLES: Asignar roles"))
+                .appendNewline()
+                .append(Component.text("- CLAIM_TERRITORY: Reclamar territorio"))
+                .appendNewline()
+                .append(Component.text("- ABANDON_TERRITORY: Abandonar territorio"));
+
+        player.openBook(Book.book(title, author, content.build()));
     }
 
 }

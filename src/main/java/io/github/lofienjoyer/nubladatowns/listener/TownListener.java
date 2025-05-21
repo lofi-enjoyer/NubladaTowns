@@ -30,6 +30,7 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -195,29 +196,41 @@ public class TownListener implements Listener {
     private boolean createTown(Player player, Location location, String townName, Banner banner) {
         var currentTown = townManager.getTownOnChunk(location.getChunk());
         if (currentTown != null) {
-            player.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("land-already-of", true), currentTown));
+            var message = ComponentUtils.replaceTownName(localizationManager.getMessage("land-already-of", true), currentTown);
+            if (message != null) {
+                player.sendMessage(message);
+            }
             return false;
         }
 
         var townWithSameName = townManager.getTownByName(townName);
         if (townWithSameName != null) {
-            player.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("town-already-exists", true), townWithSameName));
+            var message = ComponentUtils.replaceTownName(localizationManager.getMessage("town-already-exists", true), townWithSameName);
+            if (message != null) {
+                player.sendMessage(message);
+            }
             return false;
         }
 
         var patterns = banner.getPatterns();
         if (patterns.isEmpty()) {
-            player.sendActionBar(localizationManager.getMessage("invalid-banner", true));
+            var message = localizationManager.getMessage("invalid-banner", true);
+            if (message != null) {
+                player.sendActionBar(message);
+            }
             return false;
         }
 
         var color = banner.getBaseColor().getColor().asARGB();
         townManager.createTown(townName, location, player, color, banner.getPatterns());
 
-        Bukkit.broadcast(ComponentUtils.replacePlayerName(
+        var broadcastMessage = ComponentUtils.replacePlayerName(
                 ComponentUtils.replaceTownName(localizationManager.getMessage("player-founded-town", true), townName, color),
-                player.getName())
+                player.getName()
         );
+        if (broadcastMessage != null) {
+            Bukkit.broadcast(broadcastMessage);
+        }
 
         ParticleUtils.showChunkBorders(location.getChunk(), Particle.HAPPY_VILLAGER, player.getLocation().getY(), 40);
         SoundUtils.playAscendingSound(location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5f, 0.25f, 4);
@@ -315,6 +328,69 @@ public class TownListener implements Listener {
             player.playSound(player, Sound.ITEM_BOOK_PUT, 1, 1.25f);
             item.setAmount(item.getAmount() - 1);
             player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-created", true), "%role%", roleName));
+            return;
+        }
+
+        if(item.getType().toString().contains("BANNER") && item.hasItemMeta()) {
+            if(!town.hasPermission(player, Permission.MANAGE_ROLES)) {
+                player.sendMessage(localizationManager.getMessage("no-permission"));
+                return;
+            }
+            
+            if (!item.getItemMeta().hasDisplayName()) {
+                player.sendMessage("El banner debe tener el nombre del town con el que quieres aliarte.");
+                return;
+            }
+            
+            var targetTownName = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(item.getItemMeta().displayName()));
+            var targetTown = townManager.getTownByName(targetTownName);
+            
+            if (targetTown == null) {
+                player.sendMessage(localizationManager.getMessage("non-existent-town"));
+                return;
+            }
+            
+            if (town.getUniqueId().equals(targetTown.getUniqueId())) {
+                player.sendMessage(localizationManager.getMessage("cannot-ally-own-town"));
+                return;
+            }
+            
+            if (town.isAlliedWith(targetTown)) {
+                player.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("town-already-allied"), targetTown));
+                return;
+            }
+            
+            var townAliadosRole = town.getRole("Aliados");
+            
+            if (townAliadosRole == null) {
+                townAliadosRole = new Role("Aliados");
+                townAliadosRole.addPermission(Permission.INTERACT);
+                town.addRole(townAliadosRole);
+                player.sendMessage("Se ha creado automáticamente el rol de Aliados en tu town.");
+            }
+            
+            if (town.getRole("Asistente") == null) {
+                Role asistenteRole = new Role("Asistente");
+                asistenteRole.addPermission(Permission.BUILD);
+                asistenteRole.addPermission(Permission.DESTROY);
+                asistenteRole.addPermission(Permission.INTERACT);
+                town.addRole(asistenteRole);
+                player.sendMessage("Se ha creado automáticamente el rol de Asistente en tu town.");
+            }
+            
+            townAliadosRole.addPlayer(targetTown.getMayor());
+            
+            player.sendMessage(ComponentUtils.replaceTownName(localizationManager.getMessage("alliance-established"), targetTown));
+            player.playSound(player, Sound.BLOCK_AMETHYST_BLOCK_CHIME, 1.0f, 1.0f);
+            
+            targetTown.getResidents().forEach(residentUuid -> {
+                var resident = NubladaTowns.getInstance().getServer().getPlayer(residentUuid);
+                if (resident != null && resident.isOnline()) {
+                    var replacements = Map.of("%town1%", town.getName(), "%town2%", targetTown.getName());
+                    resident.sendMessage(ComponentUtils.replaceStrings(localizationManager.getMessage("alliance-established", true), replacements));
+                }
+            });
+            
             return;
         }
 

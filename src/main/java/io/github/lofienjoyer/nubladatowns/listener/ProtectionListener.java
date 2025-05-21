@@ -41,7 +41,20 @@ public class ProtectionListener implements Listener {
         if (currentTown == null)
             return;
 
-        if (!currentTown.hasPermission(player, Permission.DESTROY)) {
+        // Verifica si el jugador puede romper bloques:
+        // - Tiene permiso DESTROY directamente en el town, O
+        // - Pertenece a un town aliado Y el rol Aliados tiene permiso DESTROY
+        var hasPermission = currentTown.hasPermission(player, Permission.DESTROY);
+        
+        // Solo verificar permisos de aliados si el rol existe
+        if (!hasPermission && currentTown.isAlly(player)) {
+            var aliadosRole = currentTown.getRole("Aliados");
+            if (aliadosRole != null && aliadosRole.getPermissions().contains(Permission.DESTROY)) {
+                hasPermission = true;
+            }
+        }
+        
+        if (!hasPermission) {
             player.sendActionBar(localizationManager.getMessage("cannot-break-here"));
             event.setCancelled(true);
         }
@@ -57,7 +70,20 @@ public class ProtectionListener implements Listener {
         if (currentTown == null)
             return;
 
-        if (!currentTown.hasPermission(player, Permission.BUILD)) {
+        // Verifica si el jugador puede colocar bloques:
+        // - Tiene permiso BUILD directamente en el town, O
+        // - Pertenece a un town aliado Y el rol Aliados tiene permiso BUILD
+        var hasPermission = currentTown.hasPermission(player, Permission.BUILD);
+        
+        // Solo verificar permisos de aliados si el rol existe
+        if (!hasPermission && currentTown.isAlly(player)) {
+            var aliadosRole = currentTown.getRole("Aliados");
+            if (aliadosRole != null && aliadosRole.getPermissions().contains(Permission.BUILD)) {
+                hasPermission = true;
+            }
+        }
+        
+        if (!hasPermission) {
             player.sendActionBar(localizationManager.getMessage("cannot-place-here"));
             event.setCancelled(true);
         }
@@ -88,7 +114,23 @@ public class ProtectionListener implements Listener {
 
         if (blockState instanceof Container || blockData instanceof Openable) {
             var currentTown = townManager.getTownOnChunk(block.getChunk());
-            if (currentTown != null && !currentTown.hasPermission(player, Permission.INTERACT)) {
+            if (currentTown == null)
+                return;
+            
+            // Verifica si el jugador puede interactuar:
+            // - Tiene permiso INTERACT directamente en el town, O
+            // - Pertenece a un town aliado Y el rol Aliados tiene permiso INTERACT
+            var hasPermission = currentTown.hasPermission(player, Permission.INTERACT);
+            
+            // Solo verificar permisos de aliados si el rol existe
+            if (!hasPermission && currentTown.isAlly(player)) {
+                var aliadosRole = currentTown.getRole("Aliados");
+                if (aliadosRole != null && aliadosRole.getPermissions().contains(Permission.INTERACT)) {
+                    hasPermission = true;
+                }
+            }
+            
+            if (!hasPermission) {
                 event.setCancelled(true);
                 player.sendActionBar(localizationManager.getMessage("cannot-interact-here"));
             }
@@ -133,8 +175,21 @@ public class ProtectionListener implements Listener {
             return;
 
         var eventTown = townManager.getTownOnChunk(event.getEntity().getChunk());
-        if (eventTown == null || Objects.equals(townManager.getPlayerTown(damager), eventTown))
+        if (eventTown == null)
             return;
+        
+        // Permitir atacar animales si:
+        // - El jugador pertenece al mismo town que posee el chunk, O
+        // - El jugador pertenece a un town aliado Y el rol Aliados tiene permiso INTERACT
+        if (Objects.equals(townManager.getPlayerTown(damager), eventTown))
+            return;
+        
+        // Verificar permisos de aliados si el rol existe
+        if (eventTown.isAlly(damager)) {
+            var aliadosRole = eventTown.getRole("Aliados");
+            if (aliadosRole != null && aliadosRole.getPermissions().contains(Permission.INTERACT))
+                return;
+        }
 
         damager.sendActionBar(localizationManager.getMessage("cannot-attack-animals-here"));
         event.setCancelled(true);
