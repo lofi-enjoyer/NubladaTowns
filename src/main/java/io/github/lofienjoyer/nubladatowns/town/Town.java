@@ -39,7 +39,7 @@ public class Town {
         this.claimedLand = claimedLand;
         this.historyEvents = historyEvents;
         this.inventory = Bukkit.createInventory(null, 9, Component.text(name));
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < Math.min(inventory.getSize(), inventoryItems.size()); i++) {
             inventory.setItem(i, inventoryItems.get(i));
         }
     }
