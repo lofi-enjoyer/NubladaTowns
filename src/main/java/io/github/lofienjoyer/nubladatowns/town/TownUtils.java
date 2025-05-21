@@ -46,8 +46,14 @@ public class TownUtils {
                 .appendNewline()
                 .append(ComponentUtils.replaceInteger(lm.getMessage("town-menu-land"), "%count%", town.getClaimedLand().size()))
                 .appendNewline()
-                .append(ComponentUtils.replaceIntegers(lm.getMessage("town-menu-power"), power))
-                .appendNewline()
+                .append(ComponentUtils.replaceIntegers(lm.getMessage("town-menu-power"), power));
+
+        if (NubladaTowns.getInstance().isEconomyEnabled()) {
+            var townBalance = NubladaTowns.getInstance().getEconomyHandler().getTownBalance(town);
+            content = content.appendNewline().append(ComponentUtils.replaceString(lm.getMessage("town-menu-balance"), "%balance%", String.valueOf(townBalance)));
+        }
+
+        content = content.appendNewline()
                 .appendNewline()
                 .append(lm.getMessage("town-menu-resident-list").clickEvent(ClickEvent.runCommand("/nubladatowns:town list " + town.getName())))
                 .appendNewline()

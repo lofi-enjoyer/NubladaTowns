@@ -115,6 +115,10 @@ public class TownManager {
         residentsMap.remove(playerUuid);
     }
 
+    public Town getTownByUUID(UUID uuid) {
+        return townMap.get(uuid);
+    }
+
     public Town getTownByName(String name) {
         return townMap.values().stream()
                 .filter(town -> town.getName().equals(name))

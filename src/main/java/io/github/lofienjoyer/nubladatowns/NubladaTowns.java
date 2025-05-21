@@ -6,6 +6,7 @@ import io.github.lofienjoyer.nubladatowns.configuration.ConfigValues;
 import io.github.lofienjoyer.nubladatowns.data.DataManager;
 import io.github.lofienjoyer.nubladatowns.data.YamlDataManager;
 import io.github.lofienjoyer.nubladatowns.economy.NubladaEconomyHandler;
+import io.github.lofienjoyer.nubladatowns.hooks.BancoIntegration;
 import io.github.lofienjoyer.nubladatowns.hooks.SquareMapIntegration;
 import io.github.lofienjoyer.nubladatowns.hooks.TownPlaceholderExpansion;
 import io.github.lofienjoyer.nubladatowns.listener.MapListener;
@@ -22,6 +23,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import ovh.mythmc.banco.api.Banco;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,6 +76,9 @@ public final class NubladaTowns extends JavaPlugin {
 
         if (Bukkit.getPluginManager().isPluginEnabled("vault"))
             setupEconomy();
+
+        if (Bukkit.getPluginManager().isPluginEnabled("banco"))
+            Banco.get().getStorageRegistry().registerStorage(new BancoIntegration());
     }
 
     @Override
@@ -115,11 +120,7 @@ public final class NubladaTowns extends JavaPlugin {
     }
 
     private void setupEconomy() {
-        var rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null)
-            return;
-
-        this.economyHandler = new NubladaEconomyHandler(rsp.getProvider());
+        this.economyHandler = new NubladaEconomyHandler();
         this.economyEnabled = true;
     }
 

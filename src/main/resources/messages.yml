@@ -29,8 +29,8 @@ loading-data: "<white>Loading data...</white>"
 data-loaded: "<green>Data loaded!</green>"
 error-loading-data: "<red>An error has occurred while saving the data. Check the console for more information.</red>"
 town-information: "<bold><dark_gray>-</dark_gray> %town% <dark_gray>-</dark_gray></bold><newline> <gray>Residents:</gray> %residents% player(s)<newline> <gray>Power:</gray> %power%<newline> <gray>Territory:</gray> %territory% chunk(s)"
-town-balance: "<green>The balance of %town% is currently %value%</green>"
-town-balance-changed: "<green>The balance of %town% was not set to %value%</green>"
+town-balance: "<white>The balance of %town% is currently</white> <green>%value%</green>"
+town-balance-changed: "<red>The balance of %town% was not set to %value%</red>"
 economy-disabled: "<red>Economy is disabled.</red>"
 
 #
@@ -135,6 +135,7 @@ town-menu-roles-list: "<blue>[Roles list]</blue>"
 town-menu-join: "<green>[Join town]</green>"
 town-menu-leave: "<red>[Leave town]</red>"
 town-menu-change-banner: "<aqua>[Change banner]</aqua>"
+town-menu-balance: "<gray>$</gray> <dark_gray>%balance%</dark_gray>"
 
 # Resident list
 resident-list: "<black><bold>List of residents</bold></black>"
