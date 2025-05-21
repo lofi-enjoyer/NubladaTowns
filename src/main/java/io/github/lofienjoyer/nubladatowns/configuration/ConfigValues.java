@@ -15,6 +15,7 @@ public class ConfigValues {
     private final double townAbandonTntYield = getValue("town-abandon.tnt.yield", Double.class, 2.0);
     private final boolean townAbandonTntFire = getValue("town-abandon.tnt.fire", Boolean.class, false);
     private final int townAbandonTntFuseTicks = getValue("town-abandon.tnt.fuse-ticks", Integer.class, 100);
+    private final boolean economyEnabled = getValue("economy.enabled", Boolean.class, true);
 
     public static <T> T getValue(String path, Class<T> type, T defaultValue) {
         var value = NubladaTowns.getInstance().getConfig().get(path);

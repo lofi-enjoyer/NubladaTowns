@@ -4,6 +4,8 @@ main: io.github.lofienjoyer.nubladatowns.NubladaTowns
 softdepend:
   - PlaceholderAPI
   - squaremap
+  - vault
+  - banco
 api-version: '1.21.3'
 
 commands:
