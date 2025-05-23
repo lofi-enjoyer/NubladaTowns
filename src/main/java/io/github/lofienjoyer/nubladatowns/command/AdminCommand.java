@@ -30,6 +30,7 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
         subCommands.put("save", new SaveSubcommand(localizationManager));
         subCommands.put("info", new InfoSubcommand(localizationManager));
         subCommands.put("economy", new EconomySubcommand(localizationManager));
+        subCommands.put("banner", new BannerSubcommand(localizationManager));
     }
 
     @Override

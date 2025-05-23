@@ -32,14 +32,23 @@ public class BannerUtils {
             )
     );
 
-
-    public static MapCursor.Type getBannerByColor(int color) {
+    public static MapCursor.Type getMapCursorBannerByColor(int argbColor) {
         for (var entry : BANNER_TYPES.entrySet()) {
             var state = (Banner) entry.getKey().createBlockData().createBlockState();
-            if (state.getBaseColor().getColor().asARGB() == color)
+            if (state.getBaseColor().getColor().asARGB() == argbColor)
                 return entry.getValue();
         }
         return MapCursor.Type.BANNER_WHITE;
+    }
+
+    public static Material getBannerMaterialByColor(int argbColor) {
+        for (var material : BANNER_TYPES.keySet()) {
+            var bannerColor = ((Banner) material.createBlockData().createBlockState()).getBaseColor().getColor().asARGB();
+            if (argbColor == bannerColor)
+                return material;
+        }
+
+        return Material.WHITE_BANNER;
     }
 
 }

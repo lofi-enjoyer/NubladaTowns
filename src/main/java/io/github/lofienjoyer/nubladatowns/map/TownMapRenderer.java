@@ -49,7 +49,7 @@ public class TownMapRenderer extends MapRenderer {
             if (canvas.getBasePixelColor(cursorX, cursorZ).getAlpha() == 0)
                 return;
 
-            cursors.addCursor(new MapCursor((byte)(cursorX * 2 - 128), (byte)(cursorZ * 2 - 128), (byte)8, BannerUtils.getBannerByColor(town.getRgbColor()), true, Component.text(town.getName(), TextColor.color(town.getRgbColor()))));
+            cursors.addCursor(new MapCursor((byte)(cursorX * 2 - 128), (byte)(cursorZ * 2 - 128), (byte)8, BannerUtils.getMapCursorBannerByColor(town.getRgbColor()), true, Component.text(town.getName(), TextColor.color(town.getRgbColor()))));
         });
         canvas.setCursors(cursors);
     }
