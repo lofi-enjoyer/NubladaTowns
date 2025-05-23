@@ -32,6 +32,9 @@ town-information: "<bold><dark_gray>-</dark_gray> %town% <dark_gray>-</dark_gray
 town-balance: "<white>The balance of %town% is currently</white> <green>%value%</green>"
 town-balance-changed: "<red>The balance of %town% was not set to %value%</red>"
 economy-disabled: "<red>Economy is disabled.</red>"
+banner-received: "<white>You received %town%'s banner.</white>"
+invalid-item: "<red>The item you're holding is not valid.</red>"
+banner-set: "<white>%town%'s banner was successfully changed!</white>"
 
 #
 # Town messages
