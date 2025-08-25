@@ -1,9 +1,11 @@
 package io.github.lofienjoyer.nubladatowns.plot;
 
+import org.bukkit.World;
 import org.bukkit.util.Vector;
 
+import java.util.List;
 import java.util.UUID;
 
-public record Plot(UUID townUuid, Vector min, Vector max) {
+public record Plot(UUID ownerUuid, Vector min, Vector max, World world, List<UUID> members) {
 
 }

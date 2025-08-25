@@ -65,6 +65,7 @@ lectern-moved: "<green>The town's lectern was successfully moved.</green>"
 
 started-plot-creation: "<green>Right click on the opposite corner to create a plot.</green>"
 plot-outside-town: "<red>The plot must be in the town's territory.</red>"
+stopped-plot-creation: "<white>Finishing plot creation...</white>"
 
 # Errors
 non-existent-town: "<red>That town does not exist.</red>"

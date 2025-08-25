@@ -34,7 +34,7 @@ public class Town {
     private List<TownHistoryEvent> historyEvents;
     private Inventory inventory;
 
-    public Town(UUID uniqueId, String name, List<UUID> residents, List<LandChunk> claimedLand, List<TownHistoryEvent> historyEvents, List<ItemStack> inventoryItems) {
+    public Town(UUID uniqueId, String name, List<UUID> residents, List<LandChunk> claimedLand, List<TownHistoryEvent> historyEvents, List<ItemStack> inventoryItems, List<Plot> plots) {
         this.uniqueId = uniqueId;
         this.name = name;
         this.roles = new ArrayList<>();
@@ -45,10 +45,11 @@ public class Town {
         for (int i = 0; i < Math.min(inventory.getSize(), inventoryItems.size()); i++) {
             inventory.setItem(i, inventoryItems.get(i));
         }
+        this.plots = plots;
     }
 
     public Town(String name) {
-        this(UUID.randomUUID(), name, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        this(UUID.randomUUID(), name, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     protected void addLand(LandChunk chunk) {
@@ -180,6 +181,10 @@ public class Town {
     }
 
     protected void setRoles(ArrayList<Role> roles) { this.roles = roles; }
+
+    public List<Plot> getPlots() {
+        return plots;
+    }
 
     public boolean hasPermission(UUID uuid, Permission permission) {
         if(getMayor().equals(uuid))

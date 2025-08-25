@@ -8,10 +8,12 @@ import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class PlotUtils {
 
-    public static Plot getPlotBetween(Location a, Location b, Town town) {
+    public static Plot getPlotBetween(Location a, Location b, UUID ownerUuid) {
         var x0 = Math.min(a.getBlockX(), b.getBlockX());
         var x1 = Math.max(a.getBlockX(), b.getBlockX());
         var y0 = Math.min(a.getBlockY(), b.getBlockY());
@@ -21,7 +23,7 @@ public class PlotUtils {
 
         var min = new Location(a.getWorld(), x0, y0, z0);
         var max = new Location(a.getWorld(), x1, y1, z1);
-        return new Plot(town.getUniqueId(), min.toVector(), max.toVector());
+        return new Plot(ownerUuid, min.toVector(), max.toVector(), a.getWorld(),  new ArrayList<>());
     }
 
     public static Plot getPlotBetween(Location a, Location b) {
@@ -34,7 +36,7 @@ public class PlotUtils {
 
         var min = new Location(a.getWorld(), x0, y0, z0);
         var max = new Location(a.getWorld(), x1, y1, z1);
-        return new Plot(null, min.toVector(), max.toVector());
+        return new Plot(null, min.toVector(), max.toVector(), a.getWorld(), null);
     }
 
     public static boolean isPlotInsideTown(Location posA, Location posB, Town town) {
@@ -42,7 +44,7 @@ public class PlotUtils {
         var chunks = getChunksInsidePlot(plot, posA.getWorld());
         return chunks.stream().allMatch(chunk -> {
             var chunkTown = NubladaTowns.getInstance().getTownManager().getTownOnChunk(chunk);
-            return chunkTown == null || !chunkTown.getUniqueId().equals(town.getUniqueId());
+            return chunkTown != null && chunkTown.getUniqueId().equals(town.getUniqueId());
         });
     }
 
@@ -56,6 +58,31 @@ public class PlotUtils {
             }
         }
         return chunks;
+    }
+
+    public static Optional<Plot> getPlotAtLocation(Location location) {
+        for (var town : NubladaTowns.getInstance().getTownManager().getTowns()) {
+            var plot = getPlotAtLocation(location, town);
+            if (plot.isPresent())
+                return plot;
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<Plot> getPlotAtLocation(Location location, Town town) {
+        for (var plot : town.getPlots()) {
+            if (!plot.world().equals(location.getWorld()))
+                continue;
+
+            if (
+                    (plot.min().getX() <= location.x() && plot.max().getX() >= location.x()) &&
+                    (plot.min().getY() <= location.y() && plot.max().getY() >= location.y()) &&
+                    (plot.min().getZ() <= location.z() && plot.max().getZ() >= location.z())
+            ) {
+                return Optional.of(plot);
+            }
+        }
+        return Optional.empty();
     }
 
 }

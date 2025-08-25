@@ -52,7 +52,7 @@ public class PlotListener implements Listener {
     private void handlePlotCreation(Player player, Location posA, Location posB, Town town) {
         // TODO: check if overlaps with another plot
         player.sendMessage(localizationManager.getMessage("stopped-plot-creation"));
-        var plot = PlotUtils.getPlotBetween(posA, posB);
+        var plot = PlotUtils.getPlotBetween(posA, posB, player.getUniqueId());
         if (PlotUtils.isPlotInsideTown(posA, posB, town)) {
             townManager.addPlotToTown(plot, town);
         } else {
