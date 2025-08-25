@@ -1,7 +1,12 @@
 name: NubladaTowns
 version: '${project.version}'
 main: io.github.lofienjoyer.nubladatowns.NubladaTowns
-api-version: '1.20'
+softdepend:
+  - PlaceholderAPI
+  - squaremap
+  - vault
+  - banco
+api-version: '1.21.3'
 
 commands:
   town:

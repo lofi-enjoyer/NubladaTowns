@@ -9,7 +9,11 @@ public enum Permission {
     RENAME,
     CHANGE_SPAWN,
     MANAGE_ROLES,
-    ASSIGN_ROLES;
+    ASSIGN_ROLES,
+    CHANGE_BANNER,
+    CLAIM_TERRITORY,
+    ABANDON_TERRITORY,
+    OPEN_INVENTORY;
 
     public static boolean contains(String literal) {
         for (Permission permission : Permission.values()) {

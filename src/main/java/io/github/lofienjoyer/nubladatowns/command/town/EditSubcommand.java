@@ -73,69 +73,12 @@ public class EditSubcommand implements BiConsumer<CommandSender, String[]> {
                     player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-deleted", true), "%role%", role.getName()));
                     town.removeRole(role);
                     return;
+                } else {
+                    var page = Integer.parseInt(args[2]);
+                    TownUtils.showRoleEditor(player, town, role, page);
                 }
-            } else if (args.length == 3 && args[2].equals("delete")) {
-                if (!town.hasPermission(player, Permission.MANAGE_ROLES)) {
-                    player.sendMessage(localizationManager.getMessage("no-permission"));
-                    return;
-                }
-
-                player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-deleted", true), "%role%", role.getName()));
-                town.removeRole(role);
             } else if (args.length == 4) {
                 switch (args[2]) {
-                    case "grant" -> {
-                        if (!town.hasPermission(player, Permission.MANAGE_ROLES)) {
-                            player.sendMessage(localizationManager.getMessage("no-permission"));
-                            return;
-                        }
-
-                        if (!Permission.contains(args[3])) {
-                            player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("invalid-value"), "%value%", args[3]));
-                            return;
-                        }
-
-                        var permission = Permission.valueOf(args[3]);
-
-                        if (permission.equals(Permission.ASSIGN_ROLES) && !town.getMayor().equals(player.getUniqueId())) {
-                            player.sendMessage(localizationManager.getMessage("no-permission"));
-                            return;
-                        }
-
-                        if (role.getPermissions().contains(permission)) {
-                            player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-already-has-permission"), "%role%", role.getName()));
-                            return;
-                        }
-
-                        role.addPermission(permission);
-                        TownUtils.showRoleEditor(player, town, role);
-                    }
-                    case "revoke" -> {
-                        if (!town.hasPermission(player, Permission.MANAGE_ROLES)) {
-                            player.sendMessage(localizationManager.getMessage("no-permission"));
-                            return;
-                        }
-
-                        if (!Permission.contains(args[3])) {
-                            player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("invalid-value"), "%value%", args[3]));
-                            return;
-                        }
-
-                        var permission = Permission.valueOf(args[3]);
-
-                        if (permission.equals(Permission.ASSIGN_ROLES) && !town.getMayor().equals(player.getUniqueId())) {
-                            player.sendMessage(localizationManager.getMessage("no-permission"));
-                            return;
-                        }
-
-                        if (!role.getPermissions().contains(permission)) {
-                            player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-does-not-have-permission"), "%role%", role.getName()));
-                            return;
-                        }
-
-                        role.removePermission(permission);
-                        TownUtils.showRoleEditor(player, town, role);
-                    }
                     case "add" -> {
                         if (!town.hasPermission(player, Permission.ASSIGN_ROLES)) {
                             player.sendMessage(localizationManager.getMessage("no-permission"));
@@ -183,6 +126,61 @@ public class EditSubcommand implements BiConsumer<CommandSender, String[]> {
                         TownUtils.showResidentRoleEditor(player, town, target);
                     }
                 }
+            } else if (args.length == 5) {
+                switch (args[2]) {
+                    case "grant" -> {
+                        if (!town.hasPermission(player, Permission.MANAGE_ROLES)) {
+                            player.sendMessage(localizationManager.getMessage("no-permission"));
+                            return;
+                        }
+
+                        if (!Permission.contains(args[3])) {
+                            player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("invalid-value"), "%value%", args[3]));
+                            return;
+                        }
+
+                        var permission = Permission.valueOf(args[3]);
+
+                        if (permission.equals(Permission.ASSIGN_ROLES) && !town.getMayor().equals(player.getUniqueId())) {
+                            player.sendMessage(localizationManager.getMessage("no-permission"));
+                            return;
+                        }
+
+                        if (role.getPermissions().contains(permission)) {
+                            player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-already-has-permission"), "%role%", role.getName()));
+                            return;
+                        }
+
+                        role.addPermission(permission);
+                        TownUtils.showRoleEditor(player, town, role, Integer.parseInt(args[4]));
+                    }
+                    case "revoke" -> {
+                        if (!town.hasPermission(player, Permission.MANAGE_ROLES)) {
+                            player.sendMessage(localizationManager.getMessage("no-permission"));
+                            return;
+                        }
+
+                        if (!Permission.contains(args[3])) {
+                            player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("invalid-value"), "%value%", args[3]));
+                            return;
+                        }
+
+                        var permission = Permission.valueOf(args[3]);
+
+                        if (permission.equals(Permission.ASSIGN_ROLES) && !town.getMayor().equals(player.getUniqueId())) {
+                            player.sendMessage(localizationManager.getMessage("no-permission"));
+                            return;
+                        }
+
+                        if (!role.getPermissions().contains(permission)) {
+                            player.sendMessage(ComponentUtils.replaceString(localizationManager.getMessage("role-does-not-have-permission"), "%role%", role.getName()));
+                            return;
+                        }
+
+                        role.removePermission(permission);
+                        TownUtils.showRoleEditor(player, town, role, Integer.parseInt(args[4]));
+                    }
+                }
             } else {
                 player.sendMessage(localizationManager.getMessage("invalid-command"));
             }
@@ -224,7 +222,7 @@ public class EditSubcommand implements BiConsumer<CommandSender, String[]> {
             }
 
             if (args.length == 2) {
-                TownUtils.showResidentEditor(player, target.getName());
+                TownUtils.showResidentEditor(player, town, target.getName());
             } else if (args.length == 3) {
                 if (args[2].equals("kick")) {
                     if (!town.hasPermission(player, Permission.KICK)) {

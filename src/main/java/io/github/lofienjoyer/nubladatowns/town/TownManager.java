@@ -2,24 +2,27 @@ package io.github.lofienjoyer.nubladatowns.town;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
 import io.github.lofienjoyer.nubladatowns.plot.Plot;
+import io.github.lofienjoyer.nubladatowns.data.DataManager;
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.banner.Pattern;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class TownManager {
 
     private final NubladaTowns instance;
-    private Map<UUID, Town> townMap;
-    private Map<LandChunk, UUID> landMap;
-    private Map<UUID, UUID> residentsMap;
+    private final Map<UUID, Town> townMap;
+    private final Map<LandChunk, UUID> landMap;
+    private final Map<UUID, UUID> residentsMap;
 
     public TownManager(NubladaTowns instance) {
         this.instance = instance;
@@ -29,18 +32,31 @@ public class TownManager {
         this.residentsMap = new HashMap<>();
     }
 
-    public void createTown(String name, Location location, Player founder, int color) {
+    public void createTown(String name, Location location, Player founder, int color, List<Pattern> patterns) {
         var town = new Town(name);
         addResidentToTown(founder.getUniqueId(), town);
         var landChunk = new LandChunk(location.getChunk().getX(), location.getChunk().getZ(), location.getWorld());
         town.addLand(landChunk);
         town.setSpawn(location);
         town.setRgbColor(color);
+        town.setBannerPatterns(patterns);
         town.setPower(0);
         town.setMayor(founder);
 
         townMap.put(town.getUniqueId(), town);
         landMap.put(landChunk, town.getUniqueId());
+    }
+
+    public void removeTown(Town town) {
+        town.getResidents().forEach(uuid -> {
+            residentsMap.remove(uuid);
+        });
+
+        town.getClaimedLand().forEach(chunk -> {
+            landMap.remove(chunk);
+        });
+
+        townMap.remove(town.getUniqueId());
     }
 
     public Town claimChunk(Chunk chunk, Town town) {
@@ -56,81 +72,38 @@ public class TownManager {
         return null;
     }
 
-    public void loadData(YamlConfiguration dataConfig) {
-        this.townMap = new HashMap<>();
-        this.landMap = new HashMap<>();
-        this.residentsMap = new HashMap<>();
+    public Town abandonChunk(Chunk chunk) {
+        var currentTown = getTownOnChunk(chunk);
+        if (currentTown == null) {
+            instance.getLogger().warning("Tried to abandon a non-claimed chunk.");
+            return null;
+        }
 
-        // Reminder: assign defaults to the ConfigurationSection::getSomething methods when adding new data to the Town class
-        var townsSection = dataConfig.getConfigurationSection("towns");
-        townsSection.getKeys(false).forEach(key -> {
-            var section = townsSection.getConfigurationSection(key);
-            var townUuid = UUID.fromString(key);
-            var name = section.getString("name");
-            var town = new Town(townUuid, name);
-            town.setRgbColor(section.getInt("color"));
-            town.setSpawn(section.getLocation("spawn"));
-            town.setOpen(section.getBoolean("open", true));
-            town.setPower(section.getInt("power", 0));
-            town.setMayor(UUID.fromString(section.getString("mayor")));
-            var residentUniqueIds = section.getStringList("residents");
-            residentUniqueIds.forEach(resident -> {
-                var residentUuid = UUID.fromString(resident);
-                town.addResident(residentUuid);
-                residentsMap.put(residentUuid, townUuid);
+        var landChunk = new LandChunk(chunk.getX(), chunk.getZ(), chunk.getWorld());
+        currentTown.removeLand(chunk.getX(), chunk.getZ(), chunk.getWorld());
+        landMap.remove(landChunk);
+        return currentTown;
+    }
+
+    public void loadData(DataManager dataManager) {
+        townMap.clear();
+        residentsMap.clear();
+        landMap.clear();
+
+        var towns = dataManager.loadTowns();
+        towns.forEach(town -> {
+            townMap.put(town.getUniqueId(), town);
+            town.getResidents().forEach(uuid -> {
+                residentsMap.put(uuid, town.getUniqueId());
             });
-            var landChunks = section.getStringList("land");
-            landChunks.forEach(land -> {
-                var parts = land.split(":");
-                var chunk = new LandChunk(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Bukkit.getWorld(parts[2]));
-                town.addLand(chunk);
-                landMap.put(chunk, townUuid);
+            town.getClaimedLand().forEach(chunk -> {
+                landMap.put(chunk, town.getUniqueId());
             });
-            var roles = section.getConfigurationSection("roles");
-            if (roles != null) {
-                roles.getKeys(false).forEach(roleName -> {
-                    var role = new Role(roleName);
-                    var permissions = section.getStringList("roles." + roleName + ".permissions");
-                    var players = section.getStringList("roles." + roleName + ".players");
-
-                    permissions.forEach(permission -> {
-                        role.addPermission(Permission.valueOf(permission));
-                    });
-
-                    players.forEach(uuid -> {
-                        role.addPlayer(UUID.fromString(uuid));
-                    });
-
-                    town.addRole(role);
-                });
-            }
-            townMap.put(townUuid, town);
         });
     }
 
-    public void saveData(YamlConfiguration dataConfig) {
-        var townsSection = dataConfig.createSection("towns");
-        getTowns().forEach(town -> {
-            var section = townsSection.createSection(town.getUniqueId().toString());
-            section.set("name", town.getName());
-            section.set("color", town.getRgbColor());
-            section.set("spawn", town.getSpawn());
-            section.set("power", town.getPower());
-            section.set("mayor", town.getMayor().toString());
-            var residentUniqueIds = town.getResidents().stream().map(UUID::toString).toList();
-            section.set("residents", residentUniqueIds);
-            var landChunks = town.getClaimedLand().stream()
-                    .map(chunk -> chunk.x() + ":" + chunk.z() + ":" + chunk.world().getName())
-                    .toList();
-            section.set("land", landChunks);
-            for (Role role : town.getRoles()) {
-                var permissions = role.getPermissions().stream().map(Enum::name).toList();
-                var players = role.getPlayers().stream().map(UUID::toString).toList();
-
-                section.set("roles." + role.getName() + ".permissions", permissions);
-                section.set("roles." + role.getName() + ".players", players);
-            }
-        });
+    public void saveData(DataManager dataManager) throws IOException {
+        dataManager.save(townMap.values());
     }
 
     public void addResidentToTown(UUID playerUuid, Town town) {
@@ -149,6 +122,10 @@ public class TownManager {
 
     public void removePlotFromTown(Plot plot, Town town) {
         town.removePlot(plot);
+    }
+
+    public Town getTownByUUID(UUID uuid) {
+        return townMap.get(uuid);
     }
 
     public Town getTownByName(String name) {
@@ -174,6 +151,14 @@ public class TownManager {
     public Town getPlayerTown(UUID uuid) {
         var townUuid = residentsMap.get(uuid);
         return townMap.get(townUuid);
+    }
+
+    public boolean hasTown(Player player) {
+        return hasTown(player.getUniqueId());
+    }
+
+    public boolean hasTown(UUID uuid) {
+        return getPlayerTown(uuid) != null;
     }
 
     public Collection<Town> getTowns() {

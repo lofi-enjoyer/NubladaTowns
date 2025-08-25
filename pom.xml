@@ -6,7 +6,7 @@
 
   <groupId>io.github.lofienjoyer</groupId>
   <artifactId>NubladaTowns</artifactId>
-  <version>1.0</version>
+  <version>1.0.2</version>
   <packaging>jar</packaging>
 
   <name>NubladaTowns</name>
@@ -58,13 +58,55 @@
           <id>sonatype</id>
           <url>https://oss.sonatype.org/content/groups/public/</url>
       </repository>
+      <repository>
+          <id>placeholderapi</id>
+          <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+      </repository>
+      <repository>
+          <id>jitpack.io</id>
+          <url>https://jitpack.io</url>
+      </repository>
+      <repository>
+          <id>myth-mc-releases</id>
+          <url>https://repo.mythmc.ovh/releases/</url>
+      </repository>
   </repositories>
 
   <dependencies>
       <dependency>
           <groupId>io.papermc.paper</groupId>
           <artifactId>paper-api</artifactId>
-          <version>1.20.6-R0.1-SNAPSHOT</version>
+          <version>1.21.3-R0.1-SNAPSHOT</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.projectlombok</groupId>
+          <artifactId>lombok</artifactId>
+          <version>1.18.34</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>me.clip</groupId>
+          <artifactId>placeholderapi</artifactId>
+          <version>2.11.6</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>xyz.jpenilla</groupId>
+          <artifactId>squaremap-api</artifactId>
+          <version>1.2.4</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>com.github.MilkBowl</groupId>
+          <artifactId>VaultAPI</artifactId>
+          <version>1.7</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>ovh.mythmc</groupId>
+          <artifactId>banco-api</artifactId>
+          <version>1.0.2</version>
           <scope>provided</scope>
       </dependency>
   </dependencies>

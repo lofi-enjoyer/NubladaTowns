@@ -3,9 +3,14 @@ package io.github.lofienjoyer.nubladatowns.town;
 import io.github.lofienjoyer.nubladatowns.plot.Plot;
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.banner.Pattern;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +22,7 @@ public class Town {
     private final UUID uniqueId;
     private String name;
     private int rgbColor;
+    private List<Pattern> bannerPatterns;
     private final List<UUID> residents;
     private final List<LandChunk> claimedLand;
     private Location spawn;
@@ -25,17 +31,24 @@ public class Town {
     private UUID mayor;
     private List<Role> roles;
     private List<Plot> plots;
+    private List<TownHistoryEvent> historyEvents;
+    private Inventory inventory;
 
-    public Town(UUID uniqueId, String name) {
+    public Town(UUID uniqueId, String name, List<UUID> residents, List<LandChunk> claimedLand, List<TownHistoryEvent> historyEvents, List<ItemStack> inventoryItems) {
         this.uniqueId = uniqueId;
         this.name = name;
-        this.residents = new ArrayList<>();
-        this.claimedLand = new ArrayList<>();
         this.roles = new ArrayList<>();
+        this.residents = residents;
+        this.claimedLand = claimedLand;
+        this.historyEvents = historyEvents;
+        this.inventory = Bukkit.createInventory(null, 9, Component.text(name));
+        for (int i = 0; i < Math.min(inventory.getSize(), inventoryItems.size()); i++) {
+            inventory.setItem(i, inventoryItems.get(i));
+        }
     }
 
     public Town(String name) {
-        this(UUID.randomUUID(), name);
+        this(UUID.randomUUID(), name, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     protected void addLand(LandChunk chunk) {
@@ -44,7 +57,16 @@ public class Town {
 
     protected void addLand(int x, int z, World world) {
         var landChunk = new LandChunk(x, z, world);
-        claimedLand.add(landChunk);
+        addLand(landChunk);
+    }
+
+    protected void removeLand(LandChunk chunk) {
+        claimedLand.remove(chunk);
+    }
+
+    protected void removeLand(int x, int z, World world) {
+        var landChunk = new LandChunk(x, z, world);
+        removeLand(landChunk);
     }
 
     protected void addResident(UUID uuid) {
@@ -67,6 +89,10 @@ public class Town {
         plots.remove(plot);
     }
 
+    protected void addHistoryEvent(TownHistoryEvent event) {
+        historyEvents.add(event);
+    }
+
     public List<UUID> getResidents() {
         return Collections.unmodifiableList(residents);
     }
@@ -75,11 +101,15 @@ public class Town {
         return Collections.unmodifiableList(claimedLand);
     }
 
+    public List<TownHistoryEvent> getHistoryEvents() {
+        return historyEvents;
+    }
+
     public String getName() {
         return name;
     }
 
-    protected void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -87,7 +117,7 @@ public class Town {
         return spawn;
     }
 
-    protected void setSpawn(Location spawn) {
+    public void setSpawn(Location spawn) {
         this.spawn = spawn;
     }
 
@@ -99,27 +129,39 @@ public class Town {
         return rgbColor;
     }
 
-    protected void setRgbColor(int rgbColor) {
+    public void setRgbColor(int rgbColor) {
         this.rgbColor = rgbColor;
+    }
+
+    public List<Pattern> getBannerPatterns() {
+        return bannerPatterns;
+    }
+
+    public void setBannerPatterns(List<Pattern> bannerPatterns) {
+        this.bannerPatterns = bannerPatterns;
     }
 
     public boolean isOpen() {
         return open;
     }
 
-    protected void setOpen(boolean open) {
+    public void setOpen(boolean open) {
         this.open = open;
     }
 
     public int getPower() { return power; }
 
     public void setPower(int power) { this.power = power; }
-  
+
     public void setMayor(UUID uuid) { this.mayor = uuid; }
 
-    public void setMayor(Player player) { setMayor(player.getUniqueId()); }
+    protected void setMayor(Player player) { setMayor(player.getUniqueId()); }
 
     public UUID getMayor() { return mayor; }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
 
     public void addRole(Role role) { this.roles.add(role); }
 

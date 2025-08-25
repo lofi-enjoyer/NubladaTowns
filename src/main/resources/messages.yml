@@ -14,6 +14,27 @@ invalid-command: "<red>Invalid command.</red>"
 invalid-value: "<red>%value% is not a valid value.</red>"
 not-enough-arguments: "<red>Not enough arguments.</red>"
 no-permission: "<red>You do not have permission to do that.</red>"
+only-alphanumeric: "<red>You can only use alphanumeric characters.</red>"
+
+#
+# Admin messages
+#
+
+town-power: "<green>The power of %town% is currently %value%</green>"
+town-power-changed: "<green>The power of %town% was not set to %value%</green>"
+saving-data: "<white>Saving data...</white>"
+data-saved: "<green>Data saved!</green>"
+confirm-loading: "<yellow>Be careful!</yellow> <white>Any new or modified data since the last save will be lost. Use <bold>/nta load --confirm</bold> to continue.</white>"
+loading-data: "<white>Loading data...</white>"
+data-loaded: "<green>Data loaded!</green>"
+error-loading-data: "<red>An error has occurred while saving the data. Check the console for more information.</red>"
+town-information: "<bold><dark_gray>-</dark_gray> %town% <dark_gray>-</dark_gray></bold><newline> <gray>Residents:</gray> %residents% player(s)<newline> <gray>Power:</gray> %power%<newline> <gray>Territory:</gray> %territory% chunk(s)"
+town-balance: "<white>The balance of %town% is currently</white> <green>%value%</green>"
+town-balance-changed: "<red>The balance of %town% was not set to %value%</red>"
+economy-disabled: "<red>Economy is disabled.</red>"
+banner-received: "<white>You received %town%'s banner.</white>"
+invalid-item: "<red>The item you're holding is not valid.</red>"
+banner-set: "<white>%town%'s banner was successfully changed!</white>"
 
 #
 # Town messages
@@ -23,10 +44,20 @@ player-founded-town: "<white> %player% founded %town%.</white>"
 land-claimed-successfully: "<green>This territory has been successfully claimed.</green>"
 town-claimed-land: "<white>%town% claimed a new territory.</white>"
 joined-town: "<green>You just joined %town%!</green>"
-player-joined-town: "<gold>%player%</hold> <white>joined the town.<white>"
+player-joined-town: "<gold>%player%</gold> <white>joined the town.<white>"
 kicked-from-town: "<white>You have been kicked from %town%.</white>"
 player-kicked-from-town: "<gold>%player%</gold> <white>has been kicked from town.</white>"
 set-mayor: "<white><gold>%player%</gold> has set <gold>%mayor%</gold> as the new town mayor!</white>"
+left-town: "<red>You just left %town%.</red>"
+player-left-town: "<gold>%player%</gold> <white>left the town.<white>"
+town-deleted: "<white>The town of </white><gold>%town%</gold><white> has been deleted.</white>"
+land-abandoned-successfully: "<green>This territory has been successfully abandoned.</green>"
+town-abandoned-land: "<white>%town% abandoned a territory.</white>"
+banner-changed: "<green>The town's banner was successfully changed.</green>"
+town-banner-changed: "%town%<white>'s banner was changed.</white>"
+name-changed: "<green>The town was successfully renamed to %town%.</green>"
+town-name-changed: "<gray>%old-name%</gray><white> was renamed to %town%.</white>"
+lectern-moved: "<green>The town's lectern was successfully moved.</green>"
 
 #
 # Town messages
@@ -39,15 +70,24 @@ plot-outside-town: "<red>The plot must be in the town's territory.</red>"
 non-existent-town: "<red>That town does not exist.</red>"
 not-in-a-town: "<red>You are not part of a town.</red>"
 other-not-in-this-town: "<red>Player is not part of this town.</red>"
+land-not-claimed-yet: "<red>This territory has not been claimed yet.</red>"
 cannot-claim-for-other-town: "<red>You can't claim land for another town.</red>"
+cannot-abandon-for-other-town: "<red>You can't abandon land for another town.</red>"
+cannot-move-other-town-lectern: "<red>You can't move another town's lectern.</red>"
 land-not-connected: "<red>This territory is not connected to your town.</red>"
 land-already-of: "<red>This territory belongs to %town%</red>"
 too-far-from-lectern: "<red>You are too far from the town lectern to do this.</red>"
 already-on-a-town: "<red>You're already part of a town.</red>"
 cannot-kick-yourself: "<red>You can't kick yourself from this town.</red>"
 mayor-cannot-be-kicked: "<red>This town's mayor cannot be kicked.</red>"
+mayor-cannot-leave: "<red>You can't leave the town until you name someone else as mayor or there is nobody left on it.</red>"
 town-already-exists: "<red>A town with that name already exists.</red>"
 not-enough-power: "<red>Your town doesn't have enough power.</red>"
+invalid-banner: "<red>You have to use a banner with at least one pattern.</red>"
+not-same-banner: "<red>You have to use the banner of your town to claim territory.</red>"
+not-enough-xp: "<red>You need %amount% levels of experience to do this.</red>"
+not-banner-in-hand: "<red>Hold in your hand the banner you want to use.</red>"
+move-lectern-before-abandoning: "<red>Move the town lectern to another chunk before abandoning this one.</red>"
 
 #
 # Role messages
@@ -79,6 +119,7 @@ exiting-town: "<white>Exiting %town%'s territory</white>"
 cannot-break-here: "<red>You can't break blocks here</red>"
 cannot-place-here: "<red>You can't place blocks here</red>"
 cannot-interact-here: "<red>You can't use that here</red>"
+cannot-attack-animals-here: "<red>You can't attack animals here</red>"
 
 #
 # Menus
@@ -86,6 +127,12 @@ cannot-interact-here: "<red>You can't use that here</red>"
 
 cannot-be-undone: "<red><bold>Cannot be undone!</bold></red>"
 click-to-edit: "<gray>Click to edit</gray>"
+menu-back-button: "<red><bold>◀ </bold></red>"
+menu-back-button-hover: "<gray>Go back</gray>"
+menu-previous-button: "<dark_gray>◄ </dark_gray>"
+menu-previous-button-hover: "<gray>Previous page</gray>"
+menu-next-button: "<dark_gray> ►</dark_gray>"
+menu-next-button-hover: "<gray>Next page</gray>"
 
 # Town menu
 town-menu-title: "<bold>%town%</bold>"
@@ -95,6 +142,10 @@ town-menu-land: "<gray>Owned land:</gray> <dark_gray>%count% chunk(s)</dark_gray
 town-menu-mayor: "<gray>Mayor:</gray> <dark_gray>%player%</dark_gray>"
 town-menu-resident-list: "<blue>[Resident list]</blue>"
 town-menu-roles-list: "<blue>[Roles list]</blue>"
+town-menu-join: "<green>[Join town]</green>"
+town-menu-leave: "<red>[Leave town]</red>"
+town-menu-change-banner: "<aqua>[Change banner]</aqua>"
+town-menu-balance: "<gray>$</gray> <dark_gray>%balance%</dark_gray>"
 
 # Resident list
 resident-list: "<black><bold>List of residents</bold></black>"
@@ -126,6 +177,37 @@ role-editor-edit-rename: "Rename town"
 role-editor-edit-change-spawn: "Change spawn"
 role-editor-edit-manage-roles: "Manage roles"
 role-editor-edit-assign-roles: "Assign roles"
+role-editor-edit-change-banner: "Change banner"
+role-editor-edit-claim-territory: "Claim territory"
+role-editor-edit-abandon-territory: "Abandon territory"
 role-editor-permission-not-granted: "<red>Not granted</red>"
 role-editor-permission-granted: "<green>Granted</green>"
 role-editor-delete: "<red>[Delete]</red>"
+
+#
+# Invites
+#
+
+town-invite-book-name: "<white>Town invite</white>"
+town-invite-book-description: "<gray>Use it to join <gold>%town%</gold></gray>"
+town-invite-created: "<green>Invite created!</green>"
+town-invite-required: "<red>You need a town invite in your hand to join %town%.</red>"
+town-invite-wrong-town: "<red>This invite is not valid for this town.</red>"
+town-invite-not-enough-xp: "<red>You need at least %levels% levels of experience to create an invite.</red>"
+
+#
+# Town history
+#
+
+town-history-title: "<blue><bold>Town history</bold></blue>"
+town-history-event-format: "<gold>%timestamp%</gold> <gray>%type%</gray> <dark_gray>%description%</dark_gray>"
+town-history-type-creation: "Creation"
+town-history-type-player-join: "Player joined"
+town-history-type-player-leave: "Player left"
+town-history-list: "<blue>[⌚]</blue>"
+
+#
+# Town inventory
+#
+
+town-inventory-list: "<blue>[💰]</blue>"
