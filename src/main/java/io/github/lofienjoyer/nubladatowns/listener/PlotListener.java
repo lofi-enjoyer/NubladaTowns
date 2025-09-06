@@ -5,12 +5,15 @@ import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
 import io.github.lofienjoyer.nubladatowns.plot.PlotUtils;
 import io.github.lofienjoyer.nubladatowns.town.Town;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
+import io.github.lofienjoyer.nubladatowns.utils.ParticleUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
+import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -82,7 +85,7 @@ public class PlotListener implements Listener {
         if (firstLineComponent == null)
             return;
 
-        if (!"[parcela]".equals(PlainTextComponentSerializer.plainText().serialize(firstLineComponent)))
+        if (!"[parcela]".equals(PlainTextComponentSerializer.plainText().serialize(firstLineComponent).toLowerCase()))
             return;
 
         var plotNameComponent = event.line(1);
@@ -104,6 +107,46 @@ public class PlotListener implements Listener {
         event.getPlayer().sendMessage(localizationManager.getMessage("sign-linked", true));
     }
 
+    @EventHandler
+    public void onSignInteract(PlayerInteractEvent event) {
+        if (!event.getAction().isRightClick())
+            return;
+
+        var block = event.getClickedBlock();
+        if (block == null)
+            return;
+
+        if (!(block.getState() instanceof Sign sign))
+            return;
+
+        var currentTown = townManager.getTownOnChunk(block.getChunk());
+        if (currentTown == null)
+            return;
+
+        var signSide = sign.getSide(Side.FRONT);
+        var firstLineComponent = signSide.line(0);
+
+        if (!"[parcela]".equalsIgnoreCase(PlainTextComponentSerializer.plainText().serialize(firstLineComponent)))
+            return;
+
+        var plotName = PlainTextComponentSerializer.plainText().serialize(signSide.line(1));
+        currentTown.getPlotByName(plotName).ifPresent(plot -> {
+            event.setCancelled(true);
+            var owner = Bukkit.getOfflinePlayer(plot.ownerUuid());
+            var members = plot.members().stream().map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).toList();
+            event.getPlayer().sendMessage(Component.text()
+                    .append(Component.text("Name: " + plot.name()))
+                    .appendNewline()
+                    .append(Component.text("Owner: " + owner.getName()))
+                    .appendNewline()
+                    .append(Component.text("Members: " + String.join(", ", members)))
+            );
+
+            var world = plot.world();
+            ParticleUtils.showPlot(plot.min().toLocation(world), plot.max().toLocation(world), Particle.DRIPPING_OBSIDIAN_TEAR, 0.5f);
+        });
+    }
+
     private boolean handlePlotCreation(Player player, Location posA, Location posB, Town town, String plotName) {
         if (town.doesPlotExist(plotName)) {
             player.sendMessage("Plot already exists");
@@ -111,7 +154,7 @@ public class PlotListener implements Listener {
         }
 
         var plot = PlotUtils.createPlotBetween(posA, posB, player.getUniqueId(), plotName);
-        if (!PlotUtils.isPlotInsideTown(posA, posB, town)) {
+        if (!PlotUtils.isPlotInsideTown(plot, town)) {
             player.sendMessage(localizationManager.getMessage("plot-outside-town"));
             return false;
         }
@@ -125,6 +168,7 @@ public class PlotListener implements Listener {
         }
 
         townManager.addPlotToTown(plot, town);
+        player.sendMessage(localizationManager.getMessage("plot-created"));
         return true;
     }
 

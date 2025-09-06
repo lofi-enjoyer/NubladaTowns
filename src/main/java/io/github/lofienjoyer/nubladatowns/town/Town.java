@@ -80,11 +80,11 @@ public class Town {
     protected void removeResident(Player player) { removeResident(player.getUniqueId()); }
 
     protected void addPlot(Plot plot) {
-        plots.put(plot.name(), plot);
+        plots.put(plot.name().toLowerCase(), plot);
     }
 
     protected void removePlot(Plot plot) {
-        plots.remove(plot.name());
+        plots.remove(plot.name().toLowerCase());
     }
 
     protected void addHistoryEvent(TownHistoryEvent event) {

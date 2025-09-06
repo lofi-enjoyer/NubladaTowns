@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 import org.joml.Intersectionf;
+import org.joml.Vector3fc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +25,8 @@ public class PlotUtils {
         var z1 = Math.max(a.getBlockZ(), b.getBlockZ());
 
         var min = new Location(a.getWorld(), x0, y0, z0);
-        var max = new Location(a.getWorld(), x1, y1, z1);
-        return new Plot(ownerUuid, min.toVector(), max.toVector(), plotName.toLowerCase(), a.getWorld(),  new ArrayList<>());
+        var max = new Location(a.getWorld(), x1, y1, z1).add(1, 1, 1);
+        return new Plot(ownerUuid, min.toVector(), max.toVector(), plotName, a.getWorld(),  new ArrayList<>());
     }
 
     public static Plot getPlotBetween(Location a, Location b) {
@@ -41,9 +42,8 @@ public class PlotUtils {
         return new Plot(null, min.toVector(), max.toVector(), null, a.getWorld(), null);
     }
 
-    public static boolean isPlotInsideTown(Location posA, Location posB, Town town) {
-        var plot = getPlotBetween(posA, posB);
-        var chunks = getChunksInsidePlot(plot, posA.getWorld());
+    public static boolean isPlotInsideTown(Plot plot, Town town) {
+        var chunks = getChunksInsidePlot(plot, plot.world());
         return chunks.stream().allMatch(chunk -> {
             var chunkTown = NubladaTowns.getInstance().getTownManager().getTownOnChunk(chunk);
             return chunkTown != null && chunkTown.getUniqueId().equals(town.getUniqueId());
@@ -52,7 +52,7 @@ public class PlotUtils {
 
     public static List<Chunk> getChunksInsidePlot(Plot plot, World world) {
         var min = plot.min().toLocation(world);
-        var max = plot.max().toLocation(world);
+        var max = plot.max().toLocation(world).subtract(1, 1, 1);
         var chunks = new ArrayList<Chunk>();
         for (int x = min.getChunk().getX(); x <= max.getChunk().getX(); x++) {
             for (int z = min.getChunk().getZ(); z <= max.getChunk().getZ(); z++) {
@@ -77,9 +77,9 @@ public class PlotUtils {
                 continue;
 
             if (
-                    (plot.min().getX() <= location.x() && plot.max().getX() >= location.x()) &&
-                    (plot.min().getY() <= location.y() && plot.max().getY() >= location.y()) &&
-                    (plot.min().getZ() <= location.z() && plot.max().getZ() >= location.z())
+                    (plot.min().getX() <= location.x() && plot.max().getX() > location.x()) &&
+                    (plot.min().getY() <= location.y() && plot.max().getY() > location.y()) &&
+                    (plot.min().getZ() <= location.z() && plot.max().getZ() > location.z())
             ) {
                 return Optional.of(plot);
             }
@@ -88,10 +88,24 @@ public class PlotUtils {
     }
 
     public static boolean doPlotsIntersect(Plot a, Plot b) {
-        return Intersectionf.testAabAab(
-                a.min().getBlockX(), a.min().getBlockY(), a.min().getBlockZ(), a.max().getBlockX(), a.max().getBlockY(), a.max().getBlockZ(),
-                b.min().getBlockX(), b.min().getBlockY(), b.min().getBlockZ(), b.max().getBlockX(), b.max().getBlockY(), b.max().getBlockZ()
+        return checkAbb(a.min(), a.max(), b.min(), b.max());
+    }
+
+    private static boolean checkAbb(Vector minA, Vector maxA, Vector minB, Vector maxB) {
+        return checkAab(
+                minA.getBlockX(), minA.getBlockY(), minA.getBlockZ(),
+                maxA.getBlockX(), maxA.getBlockY(), maxA.getBlockZ(),
+                minB.getBlockX(), minB.getBlockY(), minB.getBlockZ(),
+                maxB.getBlockX(), maxB.getBlockY(), maxB.getBlockZ()
         );
+    }
+
+    private static boolean checkAab(float minXA, float minYA, float minZA,
+                                    float maxXA, float maxYA, float maxZA,
+                                    float minXB, float minYB, float minZB,
+                                    float maxXB, float maxYB, float maxZB) {
+        return maxXA > minXB && maxYA > minYB && maxZA > minZB &&
+                minXA < maxXB && minYA < maxYB && minZA < maxZB;
     }
 
 }

@@ -70,6 +70,7 @@ stopped-plot-creation: "<white>Finishing plot creation...</white>"
 invalid-plot-name: "<red>There's no plot with the specified name.</red>"
 sign-linked: "<white>The sign was successfully linked!</white>"
 intersects-with-existing-plot: "<red>The plot intersects with an existing one.</red>"
+plot-created: "<white>The plot was successfully created!</white>"
 
 # Errors
 non-existent-town: "<red>That town does not exist.</red>"

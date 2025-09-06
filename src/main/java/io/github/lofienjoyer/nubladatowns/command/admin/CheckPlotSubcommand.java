@@ -35,6 +35,10 @@ public class CheckPlotSubcommand implements SubCommand {
                         .append(Component.text("Owner: " + owner.getName()))
                         .appendNewline()
                         .append(Component.text("Members: " + String.join(", ", members)))
+                        .appendNewline()
+                        .append(Component.text("Min: " + plot.min()))
+                        .appendNewline()
+                        .append(Component.text("Max: " + plot.max()))
                 );
             }, () -> {
                 player.sendMessage(Component.text("No plot here", TextColor.color(1f, 0f, 0f)));
