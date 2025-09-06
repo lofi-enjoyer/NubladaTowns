@@ -30,7 +30,10 @@ public class CheckPlotSubcommand implements SubCommand {
                 var owner = Bukkit.getOfflinePlayer(plot.ownerUuid());
                 var members = plot.members().stream().map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).toList();
                 player.sendMessage(Component.text()
+                        .append(Component.text("Name: " + plot.name()))
+                        .appendNewline()
                         .append(Component.text("Owner: " + owner.getName()))
+                        .appendNewline()
                         .append(Component.text("Members: " + String.join(", ", members)))
                 );
             }, () -> {

@@ -5,16 +5,22 @@ import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
 import io.github.lofienjoyer.nubladatowns.plot.PlotUtils;
 import io.github.lofienjoyer.nubladatowns.town.Town;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class PlotListener implements Listener {
 
@@ -37,11 +43,32 @@ public class PlotListener implements Listener {
         if (item.getType() != Material.AMETHYST_SHARD)
             return;
 
+        if (!item.hasItemMeta())
+            return;
+
+        var meta = item.getItemMeta();
+        if (!meta.hasDisplayName()) {
+            return;
+        }
+
         var player = event.getPlayer();
+        var plotName = PlainTextComponentSerializer.plainText().serialize(meta.displayName());
+        if (plotName.length() > 10) {
+            player.sendMessage(localizationManager.getMessage("too-long", true));
+            return;
+        }
+        if (!plotName.matches("^[a-zA-Z0-9 ]*$")) {
+            player.sendMessage(localizationManager.getMessage("only-alphanumeric", true));
+            return;
+        }
+
         var playerTown = townManager.getPlayerTown(player);
         if (plotsBeingCreated.get(player.getUniqueId()) != null) {
-            handlePlotCreation(player, plotsBeingCreated.get(player.getUniqueId()), event.getClickedBlock().getLocation(), playerTown);
+            var success = handlePlotCreation(player, plotsBeingCreated.get(player.getUniqueId()), event.getClickedBlock().getLocation(), playerTown, plotName);
             plotsBeingCreated.remove(player.getUniqueId());
+            if (success) {
+                item.subtract();
+            }
             return;
         }
 
@@ -49,15 +76,56 @@ public class PlotListener implements Listener {
         player.sendMessage(localizationManager.getMessage("started-plot-creation"));
     }
 
-    private void handlePlotCreation(Player player, Location posA, Location posB, Town town) {
-        // TODO: check if overlaps with another plot
-        player.sendMessage(localizationManager.getMessage("stopped-plot-creation"));
-        var plot = PlotUtils.getPlotBetween(posA, posB, player.getUniqueId());
-        if (PlotUtils.isPlotInsideTown(posA, posB, town)) {
-            townManager.addPlotToTown(plot, town);
-        } else {
-            player.sendMessage(localizationManager.getMessage("plot-outside-town"));
+    @EventHandler
+    public void onSignPlace(SignChangeEvent event) {
+        var firstLineComponent = event.line(0);
+        if (firstLineComponent == null)
+            return;
+
+        if (!"[parcela]".equals(PlainTextComponentSerializer.plainText().serialize(firstLineComponent)))
+            return;
+
+        var plotNameComponent = event.line(1);
+        if (plotNameComponent == null)
+            return;
+
+        var currentTown = townManager.getTownOnChunk(event.getBlock().getChunk());
+        if (currentTown == null)
+            return;
+
+        var plot = currentTown.getPlotByName(PlainTextComponentSerializer.plainText().serialize(plotNameComponent));
+        if (plot.isEmpty()) {
+            event.line(0, Component.text("[Parcela]"));
+            event.getPlayer().sendMessage(localizationManager.getMessage("invalid-plot-name", true));
+            return;
         }
+
+        event.line(0, Component.text("[Parcela]", Style.style().decoration(TextDecoration.BOLD, true).build()));
+        event.getPlayer().sendMessage(localizationManager.getMessage("sign-linked", true));
+    }
+
+    private boolean handlePlotCreation(Player player, Location posA, Location posB, Town town, String plotName) {
+        if (town.doesPlotExist(plotName)) {
+            player.sendMessage("Plot already exists");
+            return false;
+        }
+
+        var plot = PlotUtils.createPlotBetween(posA, posB, player.getUniqueId(), plotName);
+        if (!PlotUtils.isPlotInsideTown(posA, posB, town)) {
+            player.sendMessage(localizationManager.getMessage("plot-outside-town"));
+            return false;
+        }
+
+        var intersectsWithExistingPlot = town.getPlots().stream().anyMatch(existingPlot -> {
+            return PlotUtils.doPlotsIntersect(existingPlot, plot);
+        });
+        if (intersectsWithExistingPlot) {
+            player.sendMessage(localizationManager.getMessage("intersects-with-existing-plot"));
+            return false;
+        }
+
+        townManager.addPlotToTown(plot, town);
+        return true;
     }
 
     public Map<UUID, Location> getPlotsBeingCreated() {

@@ -15,6 +15,7 @@ invalid-value: "<red>%value% is not a valid value.</red>"
 not-enough-arguments: "<red>Not enough arguments.</red>"
 no-permission: "<red>You do not have permission to do that.</red>"
 only-alphanumeric: "<red>You can only use alphanumeric characters.</red>"
+too-long: "<red>The value is too long.</red>"
 
 #
 # Admin messages
@@ -66,6 +67,9 @@ lectern-moved: "<green>The town's lectern was successfully moved.</green>"
 started-plot-creation: "<green>Right click on the opposite corner to create a plot.</green>"
 plot-outside-town: "<red>The plot must be in the town's territory.</red>"
 stopped-plot-creation: "<white>Finishing plot creation...</white>"
+invalid-plot-name: "<red>There's no plot with the specified name.</red>"
+sign-linked: "<white>The sign was successfully linked!</white>"
+intersects-with-existing-plot: "<red>The plot intersects with an existing one.</red>"
 
 # Errors
 non-existent-town: "<red>That town does not exist.</red>"

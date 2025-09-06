@@ -45,8 +45,13 @@ public class ProtectionListener implements Listener {
         var plotOptional = PlotUtils.getPlotAtLocation(event.getBlock().getLocation(), currentTown);
         if (plotOptional.isPresent()) {
             var plot = plotOptional.get();
-            if (plot.ownerUuid().equals(event.getPlayer().getUniqueId()) || plot.members().contains(event.getPlayer().getUniqueId()))
-                return;
+            if (!plot.ownerUuid().equals(event.getPlayer().getUniqueId()) && !plot.members().contains(event.getPlayer().getUniqueId())) {
+                if (!currentTown.hasPermission(player, Permission.DESTROY)) {
+                    player.sendActionBar(localizationManager.getMessage("cannot-break-here"));
+                    event.setCancelled(true);
+                    return;
+                }
+            }
         }
 
         if (!currentTown.hasPermission(player, Permission.DESTROY)) {
@@ -68,8 +73,13 @@ public class ProtectionListener implements Listener {
         var plotOptional = PlotUtils.getPlotAtLocation(event.getBlockPlaced().getLocation(), currentTown);
         if (plotOptional.isPresent()) {
             var plot = plotOptional.get();
-            if (plot.ownerUuid().equals(event.getPlayer().getUniqueId()) || plot.members().contains(event.getPlayer().getUniqueId()))
-                return;
+            if (!plot.ownerUuid().equals(event.getPlayer().getUniqueId()) && !plot.members().contains(event.getPlayer().getUniqueId())) {
+                if (!currentTown.hasPermission(player, Permission.BUILD)) {
+                    player.sendActionBar(localizationManager.getMessage("cannot-place-here"));
+                    event.setCancelled(true);
+                    return;
+                }
+            }
         }
 
         if (!currentTown.hasPermission(player, Permission.BUILD)) {
@@ -109,8 +119,13 @@ public class ProtectionListener implements Listener {
             var plotOptional = PlotUtils.getPlotAtLocation(block.getLocation(), currentTown);
             if (plotOptional.isPresent()) {
                 var plot = plotOptional.get();
-                if (plot.ownerUuid().equals(event.getPlayer().getUniqueId()) || plot.members().contains(event.getPlayer().getUniqueId()))
+                if (!plot.ownerUuid().equals(event.getPlayer().getUniqueId()) && !plot.members().contains(event.getPlayer().getUniqueId())) {
+                    if (!currentTown.hasPermission(player, Permission.INTERACT)) {
+                        event.setCancelled(true);
+                        player.sendActionBar(localizationManager.getMessage("cannot-interact-here"));
+                    }
                     return;
+                }
             }
 
             if (!currentTown.hasPermission(player, Permission.INTERACT)) {

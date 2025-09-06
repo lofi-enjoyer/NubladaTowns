@@ -5,6 +5,8 @@ import io.github.lofienjoyer.nubladatowns.town.Town;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.util.Vector;
+import org.joml.Intersectionf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.UUID;
 
 public class PlotUtils {
 
-    public static Plot getPlotBetween(Location a, Location b, UUID ownerUuid) {
+    public static Plot createPlotBetween(Location a, Location b, UUID ownerUuid, String plotName) {
         var x0 = Math.min(a.getBlockX(), b.getBlockX());
         var x1 = Math.max(a.getBlockX(), b.getBlockX());
         var y0 = Math.min(a.getBlockY(), b.getBlockY());
@@ -23,7 +25,7 @@ public class PlotUtils {
 
         var min = new Location(a.getWorld(), x0, y0, z0);
         var max = new Location(a.getWorld(), x1, y1, z1);
-        return new Plot(ownerUuid, min.toVector(), max.toVector(), a.getWorld(),  new ArrayList<>());
+        return new Plot(ownerUuid, min.toVector(), max.toVector(), plotName.toLowerCase(), a.getWorld(),  new ArrayList<>());
     }
 
     public static Plot getPlotBetween(Location a, Location b) {
@@ -36,7 +38,7 @@ public class PlotUtils {
 
         var min = new Location(a.getWorld(), x0, y0, z0);
         var max = new Location(a.getWorld(), x1, y1, z1);
-        return new Plot(null, min.toVector(), max.toVector(), a.getWorld(), null);
+        return new Plot(null, min.toVector(), max.toVector(), null, a.getWorld(), null);
     }
 
     public static boolean isPlotInsideTown(Location posA, Location posB, Town town) {
@@ -83,6 +85,13 @@ public class PlotUtils {
             }
         }
         return Optional.empty();
+    }
+
+    public static boolean doPlotsIntersect(Plot a, Plot b) {
+        return Intersectionf.testAabAab(
+                a.min().getBlockX(), a.min().getBlockY(), a.min().getBlockZ(), a.max().getBlockX(), a.max().getBlockY(), a.max().getBlockZ(),
+                b.min().getBlockX(), b.min().getBlockY(), b.min().getBlockZ(), b.max().getBlockX(), b.max().getBlockY(), b.max().getBlockZ()
+        );
     }
 
 }

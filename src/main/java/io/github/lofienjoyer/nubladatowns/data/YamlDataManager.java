@@ -62,7 +62,7 @@ public class YamlDataManager implements DataManager {
                     .map(o -> (ItemStack) o)
                     .toList();
 
-            var town = new Town(townUuid, name, residentUniqueIds, landChunks, historyEvents, inventoryItems, new ArrayList<>());
+            var town = new Town(townUuid, name, residentUniqueIds, landChunks, historyEvents, inventoryItems, new HashMap<>());
             town.setRgbColor(section.getInt("color"));
             var patterns = section.getStringList("banner-patterns").stream()
                     .map(s -> {

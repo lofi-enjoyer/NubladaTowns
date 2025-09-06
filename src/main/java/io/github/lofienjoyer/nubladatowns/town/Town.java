@@ -12,10 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Town {
 
@@ -30,11 +27,11 @@ public class Town {
     private int power;
     private UUID mayor;
     private List<Role> roles;
-    private List<Plot> plots;
+    private Map<String, Plot> plots;
     private List<TownHistoryEvent> historyEvents;
     private Inventory inventory;
 
-    public Town(UUID uniqueId, String name, List<UUID> residents, List<LandChunk> claimedLand, List<TownHistoryEvent> historyEvents, List<ItemStack> inventoryItems, List<Plot> plots) {
+    public Town(UUID uniqueId, String name, List<UUID> residents, List<LandChunk> claimedLand, List<TownHistoryEvent> historyEvents, List<ItemStack> inventoryItems, Map<String, Plot> plots) {
         this.uniqueId = uniqueId;
         this.name = name;
         this.roles = new ArrayList<>();
@@ -49,7 +46,7 @@ public class Town {
     }
 
     public Town(String name) {
-        this(UUID.randomUUID(), name, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        this(UUID.randomUUID(), name, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new HashMap<>());
     }
 
     protected void addLand(LandChunk chunk) {
@@ -83,11 +80,11 @@ public class Town {
     protected void removeResident(Player player) { removeResident(player.getUniqueId()); }
 
     protected void addPlot(Plot plot) {
-        plots.add(plot);
+        plots.put(plot.name(), plot);
     }
 
     protected void removePlot(Plot plot) {
-        plots.remove(plot);
+        plots.remove(plot.name());
     }
 
     protected void addHistoryEvent(TownHistoryEvent event) {
@@ -182,8 +179,16 @@ public class Town {
 
     protected void setRoles(ArrayList<Role> roles) { this.roles = roles; }
 
-    public List<Plot> getPlots() {
-        return plots;
+    public Collection<Plot> getPlots() {
+        return plots.values();
+    }
+
+    public boolean doesPlotExist(String name) {
+        return plots.containsKey(name.toLowerCase());
+    }
+
+    public Optional<Plot> getPlotByName(String name) {
+        return Optional.ofNullable(plots.get(name));
     }
 
     public boolean hasPermission(UUID uuid, Permission permission) {
