@@ -92,67 +92,69 @@ public class ParticleUtils {
         }
     }
     
-    public static void showPlot(Location posA, Location posB, Particle particle) {
-        showPlot(posA, posB, particle, 1f);
+    public static void showPlot(Location posA, Location posB) {
+        showPlot(posA, posB, 1f, Color.ORANGE, 1);
     }
 
-    public static void showPlot(Location posA, Location posB, Particle particle, float step) {
+    public static void showPlot(Location posA, Location posB, float step, Color color, int iterations) {
         var world = posA.getWorld();
         var counter = new AtomicInteger();
         var taskReference = new AtomicReference<BukkitTask>();
+        var particle = Particle.DUST;
+        var dustOptions = new Particle.DustOptions(color, 1);
         taskReference.set(Bukkit.getScheduler().runTaskTimer(NubladaTowns.getPlugin(NubladaTowns.class), () -> {
             for (float i = 0; i <= Math.abs(posB.x() - posA.x()); i += step) {
-                world.spawnParticle(particle, posA.x() + i, posA.y(), posA.z(), 1);
+                world.spawnParticle(particle, posA.x() + i, posA.y(), posA.z(), 1, dustOptions);
             }
 
             for (float i = 0; i <= Math.abs(posB.x() - posA.x()); i += step) {
-                world.spawnParticle(particle, posA.x() + i, posA.y(), posB.z(), 1);
+                world.spawnParticle(particle, posA.x() + i, posA.y(), posB.z(), 1, dustOptions);
             }
 
             for (float i = 0; i <= Math.abs(posB.x() - posA.x()); i += step) {
-                world.spawnParticle(particle, posA.x() + i, posB.y(), posA.z(), 1);
+                world.spawnParticle(particle, posA.x() + i, posB.y(), posA.z(), 1, dustOptions);
             }
 
             for (float i = 0; i <= Math.abs(posB.x() - posA.x()); i += step) {
-                world.spawnParticle(particle, posA.x() + i, posB.y(), posB.z(), 1);
+                world.spawnParticle(particle, posA.x() + i, posB.y(), posB.z(), 1, dustOptions);
             }
 
             for (float i = 0; i <= Math.abs(posB.z() - posA.z()); i += step) {
-                world.spawnParticle(particle, posA.x(), posA.y(), posA.z() + i, 1);
+                world.spawnParticle(particle, posA.x(), posA.y(), posA.z() + i, 1, dustOptions);
             }
 
             for (float i = 0; i <= Math.abs(posB.z() - posA.z()); i += step) {
-                world.spawnParticle(particle, posB.x(), posA.y(), posA.z() + i, 1);
+                world.spawnParticle(particle, posB.x(), posA.y(), posA.z() + i, 1, dustOptions);
             }
 
             for (float i = 0; i <= Math.abs(posB.z() - posA.z()); i += step) {
-                world.spawnParticle(particle, posA.x(), posB.y(), posA.z() + i, 1);
+                world.spawnParticle(particle, posA.x(), posB.y(), posA.z() + i, 1, dustOptions);
             }
 
             for (float i = 0; i <= Math.abs(posB.z() - posA.z()); i += step) {
-                world.spawnParticle(particle, posB.x(), posB.y(), posA.z() + i, 1);
+                world.spawnParticle(particle, posB.x(), posB.y(), posA.z() + i, 1, dustOptions);
             }
 
             for (float i = 0; i <= Math.abs(posB.y() - posA.y()); i += step) {
-                world.spawnParticle(particle, posA.x(), posA.y() + i, posA.z(), 1);
+                world.spawnParticle(particle, posA.x(), posA.y() + i, posA.z(), 1, dustOptions);
             }
 
             for (float i = 0; i <= Math.abs(posB.y() - posA.y()); i += step) {
-                world.spawnParticle(particle, posB.x(), posA.y() + i, posA.z(), 1);
+                world.spawnParticle(particle, posB.x(), posA.y() + i, posA.z(), 1, dustOptions);
             }
 
             for (float i = 0; i <= Math.abs(posB.y() - posA.y()); i += step) {
-                world.spawnParticle(particle, posA.x(), posA.y() + i, posB.z(), 1);
+                world.spawnParticle(particle, posA.x(), posA.y() + i, posB.z(), 1, dustOptions);
             }
 
             for (float i = 0; i <= Math.abs(posB.y() - posA.y()); i += step) {
-                world.spawnParticle(particle, posB.x(), posA.y() + i, posB.z(), 1);
+                world.spawnParticle(particle, posB.x(), posA.y() + i, posB.z(), 1, dustOptions);
             }
 
-            if (counter.incrementAndGet() > 5) {
+            if (counter.incrementAndGet() > iterations) {
                 taskReference.get().cancel();
             }
-        }, 0, 1));
+        }, 0, 5));
     }
 
 }

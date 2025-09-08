@@ -134,7 +134,7 @@ public final class NubladaTowns extends JavaPlugin {
                 if (plot.max().getX() - plot.min().getX() > 64 || plot.max().getZ() - plot.min().getZ() > 64)
                     return;
 
-                ParticleUtils.showPlot(plot.min().toLocation(player.getWorld()), plot.max().toLocation(player.getWorld()).add(1, 1, 1), Particle.WAX_ON);
+                ParticleUtils.showPlot(plot.min().toLocation(player.getWorld()), plot.max().toLocation(player.getWorld()).add(1, 1, 1));
             });
         }, 0, 20);
     }

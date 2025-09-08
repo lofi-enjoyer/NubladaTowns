@@ -71,6 +71,9 @@ invalid-plot-name: "<red>There's no plot with the specified name.</red>"
 sign-linked: "<white>The sign was successfully linked!</white>"
 intersects-with-existing-plot: "<red>The plot intersects with an existing one.</red>"
 plot-created: "<white>The plot was successfully created!</white>"
+plot-sign-creation-header: "[plot]"
+working-plot-sign-header: "<bold>[Plot]</bold>"
+plot-information: "<yellow><bold>%name%</bold></yellow><newline>Owner: <bold>%owner%</bold><newline>Members: <bold>%members%</bold>"
 
 # Errors
 non-existent-town: "<red>That town does not exist.</red>"

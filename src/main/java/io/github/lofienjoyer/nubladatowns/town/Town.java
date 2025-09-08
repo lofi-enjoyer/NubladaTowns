@@ -188,7 +188,7 @@ public class Town {
     }
 
     public Optional<Plot> getPlotByName(String name) {
-        return Optional.ofNullable(plots.get(name));
+        return Optional.ofNullable(plots.get(name.toLowerCase()));
     }
 
     public boolean hasPermission(UUID uuid, Permission permission) {

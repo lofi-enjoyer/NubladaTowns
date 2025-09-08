@@ -85,7 +85,8 @@ public class PlotListener implements Listener {
         if (firstLineComponent == null)
             return;
 
-        if (!"[parcela]".equals(PlainTextComponentSerializer.plainText().serialize(firstLineComponent).toLowerCase()))
+        var plotSignCreationHeader = PlainTextComponentSerializer.plainText().serialize(localizationManager.getMessage("plot-sign-creation-header"));
+        if (!plotSignCreationHeader.equalsIgnoreCase(PlainTextComponentSerializer.plainText().serialize(firstLineComponent)))
             return;
 
         var plotNameComponent = event.line(1);
@@ -98,12 +99,12 @@ public class PlotListener implements Listener {
 
         var plot = currentTown.getPlotByName(PlainTextComponentSerializer.plainText().serialize(plotNameComponent));
         if (plot.isEmpty()) {
-            event.line(0, Component.text("[Parcela]"));
+            event.line(0, localizationManager.getMessage("plot-sign-creation-header"));
             event.getPlayer().sendMessage(localizationManager.getMessage("invalid-plot-name", true));
             return;
         }
 
-        event.line(0, Component.text("[Parcela]", Style.style().decoration(TextDecoration.BOLD, true).build()));
+        event.line(0, localizationManager.getMessage("working-plot-sign-header"));
         event.getPlayer().sendMessage(localizationManager.getMessage("sign-linked", true));
     }
 
@@ -126,7 +127,8 @@ public class PlotListener implements Listener {
         var signSide = sign.getSide(Side.FRONT);
         var firstLineComponent = signSide.line(0);
 
-        if (!"[parcela]".equalsIgnoreCase(PlainTextComponentSerializer.plainText().serialize(firstLineComponent)))
+        var workingPlotSignHeader = PlainTextComponentSerializer.plainText().serialize(localizationManager.getMessage("working-plot-sign-header"));
+        if (!workingPlotSignHeader.equalsIgnoreCase(PlainTextComponentSerializer.plainText().serialize(firstLineComponent)))
             return;
 
         var plotName = PlainTextComponentSerializer.plainText().serialize(signSide.line(1));
@@ -134,16 +136,18 @@ public class PlotListener implements Listener {
             event.setCancelled(true);
             var owner = Bukkit.getOfflinePlayer(plot.ownerUuid());
             var members = plot.members().stream().map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).toList();
-            event.getPlayer().sendMessage(Component.text()
-                    .append(Component.text("Name: " + plot.name()))
-                    .appendNewline()
-                    .append(Component.text("Owner: " + owner.getName()))
-                    .appendNewline()
-                    .append(Component.text("Members: " + String.join(", ", members)))
-            );
+            var plotInfoComponent = localizationManager.getMessage("plot-information")
+                    .replaceText(builder -> {
+                        builder.matchLiteral("%name%").replacement(plot.name());
+                    }).replaceText(builder -> {
+                        builder.matchLiteral("%owner%").replacement(owner.getName());
+                    }).replaceText(builder -> {
+                        builder.matchLiteral("%members%").replacement(String.join(", ", members));
+                    });
+            event.getPlayer().sendMessage(plotInfoComponent);
 
             var world = plot.world();
-            ParticleUtils.showPlot(plot.min().toLocation(world), plot.max().toLocation(world), Particle.DRIPPING_OBSIDIAN_TEAR, 0.5f);
+            ParticleUtils.showPlot(plot.min().toLocation(world), plot.max().toLocation(world), 0.5f, Color.fromARGB(plot.argbColor()), 10);
         });
     }
 

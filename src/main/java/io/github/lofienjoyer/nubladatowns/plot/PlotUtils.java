@@ -3,6 +3,7 @@ package io.github.lofienjoyer.nubladatowns.plot;
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
 import io.github.lofienjoyer.nubladatowns.town.Town;
 import org.bukkit.Chunk;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
@@ -26,7 +27,14 @@ public class PlotUtils {
 
         var min = new Location(a.getWorld(), x0, y0, z0);
         var max = new Location(a.getWorld(), x1, y1, z1).add(1, 1, 1);
-        return new Plot(ownerUuid, min.toVector(), max.toVector(), plotName, a.getWorld(),  new ArrayList<>());
+
+        var argbColor = Color.fromARGB(
+                1,
+                (int)(Math.abs(min.getBlockX() % 16) / 15f * 155) + 100,
+                (int)(Math.abs(min.getBlockY() % 16) / 15f * 155) + 100,
+                (int)(Math.abs(min.getBlockZ() % 16) / 15f * 155) + 100
+        ).asARGB();
+        return new Plot(ownerUuid, min.toVector(), max.toVector(), plotName, argbColor, a.getWorld(),  new ArrayList<>());
     }
 
     public static Plot getPlotBetween(Location a, Location b) {
@@ -39,7 +47,7 @@ public class PlotUtils {
 
         var min = new Location(a.getWorld(), x0, y0, z0);
         var max = new Location(a.getWorld(), x1, y1, z1);
-        return new Plot(null, min.toVector(), max.toVector(), null, a.getWorld(), null);
+        return new Plot(null, min.toVector(), max.toVector(), null, 0, a.getWorld(), null);
     }
 
     public static boolean isPlotInsideTown(Plot plot, Town town) {
