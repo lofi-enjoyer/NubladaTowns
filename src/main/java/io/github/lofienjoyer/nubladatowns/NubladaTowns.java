@@ -84,6 +84,7 @@ public final class NubladaTowns extends JavaPlugin {
     @Override
     public void onDisable() {
         stopTownBordersTimer();
+        stopPlotCreationTimer();
         try {
             saveData();
         } catch (IOException e) {
@@ -180,6 +181,8 @@ public final class NubladaTowns extends JavaPlugin {
 
     public static class Keys {
         public static final NamespacedKey TOWN_INVITE_KEY = new NamespacedKey("nubladatowns", "town-invite");
+        public static final NamespacedKey PLOT_CONTRACT_KEY = new NamespacedKey("nubladatowns", "plot-contract");
+        public static final NamespacedKey PLOT_INVITE_KEY = new NamespacedKey("nubladatowns", "plot-invite");
     }
 
 }

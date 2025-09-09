@@ -74,6 +74,21 @@ plot-created: "<white>The plot was successfully created!</white>"
 plot-sign-creation-header: "[plot]"
 working-plot-sign-header: "<bold>[Plot]</bold>"
 plot-information: "<yellow><bold>%name%</bold></yellow><newline>Owner: <bold>%owner%</bold><newline>Members: <bold>%members%</bold>"
+plot-contract-book-name: "<white>Plot contract</white>"
+plot-contract-book-description: "<gray>Use it to buy <gold>%plot%</gold></gray>"
+plot-contract-created: "<green>Contract created!</green>"
+plot-contract-not-enough-xp: "<red>You need at least %levels% levels of experience to create a contract.</red>"
+plot-invite-book-name: "<white>Plot invitation</white>"
+plot-invite-book-description: "<gray>Use it to join <gold>%plot%</gold></gray>"
+plot-invite-created: "<green>Invite created!</green>"
+plot-invite-not-enough-xp: "<red>You need at least %levels% levels of experience to create an invite.</red>"
+plot-menu: |
+  <bold>%plot%</bold>
+  Owner: <bold>%owner%</bold>
+  Members: <bold>%members%</bold>
+plot-joined: "<white>You just joined %plot%.</white>"
+plot-claimed: "<white>You just claimed %plot%.</white>"
+plot-already-member: "<red>You're already a member of this plot.</red>"
 
 # Errors
 non-existent-town: "<red>That town does not exist.</red>"
@@ -189,6 +204,8 @@ role-editor-edit-assign-roles: "Assign roles"
 role-editor-edit-change-banner: "Change banner"
 role-editor-edit-claim-territory: "Claim territory"
 role-editor-edit-abandon-territory: "Abandon territory"
+role-editor-edit-open-inventory: "Open inventory"
+role-editor-edit-manage-plots: "Manage plots"
 role-editor-permission-not-granted: "<red>Not granted</red>"
 role-editor-permission-granted: "<green>Granted</green>"
 role-editor-delete: "<red>[Delete]</red>"

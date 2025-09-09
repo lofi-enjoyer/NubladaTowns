@@ -1,21 +1,40 @@
 package io.github.lofienjoyer.nubladatowns.plot;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
+import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.town.Town;
-import org.bukkit.Chunk;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.World;
+import io.github.lofienjoyer.nubladatowns.utils.ComponentUtils;
+import net.kyori.adventure.inventory.Book;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.joml.Intersectionf;
 import org.joml.Vector3fc;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class PlotUtils {
+
+    public static void showPlotMenu(Player player, Plot plot) {
+        var lm = NubladaTowns.getInstance().getLocalizationManager();
+        var title = Component.text("Town menu");
+        var author = Component.text("NubladaTowns");
+        var content = lm.getMessage("plot-menu").replaceText(builder -> {
+            builder.matchLiteral("%plot%").replacement(Component.text(plot.name(), Style.style(TextColor.color(plot.argbColor()))));
+        }).replaceText(builder -> {
+            var owner = plot.ownerUuid() != null ? Bukkit.getOfflinePlayer(plot.ownerUuid()).getName() : "";
+            builder.matchLiteral("%owner%").replacement(owner);
+        }).replaceText(builder -> {
+            var members = String.join(", ", plot.members().stream().map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).toList());
+            builder.matchLiteral("%members%").replacement(members);
+        });
+
+        player.openBook(Book.book(title, author, content));
+    }
 
     public static Plot createPlotBetween(Location a, Location b, UUID ownerUuid, String plotName) {
         var x0 = Math.min(a.getBlockX(), b.getBlockX());
@@ -34,7 +53,7 @@ public class PlotUtils {
                 (int)(Math.abs(min.getBlockY() % 16) / 15f * 155) + 100,
                 (int)(Math.abs(min.getBlockZ() % 16) / 15f * 155) + 100
         ).asARGB();
-        return new Plot(ownerUuid, min.toVector(), max.toVector(), plotName, argbColor, a.getWorld(),  new ArrayList<>());
+        return new Plot(UUID.randomUUID(), ownerUuid, min.toVector(), max.toVector(), plotName, argbColor, a.getWorld(),  new ArrayList<>());
     }
 
     public static Plot getPlotBetween(Location a, Location b) {
@@ -47,7 +66,7 @@ public class PlotUtils {
 
         var min = new Location(a.getWorld(), x0, y0, z0);
         var max = new Location(a.getWorld(), x1, y1, z1);
-        return new Plot(null, min.toVector(), max.toVector(), null, 0, a.getWorld(), null);
+        return new Plot(null, null, min.toVector(), max.toVector(), null, 0, a.getWorld(), null);
     }
 
     public static boolean isPlotInsideTown(Plot plot, Town town) {

@@ -2,14 +2,16 @@ package io.github.lofienjoyer.nubladatowns.listener;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
 import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
+import io.github.lofienjoyer.nubladatowns.plot.Plot;
 import io.github.lofienjoyer.nubladatowns.plot.PlotUtils;
+import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.town.Town;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
+import io.github.lofienjoyer.nubladatowns.utils.ComponentUtils;
 import io.github.lofienjoyer.nubladatowns.utils.ParticleUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.Sign;
@@ -19,11 +21,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 public class PlotListener implements Listener {
 
@@ -128,23 +132,25 @@ public class PlotListener implements Listener {
         var firstLineComponent = signSide.line(0);
 
         var workingPlotSignHeader = PlainTextComponentSerializer.plainText().serialize(localizationManager.getMessage("working-plot-sign-header"));
-        if (!workingPlotSignHeader.equalsIgnoreCase(PlainTextComponentSerializer.plainText().serialize(firstLineComponent)))
+        if (!workingPlotSignHeader.equals(PlainTextComponentSerializer.plainText().serialize(firstLineComponent)))
             return;
 
         var plotName = PlainTextComponentSerializer.plainText().serialize(signSide.line(1));
         currentTown.getPlotByName(plotName).ifPresent(plot -> {
             event.setCancelled(true);
-            var owner = Bukkit.getOfflinePlayer(plot.ownerUuid());
-            var members = plot.members().stream().map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).toList();
-            var plotInfoComponent = localizationManager.getMessage("plot-information")
-                    .replaceText(builder -> {
-                        builder.matchLiteral("%name%").replacement(plot.name());
-                    }).replaceText(builder -> {
-                        builder.matchLiteral("%owner%").replacement(owner.getName());
-                    }).replaceText(builder -> {
-                        builder.matchLiteral("%members%").replacement(String.join(", ", members));
-                    });
-            event.getPlayer().sendMessage(plotInfoComponent);
+            var itemInHand = event.getItem();
+            if (itemInHand != null) {
+                var player = event.getPlayer();
+                if (itemInHand.getType() == Material.BOOK) {
+                    handlePlotContract(player, currentTown, plot, itemInHand);
+                    return;
+                } else if (itemInHand.getType() == Material.PAPER) {
+                    handlePlotInvite(player, currentTown, plot, itemInHand);
+                    return;
+                }
+            }
+
+            PlotUtils.showPlotMenu(event.getPlayer(), plot);
 
             var world = plot.world();
             ParticleUtils.showPlot(plot.min().toLocation(world), plot.max().toLocation(world), 0.5f, Color.fromARGB(plot.argbColor()), 10);
@@ -174,6 +180,99 @@ public class PlotListener implements Listener {
         townManager.addPlotToTown(plot, town);
         player.sendMessage(localizationManager.getMessage("plot-created"));
         return true;
+    }
+
+    private void handlePlotContract(Player player, Town town, Plot plot, ItemStack itemInHand) {
+        if (itemInHand.getPersistentDataContainer().has(NubladaTowns.Keys.PLOT_CONTRACT_KEY)) {
+            var plotUuidString = itemInHand.getPersistentDataContainer().get(NubladaTowns.Keys.PLOT_CONTRACT_KEY, PersistentDataType.STRING);
+            var plotUuid = UUID.fromString(plotUuidString);
+            if (!plotUuid.equals(plot.uuid()))
+                return;
+
+            plot.setOwnerUuid(player.getUniqueId());
+            player.sendMessage(localizationManager.getMessage("plot-claimed").replaceText(builder -> {
+                builder.matchLiteral("%plot%").replacement(Component.text(plot.name(), Style.style(TextColor.color(plot.argbColor()))));
+            }));
+            itemInHand.subtract();
+            return;
+        }
+
+        if (!town.hasPermission(player, Permission.MANAGE_PLOTS) && !plot.ownerUuid().equals(player.getUniqueId())) {
+            player.sendMessage(localizationManager.getMessage("no-permission"));
+            return;
+        }
+
+        var levelsNeeded = NubladaTowns.getInstance().getConfigValues().getTownInviteXpLevels();
+        if (player.getLevel() < levelsNeeded) {
+            player.sendMessage(localizationManager.getMessage("plot-invite-not-enough-xp").replaceText(builder -> {
+                builder.matchLiteral("%levels%").replacement(String.valueOf(levelsNeeded));
+            }));
+            return;
+        }
+
+        player.setLevel(player.getLevel() - levelsNeeded);
+        itemInHand.subtract();
+
+        var inviteItem = new ItemStack(Material.BOOK);
+        var itemMeta = inviteItem.getItemMeta();
+        itemMeta.itemName(localizationManager.getMessage("plot-contract-book-name"));
+        itemMeta.lore(List.of(ComponentUtils.replaceString(localizationManager.getMessage("plot-contract-book-description"), "%plot%", plot.name())));
+        itemMeta.setMaxStackSize(1);
+        itemMeta.setEnchantmentGlintOverride(true);
+        var pdc = itemMeta.getPersistentDataContainer();
+        pdc.set(NubladaTowns.Keys.PLOT_CONTRACT_KEY, PersistentDataType.STRING, plot.uuid().toString());
+        inviteItem.setItemMeta(itemMeta);
+        player.getInventory().addItem(inviteItem);
+        player.sendMessage(localizationManager.getMessage("plot-contract-created"));
+    }
+
+    private void handlePlotInvite(Player player, Town town, Plot plot, ItemStack itemInHand) {
+        if (itemInHand.getPersistentDataContainer().has(NubladaTowns.Keys.PLOT_INVITE_KEY)) {
+            var plotUuidString = itemInHand.getPersistentDataContainer().get(NubladaTowns.Keys.PLOT_INVITE_KEY, PersistentDataType.STRING);
+            var plotUuid = UUID.fromString(plotUuidString);
+            if (!plotUuid.equals(plot.uuid()))
+                return;
+
+            if (plot.ownerUuid().equals(player.getUniqueId()) || plot.members().contains(player.getUniqueId())) {
+                player.sendMessage(localizationManager.getMessage("plot-already-member"));
+                return;
+            }
+
+            plot.members().add(player.getUniqueId());
+            player.sendMessage(localizationManager.getMessage("plot-joined").replaceText(builder -> {
+                builder.matchLiteral("%plot%").replacement(Component.text(plot.name(), Style.style(TextColor.color(plot.argbColor()))));
+            }));
+            itemInHand.subtract();
+            return;
+        }
+
+        if (!town.hasPermission(player, Permission.MANAGE_PLOTS) && !plot.ownerUuid().equals(player.getUniqueId())) {
+            player.sendMessage(localizationManager.getMessage("no-permission"));
+            return;
+        }
+
+        var levelsNeeded = NubladaTowns.getInstance().getConfigValues().getTownInviteXpLevels();
+        if (player.getLevel() < levelsNeeded) {
+            player.sendMessage(localizationManager.getMessage("plot-invite-not-enough-xp").replaceText(builder -> {
+                builder.matchLiteral("%levels%").replacement(String.valueOf(levelsNeeded));
+            }));
+            return;
+        }
+
+        player.setLevel(player.getLevel() - levelsNeeded);
+        itemInHand.subtract();
+
+        var inviteItem = new ItemStack(Material.PAPER);
+        var itemMeta = inviteItem.getItemMeta();
+        itemMeta.itemName(localizationManager.getMessage("plot-invite-book-name"));
+        itemMeta.lore(List.of(ComponentUtils.replaceString(localizationManager.getMessage("plot-invite-book-description"), "%plot%", plot.name())));
+        itemMeta.setMaxStackSize(1);
+        itemMeta.setEnchantmentGlintOverride(true);
+        var pdc = itemMeta.getPersistentDataContainer();
+        pdc.set(NubladaTowns.Keys.PLOT_INVITE_KEY, PersistentDataType.STRING, plot.uuid().toString());
+        inviteItem.setItemMeta(itemMeta);
+        player.getInventory().addItem(inviteItem);
+        player.sendMessage(localizationManager.getMessage("plot-invite-created"));
     }
 
     public Map<UUID, Location> getPlotsBeingCreated() {
