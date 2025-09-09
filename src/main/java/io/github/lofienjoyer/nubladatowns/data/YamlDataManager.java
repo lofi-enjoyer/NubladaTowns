@@ -1,6 +1,7 @@
 package io.github.lofienjoyer.nubladatowns.data;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
+import io.github.lofienjoyer.nubladatowns.plot.Plot;
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
 import io.github.lofienjoyer.nubladatowns.town.LandChunk;
@@ -13,6 +14,7 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.io.IOException;
@@ -95,6 +97,27 @@ public class YamlDataManager implements DataManager {
                 });
             }
 
+            var plots = section.getConfigurationSection("plots");
+            if (plots != null) {
+                plots.getKeys(false).forEach(plotUuid -> {
+                    var plotSection = plots.getConfigurationSection(plotUuid);
+                    var ownerUuid = UUID.fromString(plotSection.getString("owner-uuid"));
+                    var minStringParts = plotSection.getString("min").split(":");
+                    var min = new Vector(Integer.parseInt(minStringParts[0]), Integer.parseInt(minStringParts[1]), Integer.parseInt(minStringParts[2]));
+                    var maxStringParts = plotSection.getString("max").split(":");
+                    var max = new Vector(Integer.parseInt(maxStringParts[0]), Integer.parseInt(maxStringParts[1]), Integer.parseInt(maxStringParts[2]));
+                    var color = plotSection.getInt("color");
+                    var plotName = plotSection.getString("name");
+                    var world = plotSection.getString("world");
+                    var members = plotSection.getStringList("members").stream().map(uuid -> {
+                        return UUID.fromString(uuid);
+                    }).collect(Collectors.toList());
+
+                    var plot = new Plot(UUID.fromString(plotUuid), ownerUuid, min, max, plotName, color, Bukkit.getWorld(world), members);
+                    town.addPlot(plot);
+                });
+            }
+
             towns.add(town);
         });
 
@@ -144,6 +167,16 @@ public class YamlDataManager implements DataManager {
             section.set("history", historyEvents);
             var inventoryItems = Arrays.stream(town.getInventory().getContents()).toList();
             section.set("inventory", inventoryItems);
+            town.getPlots().forEach(plot -> {
+                var plotSection = section.createSection("plots." + plot.uuid().toString());
+                plotSection.set("owner-uuid", plot.ownerUuid().toString());
+                plotSection.set("min", String.format("%d:%d:%d", plot.min().getBlockX(), plot.min().getBlockY(), plot.min().getBlockZ()));
+                plotSection.set("max", String.format("%d:%d:%d", plot.max().getBlockX(), plot.max().getBlockY(), plot.max().getBlockZ()));
+                plotSection.set("color", plot.argbColor());
+                plotSection.set("name", plot.name());
+                plotSection.set("world", plot.world().getName());
+                plotSection.set("members", plot.members());
+            });
         });
 
         dataConfig.save(file);

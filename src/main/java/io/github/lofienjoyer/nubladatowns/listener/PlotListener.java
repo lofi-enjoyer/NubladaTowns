@@ -177,7 +177,7 @@ public class PlotListener implements Listener {
             return false;
         }
 
-        townManager.addPlotToTown(plot, town);
+        town.addPlot(plot);
         player.sendMessage(localizationManager.getMessage("plot-created"));
         return true;
     }

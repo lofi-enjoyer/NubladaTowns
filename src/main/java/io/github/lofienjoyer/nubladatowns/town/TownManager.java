@@ -116,14 +116,6 @@ public class TownManager {
         residentsMap.remove(playerUuid);
     }
 
-    public void addPlotToTown(Plot plot, Town town) {
-        town.addPlot(plot);
-    }
-
-    public void removePlotFromTown(Plot plot, Town town) {
-        town.removePlot(plot);
-    }
-
     public Town getTownByUUID(UUID uuid) {
         return townMap.get(uuid);
     }
