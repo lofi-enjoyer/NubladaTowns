@@ -147,6 +147,9 @@ public class PlotListener implements Listener {
                 } else if (itemInHand.getType() == Material.PAPER) {
                     handlePlotInvite(player, currentTown, plot, itemInHand);
                     return;
+                } else if (itemInHand.getType() == Material.TNT) {
+                    handlePlotDeletion(player, currentTown, plot);
+                    return;
                 }
             }
 
@@ -224,6 +227,16 @@ public class PlotListener implements Listener {
         inviteItem.setItemMeta(itemMeta);
         player.getInventory().addItem(inviteItem);
         player.sendMessage(localizationManager.getMessage("plot-contract-created"));
+    }
+
+    private void handlePlotDeletion(Player player, Town town, Plot plot) {
+        if (!town.hasPermission(player, Permission.MANAGE_PLOTS) && !plot.ownerUuid().equals(player.getUniqueId())) {
+            player.sendMessage(localizationManager.getMessage("no-permission"));
+            return;
+        }
+
+        town.removePlot(plot);
+        player.sendMessage(localizationManager.getMessage("plot-deleted"));
     }
 
     private void handlePlotInvite(Player player, Town town, Plot plot, ItemStack itemInHand) {

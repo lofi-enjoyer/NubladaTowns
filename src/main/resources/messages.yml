@@ -89,6 +89,7 @@ plot-menu: |
 plot-joined: "<white>You just joined %plot%.</white>"
 plot-claimed: "<white>You just claimed %plot%.</white>"
 plot-already-member: "<red>You're already a member of this plot.</red>"
+plot-deleted: "<white>The plot has been deleted.</white>"
 
 # Errors
 non-existent-town: "<red>That town does not exist.</red>"
