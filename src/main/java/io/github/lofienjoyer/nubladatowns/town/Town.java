@@ -1,5 +1,6 @@
 package io.github.lofienjoyer.nubladatowns.town;
 
+import io.github.lofienjoyer.nubladatowns.plot.Plot;
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
 import net.kyori.adventure.text.Component;
@@ -11,10 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Town {
 
@@ -28,13 +26,15 @@ public class Town {
     private boolean open;
     private int power;
     private UUID mayor;
-    private ArrayList<Role> roles = new ArrayList<>();
+    private List<Role> roles;
+    private Map<String, Plot> plots;
     private List<TownHistoryEvent> historyEvents;
     private Inventory inventory;
 
-    public Town(UUID uniqueId, String name, List<UUID> residents, List<LandChunk> claimedLand, List<TownHistoryEvent> historyEvents, List<ItemStack> inventoryItems) {
+    public Town(UUID uniqueId, String name, List<UUID> residents, List<LandChunk> claimedLand, List<TownHistoryEvent> historyEvents, List<ItemStack> inventoryItems, Map<String, Plot> plots) {
         this.uniqueId = uniqueId;
         this.name = name;
+        this.roles = new ArrayList<>();
         this.residents = residents;
         this.claimedLand = claimedLand;
         this.historyEvents = historyEvents;
@@ -42,10 +42,11 @@ public class Town {
         for (int i = 0; i < Math.min(inventory.getSize(), inventoryItems.size()); i++) {
             inventory.setItem(i, inventoryItems.get(i));
         }
+        this.plots = plots;
     }
 
     public Town(String name) {
-        this(UUID.randomUUID(), name, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        this(UUID.randomUUID(), name, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new HashMap<>());
     }
 
     protected void addLand(LandChunk chunk) {
@@ -77,6 +78,14 @@ public class Town {
     protected void removeResident(UUID uuid) { residents.remove(uuid); }
 
     protected void removeResident(Player player) { removeResident(player.getUniqueId()); }
+
+    public void addPlot(Plot plot) {
+        plots.put(plot.name().toLowerCase(), plot);
+    }
+
+    public void removePlot(Plot plot) {
+        plots.remove(plot.name().toLowerCase());
+    }
 
     protected void addHistoryEvent(TownHistoryEvent event) {
         historyEvents.add(event);
@@ -169,6 +178,18 @@ public class Town {
     }
 
     protected void setRoles(ArrayList<Role> roles) { this.roles = roles; }
+
+    public Collection<Plot> getPlots() {
+        return plots.values();
+    }
+
+    public boolean doesPlotExist(String name) {
+        return plots.containsKey(name.toLowerCase());
+    }
+
+    public Optional<Plot> getPlotByName(String name) {
+        return Optional.ofNullable(plots.get(name.toLowerCase()));
+    }
 
     public boolean hasPermission(UUID uuid, Permission permission) {
         if(getMayor().equals(uuid))

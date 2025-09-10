@@ -2,6 +2,7 @@ package io.github.lofienjoyer.nubladatowns.listener;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
 import io.github.lofienjoyer.nubladatowns.localization.LocalizationManager;
+import io.github.lofienjoyer.nubladatowns.plot.PlotUtils;
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.town.TownManager;
 import org.bukkit.GameMode;
@@ -41,6 +42,18 @@ public class ProtectionListener implements Listener {
         if (currentTown == null)
             return;
 
+        var plotOptional = PlotUtils.getPlotAtLocation(event.getBlock().getLocation(), currentTown);
+        if (plotOptional.isPresent()) {
+            var plot = plotOptional.get();
+            if (!plot.ownerUuid().equals(event.getPlayer().getUniqueId()) && !plot.members().contains(event.getPlayer().getUniqueId())) {
+                if (!currentTown.hasPermission(player, Permission.DESTROY)) {
+                    player.sendActionBar(localizationManager.getMessage("cannot-break-here"));
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+
         if (!currentTown.hasPermission(player, Permission.DESTROY)) {
             player.sendActionBar(localizationManager.getMessage("cannot-break-here"));
             event.setCancelled(true);
@@ -56,6 +69,18 @@ public class ProtectionListener implements Listener {
         var currentTown = townManager.getTownOnChunk(event.getBlock().getChunk());
         if (currentTown == null)
             return;
+
+        var plotOptional = PlotUtils.getPlotAtLocation(event.getBlockPlaced().getLocation(), currentTown);
+        if (plotOptional.isPresent()) {
+            var plot = plotOptional.get();
+            if (!plot.ownerUuid().equals(event.getPlayer().getUniqueId()) && !plot.members().contains(event.getPlayer().getUniqueId())) {
+                if (!currentTown.hasPermission(player, Permission.BUILD)) {
+                    player.sendActionBar(localizationManager.getMessage("cannot-place-here"));
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
 
         if (!currentTown.hasPermission(player, Permission.BUILD)) {
             player.sendActionBar(localizationManager.getMessage("cannot-place-here"));
@@ -88,7 +113,22 @@ public class ProtectionListener implements Listener {
 
         if (blockState instanceof Container || blockData instanceof Openable) {
             var currentTown = townManager.getTownOnChunk(block.getChunk());
-            if (currentTown != null && !currentTown.hasPermission(player, Permission.INTERACT)) {
+            if (currentTown == null)
+                return;
+
+            var plotOptional = PlotUtils.getPlotAtLocation(block.getLocation(), currentTown);
+            if (plotOptional.isPresent()) {
+                var plot = plotOptional.get();
+                if (!plot.ownerUuid().equals(event.getPlayer().getUniqueId()) && !plot.members().contains(event.getPlayer().getUniqueId())) {
+                    if (!currentTown.hasPermission(player, Permission.INTERACT)) {
+                        event.setCancelled(true);
+                        player.sendActionBar(localizationManager.getMessage("cannot-interact-here"));
+                    }
+                    return;
+                }
+            }
+
+            if (!currentTown.hasPermission(player, Permission.INTERACT)) {
                 event.setCancelled(true);
                 player.sendActionBar(localizationManager.getMessage("cannot-interact-here"));
             }

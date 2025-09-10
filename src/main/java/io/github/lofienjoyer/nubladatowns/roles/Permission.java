@@ -13,7 +13,8 @@ public enum Permission {
     CHANGE_BANNER,
     CLAIM_TERRITORY,
     ABANDON_TERRITORY,
-    OPEN_INVENTORY;
+    OPEN_INVENTORY,
+    MANAGE_PLOTS;
 
     public static boolean contains(String literal) {
         for (Permission permission : Permission.values()) {

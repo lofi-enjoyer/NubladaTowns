@@ -15,6 +15,7 @@ invalid-value: "<red>%value% is not a valid value.</red>"
 not-enough-arguments: "<red>Not enough arguments.</red>"
 no-permission: "<red>You do not have permission to do that.</red>"
 only-alphanumeric: "<red>You can only use alphanumeric characters.</red>"
+too-long: "<red>The value is too long.</red>"
 
 #
 # Admin messages
@@ -58,6 +59,37 @@ town-banner-changed: "%town%<white>'s banner was changed.</white>"
 name-changed: "<green>The town was successfully renamed to %town%.</green>"
 town-name-changed: "<gray>%old-name%</gray><white> was renamed to %town%.</white>"
 lectern-moved: "<green>The town's lectern was successfully moved.</green>"
+
+#
+# Town messages
+#
+
+started-plot-creation: "<green>Right click on the opposite corner to create a plot.</green>"
+plot-outside-town: "<red>The plot must be in the town's territory.</red>"
+stopped-plot-creation: "<white>Finishing plot creation...</white>"
+invalid-plot-name: "<red>There's no plot with the specified name.</red>"
+sign-linked: "<white>The sign was successfully linked!</white>"
+intersects-with-existing-plot: "<red>The plot intersects with an existing one.</red>"
+plot-created: "<white>The plot was successfully created!</white>"
+plot-sign-creation-header: "[plot]"
+working-plot-sign-header: "<bold>[Plot]</bold>"
+plot-information: "<yellow><bold>%name%</bold></yellow><newline>Owner: <bold>%owner%</bold><newline>Members: <bold>%members%</bold>"
+plot-contract-book-name: "<white>Plot contract</white>"
+plot-contract-book-description: "<gray>Use it to buy <gold>%plot%</gold></gray>"
+plot-contract-created: "<green>Contract created!</green>"
+plot-contract-not-enough-xp: "<red>You need at least %levels% levels of experience to create a contract.</red>"
+plot-invite-book-name: "<white>Plot invitation</white>"
+plot-invite-book-description: "<gray>Use it to join <gold>%plot%</gold></gray>"
+plot-invite-created: "<green>Invite created!</green>"
+plot-invite-not-enough-xp: "<red>You need at least %levels% levels of experience to create an invite.</red>"
+plot-menu: |
+  <bold>%plot%</bold>
+  Owner: <bold>%owner%</bold>
+  Members: <bold>%members%</bold>
+plot-joined: "<white>You just joined %plot%.</white>"
+plot-claimed: "<white>You just claimed %plot%.</white>"
+plot-already-member: "<red>You're already a member of this plot.</red>"
+plot-deleted: "<white>The plot has been deleted.</white>"
 
 # Errors
 non-existent-town: "<red>That town does not exist.</red>"
@@ -173,6 +205,8 @@ role-editor-edit-assign-roles: "Assign roles"
 role-editor-edit-change-banner: "Change banner"
 role-editor-edit-claim-territory: "Claim territory"
 role-editor-edit-abandon-territory: "Abandon territory"
+role-editor-edit-open-inventory: "Open inventory"
+role-editor-edit-manage-plots: "Manage plots"
 role-editor-permission-not-granted: "<red>Not granted</red>"
 role-editor-permission-granted: "<green>Granted</green>"
 role-editor-delete: "<red>[Delete]</red>"

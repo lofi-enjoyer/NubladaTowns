@@ -1,6 +1,7 @@
 package io.github.lofienjoyer.nubladatowns.town;
 
 import io.github.lofienjoyer.nubladatowns.NubladaTowns;
+import io.github.lofienjoyer.nubladatowns.plot.Plot;
 import io.github.lofienjoyer.nubladatowns.data.DataManager;
 import io.github.lofienjoyer.nubladatowns.roles.Permission;
 import io.github.lofienjoyer.nubladatowns.roles.Role;
